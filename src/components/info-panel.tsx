@@ -12,7 +12,11 @@ export const InfoPanel = ({initial, updateHandler}) => {
     const [alert, setAlert] = useState('');
     
     useEffect(() => {
-        const knownFields = ['name', 'pre_description', 'project_lead', 'lead_institution'];
+        const knownFields = ['name', 'pre_description', 
+                            'project_lead', 'lead_institution',
+                            'access', 'accesses', 'forms', 'filenames',
+                            'ispublic', 'isrequest', 'sections',
+                        'project_status'];
         const unknownFields = Object.keys(metadata).filter((key) => !knownFields.includes(key));
         const newExtraFields = {};
         unknownFields.forEach((key) => {
@@ -68,6 +72,17 @@ export const InfoPanel = ({initial, updateHandler}) => {
           </Grid>
           <Grid item xs={12} sm={6}>
             <TextField
+                fullWidth
+                label="Project Lead"
+                name="project_lead"
+                value={metadata.project_lead}
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                    setProp('project_lead', event.target.value);
+                }}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
                 name="pre_description"
                 fullWidth
                 required
@@ -77,17 +92,6 @@ export const InfoPanel = ({initial, updateHandler}) => {
                 value={metadata.pre_description}
                 onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                     setProp('pre_description', event.target.value);
-                }}
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField
-                fullWidth
-                label="Project Lead"
-                name="project_lead"
-                value={metadata.project_lead}
-                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                    setProp('project_lead', event.target.value);
                 }}
             />
           </Grid>

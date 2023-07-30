@@ -2,6 +2,7 @@ import { TabContext, TabList, TabPanel } from "@mui/lab";
 import { Box, Button, Grid, Tab } from "@mui/material"
 import { useState } from "react";
 import { InfoPanel } from "./info-panel";
+import { RolesPanel } from "./roles-panel";
 
 export interface NotebookType {
     [key: string]: unknown;
@@ -43,8 +44,8 @@ export const NotebookEditor = ({notebook}: {notebook: NotebookType}) => {
                 <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                     <TabList onChange={handleChange} aria-label="lab API tabs example">
                     <Tab label="Info" value="1" />
-                    <Tab label="Design" value="2" />
-                    <Tab label="Overview" value="3" />
+                    <Tab label="Roles" value="2" />
+                    <Tab label="Design" value="3" />
                     <Tab label="Behaviour" value="4" />
                     <Tab label="Submit" value="5" />
                     </TabList>
@@ -52,8 +53,8 @@ export const NotebookEditor = ({notebook}: {notebook: NotebookType}) => {
 
  
                 <TabPanel value="1"><InfoPanel initial={metadata} updateHandler={metadataUpdate}/></TabPanel>
-                <TabPanel value="2">Design</TabPanel>
-                <TabPanel value="3">Overview</TabPanel>
+                <TabPanel value="2"><RolesPanel initial={metadata} updateHandler={metadataUpdate}/></TabPanel>
+                <TabPanel value="3">Design</TabPanel>
                 <TabPanel value="4">Behaviour</TabPanel>
                 <TabPanel value="5">Submit</TabPanel>
 
@@ -74,13 +75,16 @@ export const NotebookEditor = ({notebook}: {notebook: NotebookType}) => {
                         : <div>&nbsp;</div>
                         }
                     </Grid>
+
+                    <Grid item>
+                        <pre className="code">
+                            {JSON.stringify(metadata, null, 2)}
+                        </pre> 
+                    </Grid>
                 </Grid>
-                
+      
             </TabContext>
 
-            <pre className="code">
-                {JSON.stringify(metadata, null, 2)}
-            </pre>
         </div>
     );
 };
