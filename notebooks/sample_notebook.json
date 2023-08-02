@@ -730,7 +730,7 @@
                     "fullWidth": true,
                     "helperText": "What do you think this is?",
                     "variant": "outlined",
-                    "required": false,
+                    "required": true,
                     "multiline": true,
                     "InputProps":
                     {

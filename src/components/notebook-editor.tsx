@@ -3,6 +3,7 @@ import { Box, Button, Grid, Tab } from "@mui/material"
 import { useState } from "react";
 import { InfoPanel } from "./info-panel";
 import { RolesPanel } from "./roles-panel";
+import { DesignPanel } from "./design-panel";
 
 export interface NotebookType {
     [key: string]: unknown;
@@ -12,7 +13,7 @@ export const NotebookEditor = ({notebook}: {notebook: NotebookType}) => {
 
     const [tabNumber, setTabNumber] = useState(1);
     const [metadata, setMetadata] = useState(notebook.metadata);
-    const [uiSpec, setUiSpec] = useState(notebook.uiSpec);
+    const [uiSpec, setUiSpec] = useState(notebook['ui-specification']);
 
     const maxTabs = 5;
 
@@ -50,11 +51,10 @@ export const NotebookEditor = ({notebook}: {notebook: NotebookType}) => {
                     <Tab label="Submit" value="5" />
                     </TabList>
                 </Box>
-
  
                 <TabPanel value="1"><InfoPanel initial={metadata} updateHandler={metadataUpdate}/></TabPanel>
                 <TabPanel value="2"><RolesPanel initial={metadata} updateHandler={metadataUpdate}/></TabPanel>
-                <TabPanel value="3">Design</TabPanel>
+                <TabPanel value="3"><DesignPanel initial={uiSpec} updateHandler={uiSpecUpdate} /></TabPanel>
                 <TabPanel value="4">Behaviour</TabPanel>
                 <TabPanel value="5">Submit</TabPanel>
 
@@ -78,7 +78,7 @@ export const NotebookEditor = ({notebook}: {notebook: NotebookType}) => {
 
                     <Grid item>
                         <pre className="code">
-                            {JSON.stringify(metadata, null, 2)}
+                            {JSON.stringify(uiSpec, null, 2)}
                         </pre> 
                     </Grid>
                 </Grid>
