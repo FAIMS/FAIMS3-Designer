@@ -1,5 +1,8 @@
 import { Accordion, AccordionSummary, AccordionDetails } from "@mui/material";
 import { MultipleTextFieldEditor } from "./Fields/MultipleTextField";
+import { BaseFieldEditor } from "./Fields/BaseFieldEditor";
+import { TakePhotoFieldEditor } from "./Fields/TakePhotoField";
+import { SelectFieldEditor } from "./Fields/SelectField";
 
 
 export const FieldEditor = ({fieldName, field, updateField}) => {
@@ -23,7 +26,17 @@ export const FieldEditor = ({fieldName, field, updateField}) => {
                         updateField={updateField}
                     />)
                 ||
-                <pre>{JSON.stringify(field, null, 2)}</pre>}
+                (fieldComponent === 'TakePhoto' && <TakePhotoFieldEditor fieldName={fieldName} field={field} updateField={updateField}/>)
+                ||
+                (fieldComponent === 'Select' && <SelectFieldEditor fieldName={fieldName} field={field} updateField={updateField}/>)
+                ||
+                <BaseFieldEditor
+                    fieldName={fieldName}
+                    field={field}
+                    updateField={updateField} 
+                    children={undefined}  
+                />
+                }
             </AccordionDetails>
         </Accordion>
     )

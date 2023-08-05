@@ -64,6 +64,7 @@ export const InfoPanel = ({initial, updateHandler}) => {
                 label="Project Name"
                 helperText="Enter a string between 2 and 100 characters long"
                 name="name"
+                data-testid="name"
                 value={metadata.name}
                 onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                     setProp('name', event.target.value);
