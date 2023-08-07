@@ -1,6 +1,7 @@
 import './App.css'
 import { NotebookEditor } from './components/notebook-editor';
-import sample_notebook from '../notebooks/sample_notebook.json';
+import sample_notebook from '../notebooks/FAIMS3-Beta-Demo-Notebook.json'
+//import sample_notebook from '../notebooks/sample_notebook.json'
 
 function App() {
 

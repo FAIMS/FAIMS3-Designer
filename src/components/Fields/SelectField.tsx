@@ -97,6 +97,7 @@ export const SelectFieldEditor = ({fieldName, field, updateField}) => {
                         name="options" 
                         variant="outlined"
                         label="Options"
+                        fullWidth
                         multiline={true}
                         rows={4}
                         value={options}

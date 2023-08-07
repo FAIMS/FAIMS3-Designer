@@ -10,8 +10,8 @@ export const FieldEditor = ({fieldName, field, updateField}) => {
     const fieldComponent = field['component-name'];
 
     const getFieldLabel = () => {
-        return field['component-parameters'].label || 
-               field['component-parameters'].InputLabelProps.label || 
+        return (field['component-parameters'] && field['component-parameters'].label) || 
+               (field['component-parameters'].InputLabelProps && field['component-parameters'].InputLabelProps.label) || 
                field['component-parameters'].name;
     }
 

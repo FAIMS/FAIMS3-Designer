@@ -59,14 +59,14 @@ export const MultipleTextFieldEditor = ({fieldName, field, updateField}) => {
 
     const cParams = field['component-parameters'];
 
-    const [state, setState] = useState({
+    const state = {
         label: cParams.InputLabelProps.label || fieldName,
         helperText: cParams.helperText || "",
         required: cParams.required || false,
         rows: cParams.InputProps.rows || 4,
         annotation: field.meta.annotation || false,
         uncertainty: field.meta.uncertainty.include || false
-    });
+    };
 
     const updateFieldFromState = (newState) => {
         const newField = {...field};
@@ -81,7 +81,6 @@ export const MultipleTextFieldEditor = ({fieldName, field, updateField}) => {
 
     const updateProperty = (prop: string, value: any) => {
         const newState = {...state, [prop]: value};
-        setState(newState);
         updateFieldFromState(newState);
     };
 
@@ -103,7 +102,9 @@ export const MultipleTextFieldEditor = ({fieldName, field, updateField}) => {
                         name="helperText" 
                         variant="outlined"
                         label="Helper Text"
-                        multiline
+                        fullWidth
+                        multiline={true}
+                        rows={4}
                         value={state.helperText} 
                         helperText="Help text shown along with the field (like this text)."
                         onChange={(e) => updateProperty('helperText', e.target.value)} 

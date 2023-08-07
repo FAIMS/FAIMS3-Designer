@@ -12,7 +12,7 @@ export const InfoPanel = ({initial, updateHandler}) => {
     const [alert, setAlert] = useState('');
     
     useEffect(() => {
-        const knownFields = ['name', 'pre_description', 
+        const knownFields = ['name', 'pre_description', 'behaviours', 'meta',
                             'project_lead', 'lead_institution',
                             'access', 'accesses', 'forms', 'filenames',
                             'ispublic', 'isrequest', 'sections',

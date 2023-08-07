@@ -54,7 +54,7 @@ export const NotebookEditor = ({notebook}: {notebook: NotebookType}) => {
  
                 <TabPanel value="1"><InfoPanel initial={metadata} updateHandler={metadataUpdate}/></TabPanel>
                 <TabPanel value="2"><RolesPanel initial={metadata} updateHandler={metadataUpdate}/></TabPanel>
-                <TabPanel value="3"><DesignPanel initial={uiSpec} updateHandler={uiSpecUpdate} /></TabPanel>
+                <TabPanel value="3"><DesignPanel uiSpec={uiSpec} updateHandler={uiSpecUpdate} /></TabPanel>
                 <TabPanel value="4">Behaviour</TabPanel>
                 <TabPanel value="5">Submit</TabPanel>
 

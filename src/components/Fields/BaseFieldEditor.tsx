@@ -1,13 +1,12 @@
 import { Checkbox, FormControlLabel, Grid, TextField } from "@mui/material";
-import { useState } from "react";
 
 export const BaseFieldEditor = ({fieldName, field, updateField, children}) => {
-
+    
     // These are needed because there is no consistency in how
     // the field label is stored in the notebook
     const getFieldLabel = () => {
-        return field['component-parameters'].label || 
-               field['component-parameters'].InputLabelProps.label || 
+        return (field['component-parameters'] && field['component-parameters'].label) || 
+               (field['component-parameters'].InputLabelProps && field['component-parameters'].InputLabelProps.label) || 
                field['component-parameters'].name;
     }
 
@@ -22,13 +21,13 @@ export const BaseFieldEditor = ({fieldName, field, updateField, children}) => {
 
     const cParams = field['component-parameters'];
 
-    const [state, setState] = useState({
+    const state = {
         label: getFieldLabel(),
         helperText: cParams.helperText || "",
         required: cParams.required || false, 
         annotation: field.meta.annotation || false,
         uncertainty: field.meta.uncertainty.include || false
-    });
+    };
 
     const updateFieldFromState = (newState) => {
         const newField = {...field};
@@ -42,7 +41,7 @@ export const BaseFieldEditor = ({fieldName, field, updateField, children}) => {
 
     const updateProperty = (prop: string, value: any) => {
         const newState = {...state, [prop]: value};
-        setState(newState);
+        //setState(newState);
         updateFieldFromState(newState);
     };
 
@@ -64,7 +63,9 @@ export const BaseFieldEditor = ({fieldName, field, updateField, children}) => {
                         name="helperText" 
                         variant="outlined"
                         label="Helper Text"
-                        multiline
+                        fullWidth
+                        multiline={true}
+                        rows={4}
                         value={state.helperText} 
                         helperText="Help text shown along with the field (like this text)."
                         onChange={(e) => updateProperty('helperText', e.target.value)} 
