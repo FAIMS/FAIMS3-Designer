@@ -1,21 +1,15 @@
-import { Accordion, AccordionDetails, AccordionSummary, 
-        Alert, 
-        Button, 
-        Checkbox, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, FormControlLabel, 
-        Grid, InputLabel, MenuItem, Select, TextField } from "@mui/material";
+import { Accordion, AccordionDetails, AccordionSummary, Checkbox, FormControl, FormControlLabel, Grid, InputLabel, MenuItem, Select, TextField } from "@mui/material";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
-
-import { FieldEditor } from "./field-editor";
-import { useState } from "react";
 import { FieldList } from "./field-list";
+import { useState } from "react";
 
-export const SectionEditor = ({fView, viewSet, fields, updateField}) => {
+export const SectionEditor = ({fView, fields, updateField}) => {
 
     const [state, setState] = useState({
         inheritAccess: true,
         access: ['admin'],
-        annotation: true,
-        uncertainty: true
+        label: fView.label
     })
 
     const updateProperty = (prop: string, value: any) => {
@@ -25,75 +19,58 @@ export const SectionEditor = ({fView, viewSet, fields, updateField}) => {
 
     return (
     <Accordion>
-        <AccordionSummary>Page: {fView.label}</AccordionSummary>
-        <AccordionDetails>
-        
-        <Accordion>
-        <AccordionSummary>Access</AccordionSummary>
+        <AccordionSummary expandIcon={<ExpandMoreIcon />}>Section: {state.label}</AccordionSummary>
         <AccordionDetails>
 
-            <Alert level="info">Configure who can access this section 
-            of the form.</Alert>
+        <Grid container spacing={2}>
+
+            <Grid item sm={6}>
+                <TextField
+                    fullWidth
+                    required
+                    label="Page Name"
+                    helperText="Name for this page of the form"
+                    name="label"
+                    data-testid="label"
+                    value={state.label}
+                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                        updateProperty('label', event.target.value);
+                    }}
+                />
+            </Grid>
 
             <Grid item sm={6}>
                 <FormControlLabel required 
                 control={<Checkbox 
                             checked={state.inheritAccess}
                             onChange={(e) => updateProperty('inheritAccess', e.target.checked)} 
-                            />} label="Inherit Access from Notebook" />
+                            />} label="Inherit Access from Form" />
             </Grid>
 
-            {!state.inheritAccess && 
-             (
-                <FormControl fullWidth>
-                    <InputLabel id="demo-simple-select-label">Roles with access</InputLabel>
-                    <Select 
-                    name="access" 
-                    multiple
-                    label="Roles with access"
-                    value={state.access}
-                    onChange={(e) => updateProperty('access', e.target.value)}
-                    >
-                    <MenuItem value="admin">Admin</MenuItem>
-                    <MenuItem value="team">Team</MenuItem>
-                </Select>
-                </FormControl>
-             )
-            }
-            </AccordionDetails>
-        </Accordion>
-
-        <Accordion>
-        <AccordionSummary>Advanced</AccordionSummary>
-        <AccordionDetails>
-        <Alert severity="info">Configure annotation and uncertainty options 
-        for all fields in this section.</Alert>
-
-            <Grid item sm={6}>
-                <FormControlLabel required 
-                control={<Checkbox 
-                            checked={state.annotation}
-                            onChange={(e) => updateProperty('annotation', e.target.checked)} 
-                            />} label="Enable Annotation" />
+                {!state.inheritAccess && 
+                (
+                    <Grid item sm={6}>
+                        <FormControl fullWidth>
+                            <InputLabel id="demo-simple-select-label">Roles with access</InputLabel>
+                            <Select 
+                            name="access" 
+                            multiple
+                            label="Roles with access"
+                            value={state.access}
+                            onChange={(e) => updateProperty('access', e.target.value)}
+                            >
+                            <MenuItem value="admin">Admin</MenuItem>
+                            <MenuItem value="team">Team</MenuItem>
+                        </Select>
+                        </FormControl>
+                    </Grid>
+                )
+                }
             </Grid>
 
-            <Grid item sm={6}>
-                <FormControlLabel required 
-                control={<Checkbox 
-                            checked={state.uncertainty}
-                            onChange={(e) => updateProperty('uncertainty', e.target.checked)} 
-                            />} label="Enable Uncertainty" />
-            </Grid>
+
+            <FieldList fView={fView} fields={fields} updateField={updateField}/>
         </AccordionDetails>
-        </Accordion>
-
-        <Accordion>
-            <AccordionSummary>Fields</AccordionSummary>
-            <AccordionDetails>
-                <FieldList fView={fView} fields={fields} updateField={updateField}/>
-            </AccordionDetails>
-        </Accordion>
-    </AccordionDetails>
     </Accordion>
     );
 }

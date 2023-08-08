@@ -3,6 +3,7 @@ import { MultipleTextFieldEditor } from "./Fields/MultipleTextField";
 import { BaseFieldEditor } from "./Fields/BaseFieldEditor";
 import { TakePhotoFieldEditor } from "./Fields/TakePhotoField";
 import { SelectFieldEditor } from "./Fields/SelectField";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 
 export const FieldEditor = ({fieldName, field, updateField}) => {
@@ -17,7 +18,7 @@ export const FieldEditor = ({fieldName, field, updateField}) => {
 
     return (
         <Accordion key={fieldName}>
-            <AccordionSummary>{getFieldLabel()} : {fieldComponent}</AccordionSummary>
+            <AccordionSummary expandIcon={<ExpandMoreIcon />}>{getFieldLabel()} : {fieldComponent}</AccordionSummary>
             <AccordionDetails>
                 {(fieldComponent === 'MultipleTextField' && 
                     <MultipleTextFieldEditor
