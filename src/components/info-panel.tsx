@@ -1,11 +1,14 @@
 import { Alert, Button, Grid, TextField } from "@mui/material";
 import { useEffect, useState } from "react";
+import { useAppSelector, useAppDispatch } from "../state/hooks";
 
 interface StringMap {[key: string]: string};
 
-export const InfoPanel = ({initial, updateHandler}) => {
+export const InfoPanel = () => {
 
-    const [metadata, setMetadata] = useState(initial);
+    const metadata = useAppSelector(state => state.metadata);
+    const dispatch = useAppDispatch();
+
     const [metadataFieldName, setMetadataFieldName] = useState('');
     const [metadataFieldValue, setMetadataFieldValue] = useState('');
     const [extraFields, setExtraFields] = useState<StringMap>({}); 
@@ -16,7 +19,7 @@ export const InfoPanel = ({initial, updateHandler}) => {
                             'project_lead', 'lead_institution',
                             'access', 'accesses', 'forms', 'filenames',
                             'ispublic', 'isrequest', 'sections',
-                        'project_status'];
+                            'project_status'];
         const unknownFields = Object.keys(metadata).filter((key) => !knownFields.includes(key));
         const newExtraFields = {};
         unknownFields.forEach((key) => {
@@ -25,11 +28,8 @@ export const InfoPanel = ({initial, updateHandler}) => {
         setExtraFields(newExtraFields);
     }, [metadata]);
 
-    const setProp = (prop: string, value: string) => {
-        const newMetadata = Object.assign({}, metadata);
-        newMetadata[prop] = value;
-        updateHandler(newMetadata);
-        setMetadata(newMetadata);
+    const setProp = (property: string, value: string) => {
+        dispatch({type: 'metadata/propertyUpdated', payload: {property, value}});
     };
 
     const updateMetadataFieldName = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -42,7 +42,6 @@ export const InfoPanel = ({initial, updateHandler}) => {
 
     const addNewMetadataField = () => { 
         setAlert('');
-        console.log('new field', metadataFieldName, metadataFieldValue);
         if (metadataFieldName in metadata) {
             setAlert(`Field '${metadataFieldName}' already exists`);
         } else {

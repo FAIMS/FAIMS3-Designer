@@ -1,7 +1,11 @@
 import { Checkbox, FormControlLabel, Grid, TextField } from "@mui/material";
+import { useAppSelector, useAppDispatch } from "../../state/hooks";
 
-export const BaseFieldEditor = ({fieldName, field, updateField, children}) => {
+export const BaseFieldEditor = ({fieldName, children}) => {
     
+    const field = useAppSelector(state => state['ui-specification'].fields[fieldName]);
+    const dispatch = useAppDispatch();
+
     // These are needed because there is no consistency in how
     // the field label is stored in the notebook
     const getFieldLabel = () => {
@@ -10,13 +14,17 @@ export const BaseFieldEditor = ({fieldName, field, updateField, children}) => {
                field['component-parameters'].name;
     }
 
-    const setFieldLabel = (label: string) => {
-        if (field['component-parameters'].label)
-            field['component-parameters'].label = label;
-        if (field['component-parameters'].InputLabelProps && field['component-parameters'].InputLabelProps.label)
-            field['component-parameters'].InputLabelProps.label = label;
-        if (field['component-parameters'].name)
-            field['component-parameters'].name = label;
+    const setFieldLabel = (newField: any, label: string) => {
+        if (newField['component-parameters'].label)
+            newField['component-parameters'].label = label;
+        if (newField['component-parameters'].InputLabelProps && newField['component-parameters'].InputLabelProps.label)
+            newField['component-parameters'].InputLabelProps.label = label;
+        if (newField['component-parameters'].name)
+            newField['component-parameters'].name = label;
+    }
+
+    const updateField = (fieldName: string, newField: any) => {
+        dispatch({type: 'ui-specification/fieldUpdated', payload: {fieldName, newField}})        
     }
 
     const cParams = field['component-parameters'];
@@ -30,8 +38,8 @@ export const BaseFieldEditor = ({fieldName, field, updateField, children}) => {
     };
 
     const updateFieldFromState = (newState) => {
-        const newField = {...field};
-        setFieldLabel(newState.label);
+        const newField = JSON.parse(JSON.stringify(field)); // deep copy
+        setFieldLabel(newField, newState.label);
         newField['component-parameters'].helperText = newState.helperText;
         newField['component-parameters'].required = newState.required;
         newField.meta.annotation = newState.annotation;
@@ -41,9 +49,10 @@ export const BaseFieldEditor = ({fieldName, field, updateField, children}) => {
 
     const updateProperty = (prop: string, value: any) => {
         const newState = {...state, [prop]: value};
-        //setState(newState);
         updateFieldFromState(newState);
     };
+
+    //console.log('BaseFieldEditor', fieldName);
 
     return ( 
             <Grid container spacing={2}>

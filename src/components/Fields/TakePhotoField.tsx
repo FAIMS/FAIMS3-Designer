@@ -1,3 +1,4 @@
+import { useAppSelector, useAppDispatch } from "../../state/hooks";
 import { BaseFieldEditor } from "./BaseFieldEditor"
 
 const sample = {
@@ -28,13 +29,13 @@ const sample = {
     }
 }
 
-export const TakePhotoFieldEditor = ({fieldName, field, updateField}) => {
+export const TakePhotoFieldEditor = ({fieldName}) => {
+    const field = useAppSelector(state => state['ui-specification'].fields[fieldName]);
+    const dispatch = useAppDispatch();
 
     return (
         <BaseFieldEditor
-            fieldName={fieldName} 
-            field={field} 
-            updateField={updateField}
+            fieldName={fieldName}
             children={undefined}
         />
     )

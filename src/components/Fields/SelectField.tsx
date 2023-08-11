@@ -1,6 +1,7 @@
 import { Grid, TextField } from "@mui/material";
 import { useState } from "react";
 import { BaseFieldEditor } from "./BaseFieldEditor"
+import { useAppSelector, useAppDispatch } from "../../state/hooks";
 
 const sample = {
     "component-namespace": "faims-custom",
@@ -62,7 +63,10 @@ const sample = {
     }
 }
 
-export const SelectFieldEditor = ({fieldName, field, updateField}) => {
+export const SelectFieldEditor = ({fieldName}) => {
+    
+    const field = useAppSelector(state => state['ui-specification'].fields[fieldName]);
+    const dispatch = useAppDispatch();
 
     const getOptions = () => {
         let options = [];
@@ -84,6 +88,10 @@ export const SelectFieldEditor = ({fieldName, field, updateField}) => {
         field['component-parameters'].ElementProps.options =
             optionArray.map(o => {return {label: o, value: o}})
         updateField(field);
+    }
+    
+    const updateField = (fieldName: string, newField: any) => {
+        console.log('updateField', fieldName, newField);
     }
 
     return (

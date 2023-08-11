@@ -1,22 +1,34 @@
-import { Alert, Button, Divider, List, ListItem, ListItemText, Paper, TextField } from "@mui/material";
-import { useEffect, useState } from "react";
+import { Alert, Button, Divider, IconButton, List, ListItem, ListItemText, Paper, TextField } from "@mui/material";
+import { useState } from "react";
+import { useAppSelector, useAppDispatch } from "../state/hooks";
+import DeleteIcon from '@mui/icons-material/Delete';
 
 /**
  * RolesPanel - edit the user roles associated with this notebook
  * which are stored in the "accesses" property in the metadata
- * @param param0 
- * @returns 
  */
-export const RolesPanel = ({initial, updateHandler}) => {
+export const RolesPanel = () => {
 
-    const [accesses, setAccesses] = useState(initial.accesses);
-    const [newAccess, setNewAccess] = useState('');
+    const roles = useAppSelector(state => state.metadata.accesses) as string[];
+    const dispatch = useAppDispatch();
+
+    const [newRole, setNewRole] = useState('');
 
     const addRole = () => {
-        accesses.push(newAccess)
-        setAccesses(accesses);
-        updateHandler({...initial, accesses: accesses});
-        setNewAccess('');
+        const newRoles = [...roles, newRole];
+        dispatch({
+            type: 'metadata/rolesUpdated', 
+            payload: {roles: newRoles}
+        })
+        setNewRole('');
+    };
+
+    const removeRole = (role: string) => {
+        const newRoles = roles.filter((r) => r !== role);
+        dispatch({
+            type: 'metadata/rolesUpdated', 
+            payload: {roles: newRoles}
+        });
     };
 
     return (
@@ -30,15 +42,24 @@ export const RolesPanel = ({initial, updateHandler}) => {
 
         <TextField 
             label="New Role" 
-            value={newAccess}
-            onChange={(e) => setNewAccess(e.target.value)} />
+            value={newRole}
+            onChange={(e) => setNewRole(e.target.value)} />
         <Button onClick={addRole}>Add Role</Button>
 
         <List>
-            {accesses.map((access : string) => {
+            {roles.map((access : string) => {
                 return (
                     <Paper key={access}>
-                    <ListItem key={access}>
+                    <ListItem 
+                            key={access}
+                            secondaryAction={
+                                <IconButton 
+                                    edge="end" 
+                                    aria-label="delete"
+                                    onClick={() => removeRole(access)}>
+                                <DeleteIcon />
+                                </IconButton>
+                            }>
                         <ListItemText primary={access} />
                     </ListItem>
                     <Divider />

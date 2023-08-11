@@ -1,9 +1,10 @@
 import { TabContext, TabList, TabPanel } from "@mui/lab";
 import { Box, Button, Grid, Tab } from "@mui/material"
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { InfoPanel } from "./info-panel";
 import { RolesPanel } from "./roles-panel";
 import { DesignPanel } from "./design-panel";
+import { useAppDispatch } from '../state/hooks';
 
 export interface NotebookType {
     [key: string]: unknown;
@@ -11,9 +12,14 @@ export interface NotebookType {
 
 export const NotebookEditor = ({notebook}: {notebook: NotebookType}) => {
 
+    const dispatch = useAppDispatch();
+
+    useEffect(() => {
+        dispatch({type: 'metadata/loaded', payload: notebook.metadata})
+        dispatch({type: 'ui-specification/loaded', payload: notebook['ui-specification']})
+    }, [notebook, dispatch]);
+
     const [tabNumber, setTabNumber] = useState(1);
-    const [metadata, setMetadata] = useState(notebook.metadata);
-    const [uiSpec, setUiSpec] = useState(notebook['ui-specification']);
 
     const maxTabs = 5;
 
@@ -27,14 +33,6 @@ export const NotebookEditor = ({notebook}: {notebook: NotebookType}) => {
 
     const previousTab = () => {
         tabNumber > 1 ? setTabNumber((tabNumber - 1)) : setTabNumber(1);
-    };
-
-    const metadataUpdate = (metadata: any) => {
-        setMetadata(metadata);
-    };
-
-    const uiSpecUpdate = (uiSpec: any) => {
-        setUiSpec(uiSpec);
     };
 
     return (
@@ -52,9 +50,9 @@ export const NotebookEditor = ({notebook}: {notebook: NotebookType}) => {
                     </TabList>
                 </Box>
  
-                <TabPanel value="1"><InfoPanel initial={metadata} updateHandler={metadataUpdate}/></TabPanel>
-                <TabPanel value="2"><RolesPanel initial={metadata} updateHandler={metadataUpdate}/></TabPanel>
-                <TabPanel value="3"><DesignPanel uiSpec={uiSpec} updateHandler={uiSpecUpdate} /></TabPanel>
+                <TabPanel value="1"><InfoPanel /></TabPanel>
+                <TabPanel value="2"><RolesPanel /></TabPanel>
+                <TabPanel value="3"><DesignPanel /></TabPanel>
                 <TabPanel value="4">Behaviour</TabPanel>
                 <TabPanel value="5">Submit</TabPanel>
 
@@ -74,12 +72,6 @@ export const NotebookEditor = ({notebook}: {notebook: NotebookType}) => {
                             <Button variant="contained" color="primary" onClick={nextTab} >Next &gt;</Button>
                         : <div>&nbsp;</div>
                         }
-                    </Grid>
-
-                    <Grid item>
-                        <pre className="code">
-                            {JSON.stringify(uiSpec, null, 2)}
-                        </pre> 
                     </Grid>
                 </Grid>
       

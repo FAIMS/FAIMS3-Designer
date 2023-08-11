@@ -1,8 +1,14 @@
 import { Button, Dialog, DialogTitle, DialogContent, DialogContentText, TextField, DialogActions } from "@mui/material";
 import { FieldEditor } from "./field-editor";
 import { useState } from "react";
+import { useAppDispatch, useAppSelector } from "../state/hooks";
+import { shallowEqual } from "react-redux"; 
 
-export const FieldList = ({fView, fields, updateField}) => {
+export const FieldList = ({fView}) => {
+
+    const fields = useAppSelector(state => {
+        Object.keys(state['ui-specification'].fields)}, shallowEqual);
+    const dispatch = useAppDispatch();
 
     const [dialogOpen, setDialogOpen] = useState(false);
 
@@ -14,26 +20,17 @@ export const FieldList = ({fView, fields, updateField}) => {
         setDialogOpen(false);
     }
 
-    // return the details for this field name
-    const getField = (fieldName: string) => {
-        return fields[fieldName];
-    };
+    console.log('FieldList')
 
     return (
         <>
          {fView.fields.map((fieldName : string) => {
-                const field = getField(fieldName);
-                if (field) 
-                    return (
-                            <FieldEditor 
-                                key={fieldName}
-                                fieldName={fieldName} 
-                                field={field}
-                                updateField={updateField}
-                            />
-                            )
-                else
-                    return (<p>Unknown field {fieldName}</p>)
+                return (
+                        <FieldEditor 
+                            key={fieldName}
+                            fieldName={fieldName}  
+                        />
+                        )
             })}
             <Button variant="outlined" onClick={openDialog}>Add a Field</Button>
 

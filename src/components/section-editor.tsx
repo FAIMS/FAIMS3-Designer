@@ -3,8 +3,13 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 import { FieldList } from "./field-list";
 import { useState } from "react";
+import { useAppSelector, useAppDispatch } from "../state/hooks";
 
-export const SectionEditor = ({fView, fields, updateField}) => {
+export const SectionEditor = ({viewId}) => {
+
+    const fView = useAppSelector(state => state['ui-specification'].fviews[viewId]);
+    const metadata = useAppSelector(state => state.metadata);
+    const dispatch = useAppDispatch();
 
     const [state, setState] = useState({
         inheritAccess: true,
@@ -16,6 +21,8 @@ export const SectionEditor = ({fView, fields, updateField}) => {
         const newState = {...state, [prop]: value};
         setState(newState); 
     };
+
+    console.log('SectionEditor', viewId);
 
     return (
     <Accordion>
@@ -69,7 +76,7 @@ export const SectionEditor = ({fView, fields, updateField}) => {
             </Grid>
 
 
-            <FieldList fView={fView} fields={fields} updateField={updateField}/>
+            <FieldList fView={fView} />
         </AccordionDetails>
     </Accordion>
     );

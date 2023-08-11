@@ -4,9 +4,11 @@ import { BaseFieldEditor } from "./Fields/BaseFieldEditor";
 import { TakePhotoFieldEditor } from "./Fields/TakePhotoField";
 import { SelectFieldEditor } from "./Fields/SelectField";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import { useAppSelector } from "../state/hooks";
 
+export const FieldEditor = ({fieldName}) => {
 
-export const FieldEditor = ({fieldName, field, updateField}) => {
+    const field = useAppSelector(state => state['ui-specification'].fields[fieldName]); 
 
     const fieldComponent = field['component-name'];
 
@@ -22,19 +24,15 @@ export const FieldEditor = ({fieldName, field, updateField}) => {
             <AccordionDetails>
                 {(fieldComponent === 'MultipleTextField' && 
                     <MultipleTextFieldEditor
-                        fieldName={fieldName} 
-                        field={field} 
-                        updateField={updateField}
+                        fieldName={fieldName}  
                     />)
                 ||
-                (fieldComponent === 'TakePhoto' && <TakePhotoFieldEditor fieldName={fieldName} field={field} updateField={updateField}/>)
+                (fieldComponent === 'TakePhoto' && <TakePhotoFieldEditor fieldName={fieldName}  />)
                 ||
-                (fieldComponent === 'Select' && <SelectFieldEditor fieldName={fieldName} field={field} updateField={updateField}/>)
+                (fieldComponent === 'Select' && <SelectFieldEditor fieldName={fieldName} />)
                 ||
                 <BaseFieldEditor
-                    fieldName={fieldName}
-                    field={field}
-                    updateField={updateField} 
+                    fieldName={fieldName} 
                     children={undefined}  
                 />
                 }

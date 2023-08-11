@@ -1,5 +1,5 @@
 import { Checkbox, FormControlLabel, Grid, TextField } from "@mui/material";
-import { useState } from "react";
+import { useAppSelector, useAppDispatch } from "../../state/hooks";
 
 
 const sample =  {
@@ -55,7 +55,10 @@ const couldBe =  {
     "uncertainty":false, /* EDIT */
 };
 
-export const MultipleTextFieldEditor = ({fieldName, field, updateField}) => {
+export const MultipleTextFieldEditor = ({fieldName}) => {
+
+    const field = useAppSelector(state => state['ui-specification'].fields[fieldName]);
+    const dispatch = useAppDispatch();
 
     const cParams = field['component-parameters'];
 
@@ -83,6 +86,10 @@ export const MultipleTextFieldEditor = ({fieldName, field, updateField}) => {
         const newState = {...state, [prop]: value};
         updateFieldFromState(newState);
     };
+
+    const updateField = (fieldName: string, newField: any) => {
+        console.log('updateField', fieldName, newField);
+    }
 
     return ( 
             <Grid container spacing={2}>
