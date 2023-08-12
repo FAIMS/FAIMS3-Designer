@@ -4,6 +4,7 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { FieldList } from "./field-list";
 import { useState } from "react";
 import { useAppSelector, useAppDispatch } from "../state/hooks";
+import { shallowEqual } from "react-redux";
 
 export const SectionEditor = ({viewId}) => {
 
@@ -11,6 +12,9 @@ export const SectionEditor = ({viewId}) => {
     const metadata = useAppSelector(state => state.metadata);
     const dispatch = useAppDispatch();
 
+    // roles that can be used to access this form
+    const roles = useAppSelector(state => state.metadata.accesses, shallowEqual) as string[];
+ 
     const [state, setState] = useState({
         inheritAccess: true,
         access: ['admin'],
@@ -66,8 +70,11 @@ export const SectionEditor = ({viewId}) => {
                             value={state.access}
                             onChange={(e) => updateProperty('access', e.target.value)}
                             >
-                            <MenuItem value="admin">Admin</MenuItem>
-                            <MenuItem value="team">Team</MenuItem>
+                                {roles.map((role: string, index: number) => {
+                                    return (
+                                        <MenuItem key={index} value={role}>{role}</MenuItem>
+                                    )
+                                })}
                         </Select>
                         </FormControl>
                     </Grid>
@@ -76,7 +83,7 @@ export const SectionEditor = ({viewId}) => {
             </Grid>
 
 
-            <FieldList fView={fView} />
+            <FieldList viewId={viewId} />
         </AccordionDetails>
     </Accordion>
     );

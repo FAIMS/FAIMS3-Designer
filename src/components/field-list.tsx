@@ -1,22 +1,42 @@
-import { Button, Dialog, DialogTitle, DialogContent, DialogContentText, TextField, DialogActions } from "@mui/material";
+import { Button, Dialog, DialogTitle, DialogContent, DialogContentText, TextField, DialogActions, MenuItem, Select } from "@mui/material";
 import { FieldEditor } from "./field-editor";
 import { useState } from "react";
 import { useAppDispatch, useAppSelector } from "../state/hooks";
-import { shallowEqual } from "react-redux"; 
+import { getFieldNames } from "../fields";
 
-export const FieldList = ({fView}) => {
 
-    const fields = useAppSelector(state => {
-        Object.keys(state['ui-specification'].fields)}, shallowEqual);
+
+export const FieldList = ({viewId}) => {
+
+    const fView = useAppSelector(state => state['ui-specification'].fviews[viewId]);
     const dispatch = useAppDispatch();
 
     const [dialogOpen, setDialogOpen] = useState(false);
+    const [dialogState, setDialogState] = useState({
+        name: 'New Text Field',
+        type: 'TextField'
+    });
+
+    const allFieldNames = getFieldNames();
 
     const openDialog = () => {
         setDialogOpen(true);
     }
 
     const closeDialog = () => {
+        setDialogOpen(false);
+    }
+
+    const addField = () => {
+        console.log('addField', dialogState);
+        dispatch({
+            type: 'ui-specification/fieldAdded',
+            payload: {
+                fieldName: dialogState.name,
+                fieldType: dialogState.type,
+                viewId: viewId
+            }
+        });
         setDialogOpen(false);
     }
 
@@ -35,25 +55,50 @@ export const FieldList = ({fView}) => {
             <Button variant="outlined" onClick={openDialog}>Add a Field</Button>
 
             <Dialog open={dialogOpen} onClose={closeDialog}>
-                <DialogTitle>Subscribe</DialogTitle>
+                <DialogTitle>New Field</DialogTitle>
                 <DialogContent>
-                <DialogContentText>
-                    To subscribe to this website, please enter your email address here. We
-                    will send updates occasionally.
-                </DialogContentText>
-                <TextField
-                    autoFocus
-                    margin="dense"
-                    id="name"
-                    label="Email Address"
-                    type="email"
-                    fullWidth
-                    variant="standard"
-                />
+                    <DialogContentText>
+                        Create a new field in your form.
+                    </DialogContentText>
+                    <TextField
+                        autoFocus
+                        margin="dense"
+                        id="name"
+                        label="Field Name"
+                        value={dialogState.name}
+                        fullWidth
+                        variant="standard"
+                        onChange={(e) => {
+                            setDialogState({
+                                ...dialogState,
+                                name: e.target.value
+                            })
+                        }}
+                    />
+                    <Select 
+                        name="type" 
+                        label="Field Type" 
+                        fullWidth
+                        value={dialogState.type}
+                        onChange={(e) => {
+                            setDialogState({
+                                ...dialogState,
+                                type: e.target.value
+                            })
+                        }}>
+                        {allFieldNames.map((fieldName : string) => {
+                            return (
+                                <MenuItem key={fieldName} value={fieldName}>
+                                    {fieldName}
+                                </MenuItem>
+                            )
+                            })
+                        }
+                    </Select>
                 </DialogContent>
                 <DialogActions>
                 <Button onClick={closeDialog}>Cancel</Button>
-                <Button onClick={closeDialog}>Subscribe</Button>
+                <Button onClick={addField}>Add Field</Button>
                 </DialogActions>
             </Dialog>
             </>

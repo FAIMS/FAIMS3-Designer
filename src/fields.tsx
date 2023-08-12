@@ -371,6 +371,7 @@ export const getFieldNames = () => {
   return Object.keys(fields);
 }
 
-export const getFieldSpec = (fieldName: string) => {
-  return fields[fieldName];
+// Return a copy of the spec for this field type
+export const getFieldSpec = (fieldType: string) => {
+  return JSON.parse(JSON.stringify(fields[fieldType]));
 }

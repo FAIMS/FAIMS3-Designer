@@ -21,8 +21,7 @@ export const DesignPanel = () => {
 
     return (
         <TabContext value={tabIndex}>
-            <h2>Design</h2>
-
+            
         <Alert severity="info">Define the user interface for your notebook here.  Add one
         or more forms to collect data from users.  Each form can have one or more sections.  
         Each section has one or more form fields.
