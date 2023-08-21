@@ -19,7 +19,7 @@ import sample_notebook from '../notebooks/FAIMS3-Beta-Demo-Notebook.json';
 import { store } from './state/store';
 import { Provider } from 'react-redux';
 import { ThemeProvider } from "@mui/material/styles";
-import globalTheme from "./theme/index.tsx";
+import globalTheme from "./theme/index";
 
 function App() {
   return (
