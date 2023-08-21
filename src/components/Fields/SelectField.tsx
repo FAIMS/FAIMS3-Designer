@@ -13,7 +13,6 @@
 // limitations under the License.
 
 import { Grid, TextField } from "@mui/material";
-import { useState } from "react";
 import { BaseFieldEditor } from "./BaseFieldEditor"
 import { useAppSelector, useAppDispatch } from "../../state/hooks";
 
@@ -93,10 +92,9 @@ export const SelectFieldEditor = ({fieldName}) => {
         return options.join(', ');
     }
 
-    const [options, setOptions] = useState(getOptions())
+    const options = getOptions();
 
     const updateProperty = (value: any) => {
-        setOptions(value);
         const optionArray = value.split(',').map(v => v.trim());
         // take a deep copy of the field
         const newField = JSON.parse(JSON.stringify(field));
