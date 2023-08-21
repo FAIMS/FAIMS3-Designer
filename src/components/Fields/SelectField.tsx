@@ -98,21 +98,15 @@ export const SelectFieldEditor = ({fieldName}) => {
     const updateProperty = (value: any) => {
         setOptions(value);
         const optionArray = value.split(',').map(v => v.trim());
-        console.log(optionArray);
-        field['component-parameters'].ElementProps.options =
+        // take a deep copy of the field
+        const newField = JSON.parse(JSON.stringify(field));
+        newField['component-parameters'].ElementProps.options =
             optionArray.map(o => {return {label: o, value: o}})
-        updateField(field);
-    }
-    
-    const updateField = (fieldName: string, newField: any) => {
-        console.log('updateField', fieldName, newField);
+        dispatch({type: 'ui-specification/fieldUpdated', payload: {fieldName, newField}})
     }
 
     return (
-        <BaseFieldEditor
-            fieldName={fieldName} 
-            field={field} 
-            updateField={updateField}>
+        <BaseFieldEditor fieldName={fieldName}>
 
                 <Grid item sm={6} xs={12}>
                     <TextField 
@@ -128,6 +122,6 @@ export const SelectFieldEditor = ({fieldName}) => {
                     />
                 </Grid>
 
-            </BaseFieldEditor>
+        </BaseFieldEditor>
     )
 }
