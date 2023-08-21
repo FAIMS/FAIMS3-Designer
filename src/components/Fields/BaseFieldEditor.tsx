@@ -57,7 +57,7 @@ export const BaseFieldEditor = ({fieldName, children}) => {
         newField['component-parameters'].helperText = newState.helperText;
         newField['component-parameters'].required = newState.required;
         newField.meta.annotation = newState.annotation;
-        newField.meta.uncertainty = newState.uncertainty;
+        newField.meta.uncertainty = {include: newState.uncertainty, label: "uncertainty"};
         updateField(fieldName, newField);
     };
 
@@ -65,8 +65,6 @@ export const BaseFieldEditor = ({fieldName, children}) => {
         const newState = {...state, [prop]: value};
         updateFieldFromState(newState);
     };
-
-    //console.log('BaseFieldEditor', fieldName);
 
     return ( 
             <Grid container spacing={2}>
