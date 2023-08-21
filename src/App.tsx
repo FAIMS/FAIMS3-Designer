@@ -18,13 +18,16 @@ import sample_notebook from '../notebooks/FAIMS3-Beta-Demo-Notebook.json';
 //import sample_notebook from '../notebooks/sample_notebook.json'
 import { store } from './state/store';
 import { Provider } from 'react-redux';
+import { ThemeProvider } from "@mui/material/styles";
+import globalTheme from "./theme/index";
 
 function App() {
-
   return (
-    <Provider store={store}>
-      <NotebookEditor notebook={sample_notebook} />
-    </Provider>
+    <ThemeProvider theme={globalTheme}>
+      <Provider store={store}>
+        <NotebookEditor notebook={sample_notebook} />
+      </Provider>
+    </ThemeProvider>
   )
 }
 
