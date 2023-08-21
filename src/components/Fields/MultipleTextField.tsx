@@ -14,6 +14,8 @@
 
 import { Checkbox, FormControlLabel, Grid, TextField } from "@mui/material";
 import { useAppSelector, useAppDispatch } from "../../state/hooks";
+import { BaseFieldEditor } from "./BaseFieldEditor";
+import { useState } from "react";
 
 
 const sample =  {
@@ -74,101 +76,28 @@ export const MultipleTextFieldEditor = ({fieldName}) => {
     const field = useAppSelector(state => state['ui-specification'].fields[fieldName]);
     const dispatch = useAppDispatch();
 
-    const cParams = field['component-parameters'];
+    const rows = field['component-parameters'].InputProps.rows || 4;
 
-    const state = {
-        label: cParams.InputLabelProps.label || fieldName,
-        helperText: cParams.helperText || "",
-        required: cParams.required || false,
-        rows: cParams.InputProps.rows || 4,
-        annotation: field.meta.annotation || false,
-        uncertainty: field.meta.uncertainty.include || false
-    };
-
-    const updateFieldFromState = (newState) => {
-        const newField = {...field};
-        newField['component-parameters'].InputLabelProps.label = newState.label;
-        newField['component-parameters'].helperText = newState.helperText;
-        newField['component-parameters'].required = newState.required;
-        newField['component-parameters'].InputProps.rows = newState.rows;
-        newField.meta.annotation = newState.annotation;
-        newField.meta.uncertainty = newState.uncertainty;
-        updateField(fieldName, newField);
-    };
-
-    const updateProperty = (prop: string, value: any) => {
-        const newState = {...state, [prop]: value};
-        updateFieldFromState(newState);
-    };
-
-    const updateField = (fieldName: string, newField: any) => {
-        console.log('updateField', fieldName, newField);
+    const updateRows = (value: number) => {
+      const newField = JSON.parse(JSON.stringify(field)); // deep copy
+      newField['component-parameters'].InputProps.rows = value;
+      dispatch({type: 'ui-specification/fieldUpdated', payload: {fieldName, newField}})
     }
 
     return ( 
-            <Grid container spacing={2}>
-                <Grid item sm={6} xs={12}>
-                    <TextField 
-                        name="label" 
-                        variant="outlined"
-                        label="Label"
-                        value={state.label} 
-                        onChange={(e) => updateProperty('label', e.target.value)} 
-                        helperText="Enter a label for the field"
-                    />
-                </Grid>
-
-                <Grid item sm={6} xs={12}>
-                    <TextField 
-                        name="helperText" 
-                        variant="outlined"
-                        label="Helper Text"
-                        fullWidth
-                        multiline={true}
-                        rows={4}
-                        value={state.helperText} 
-                        helperText="Help text shown along with the field (like this text)."
-                        onChange={(e) => updateProperty('helperText', e.target.value)} 
-                    />
-                </Grid>
-
+            <BaseFieldEditor fieldName={fieldName}>
                 <Grid item sm={6} xs={12}>
                     <TextField 
                         name="rows" 
                         variant="outlined"
                         label="Rows to display"
                         type="number"
-                        value={state.rows} 
+                        value={rows} 
                         helperText="Number of rows in the text field."
-                        onChange={(e) => updateProperty('rows', e.target.value)} 
+                        onChange={(e) => updateRows(e.target.value)} 
                     />
                 </Grid>
-
-                <Grid item sm={6}>
-                    <FormControlLabel required 
-                                control={<Checkbox 
-                                checked={state.required}
-                                onChange={(e) => updateProperty('required', e.target.checked)} 
-                              />} label="Required" />
-                </Grid>
-
-
-                <Grid item sm={6}>
-                    <FormControlLabel required 
-                    control={<Checkbox 
-                                checked={state.annotation}
-                                onChange={(e) => updateProperty('annotation', e.target.checked)} 
-                              />} label="Enable Annotation" />
-                </Grid>
-
-                <Grid item sm={6}>
-                    <FormControlLabel required 
-                    control={<Checkbox 
-                                checked={state.uncertainty}
-                                onChange={(e) => updateProperty('uncertainty', e.target.checked)} 
-                              />} label="Enable Uncertainty" />
-                </Grid>
-            </Grid> 
+            </BaseFieldEditor>
     )
 
 };

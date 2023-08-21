@@ -13,7 +13,6 @@
 // limitations under the License.
 
 import { Grid, TextField } from "@mui/material";
-import { useState } from "react";
 import { BaseFieldEditor } from "./BaseFieldEditor"
 import { useAppSelector, useAppDispatch } from "../../state/hooks";
 
@@ -93,26 +92,19 @@ export const SelectFieldEditor = ({fieldName}) => {
         return options.join(', ');
     }
 
-    const [options, setOptions] = useState(getOptions())
+    const options = getOptions();
 
     const updateProperty = (value: any) => {
-        setOptions(value);
         const optionArray = value.split(',').map(v => v.trim());
-        console.log(optionArray);
-        field['component-parameters'].ElementProps.options =
+        // take a deep copy of the field
+        const newField = JSON.parse(JSON.stringify(field));
+        newField['component-parameters'].ElementProps.options =
             optionArray.map(o => {return {label: o, value: o}})
-        updateField(field);
-    }
-    
-    const updateField = (fieldName: string, newField: any) => {
-        console.log('updateField', fieldName, newField);
+        dispatch({type: 'ui-specification/fieldUpdated', payload: {fieldName, newField}})
     }
 
     return (
-        <BaseFieldEditor
-            fieldName={fieldName} 
-            field={field} 
-            updateField={updateField}>
+        <BaseFieldEditor fieldName={fieldName}>
 
                 <Grid item sm={6} xs={12}>
                     <TextField 
@@ -128,6 +120,6 @@ export const SelectFieldEditor = ({fieldName}) => {
                     />
                 </Grid>
 
-            </BaseFieldEditor>
+        </BaseFieldEditor>
     )
 }
