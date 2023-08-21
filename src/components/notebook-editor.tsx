@@ -13,7 +13,9 @@
 // limitations under the License.
 
 import { TabContext, TabList, TabPanel } from "@mui/lab";
-import { Box, Button, Grid, Tab } from "@mui/material"
+import { Box, Button, Grid, Tab, Typography, AppBar, Toolbar, IconButton } from "@mui/material";
+import MenuIcon from '@mui/icons-material/Menu';
+
 import { useEffect, useState } from "react";
 import { InfoPanel } from "./info-panel";
 import { RolesPanel } from "./roles-panel";
@@ -24,13 +26,13 @@ export interface NotebookType {
     [key: string]: unknown;
 }
 
-export const NotebookEditor = ({notebook}: {notebook: NotebookType}) => {
+export const NotebookEditor = ({ notebook }: { notebook: NotebookType }) => {
 
     const dispatch = useAppDispatch();
 
     useEffect(() => {
-        dispatch({type: 'metadata/loaded', payload: notebook.metadata})
-        dispatch({type: 'ui-specification/loaded', payload: notebook['ui-specification']})
+        dispatch({ type: 'metadata/loaded', payload: notebook.metadata })
+        dispatch({ type: 'ui-specification/loaded', payload: notebook['ui-specification'] })
     }, [notebook, dispatch]);
 
     const [tabNumber, setTabNumber] = useState(1);
@@ -50,47 +52,72 @@ export const NotebookEditor = ({notebook}: {notebook: NotebookType}) => {
     };
 
     return (
-        <div>
-            <h1>Notebook Editor</h1>
+        <>
+            <Box sx={{ flexGrow: 1 }}>
+                <AppBar position="static">
+                    <Toolbar>
+                        <IconButton
+                            size="large"
+                            edge="start"
+                            color="inherit"
+                            aria-label="menu"
+                            sx={{ mr: 2 }}
+                        >
+                            <MenuIcon />
+                        </IconButton>
+                        <img
+                            src="/static/Fieldmark-Short-Green-NoBorder.png"
+                            style={{ maxWidth: '140px', flex: 1 }}
+                        />
+                        <Box sx={{ flexGrow: 1 }} />
+                        <Button color="inherit">Login</Button>
+                    </Toolbar>
+                </AppBar>
+            </Box>
 
-            <TabContext value={tabNumber.toString()}>
-                <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-                    <TabList onChange={handleChange} aria-label="lab API tabs example">
-                    <Tab label="Info" value="1" />
-                    <Tab label="Roles" value="2" />
-                    <Tab label="Design" value="3" />
-                    <Tab label="Behaviour" value="4" />
-                    <Tab label="Submit" value="5" />
-                    </TabList>
-                </Box>
- 
-                <TabPanel value="1"><InfoPanel /></TabPanel>
-                <TabPanel value="2"><RolesPanel /></TabPanel>
-                <TabPanel value="3"><DesignPanel /></TabPanel>
-                <TabPanel value="4">Behaviour</TabPanel>
-                <TabPanel value="5">Submit</TabPanel>
+            <Box p={3}>
+                <Typography variant="h1">Notebook Editor</Typography>
 
-                <Grid 
-                    container 
-                    spacing={2}
-                    justifyContent="space-between"
-                >
-                    <Grid item>
-                        {tabNumber > 1 ?
-                        <Button variant="contained" color="primary" onClick={previousTab} >&lt; Previous</Button>
-                        : <div>&nbsp;</div>
-                        }
+                <Box pt={2}>
+                    <TabContext value={tabNumber.toString()}>
+                        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                            <TabList onChange={handleChange} aria-label="lab API tabs example">
+                                <Tab label="Info" value="1" />
+                                <Tab label="Roles" value="2" />
+                                <Tab label="Design" value="3" />
+                                <Tab label="Behaviour" value="4" />
+                                <Tab label="Submit" value="5" />
+                            </TabList>
+                        </Box>
+
+                        <TabPanel value="1"><InfoPanel /></TabPanel>
+                        <TabPanel value="2"><RolesPanel /></TabPanel>
+                        <TabPanel value="3"><DesignPanel /></TabPanel>
+                        <TabPanel value="4">Behaviour</TabPanel>
+                        <TabPanel value="5">Submit</TabPanel>
+
+                        <Grid
+                            container
+                            spacing={2}
+                            justifyContent="space-between"
+                        >
+                            <Grid item>
+                                {tabNumber > 1 ?
+                                    <Button variant="contained" color="primary" onClick={previousTab} >&lt; Previous</Button>
+                                    : <div>&nbsp;</div>
+                                }
+                            </Grid>
+                            <Grid item>
+                                {tabNumber < maxTabs ?
+                                    <Button variant="contained" color="primary" onClick={nextTab} >Next &gt;</Button>
+                                    : <div>&nbsp;</div>
+                                }
+                            </Grid>
                         </Grid>
-                        <Grid item>
-                        {tabNumber < maxTabs ?
-                            <Button variant="contained" color="primary" onClick={nextTab} >Next &gt;</Button>
-                        : <div>&nbsp;</div>
-                        }
-                    </Grid>
-                </Grid>
-      
-            </TabContext>
 
-        </div>
+                    </TabContext>
+                </Box>
+            </Box>
+        </>
     );
 };
