@@ -22,15 +22,32 @@ export const TextFieldEditor = ({ fieldName }: any) => {
 
     const initVal = field['initialValue']
 
-    // const updateRows = (value: number) => {
-    //     const newField = JSON.parse(JSON.stringify(field)); // deep copy
-    //     newField['component-parameters'].InputProps.rows = value;
-    //     dispatch({ type: 'ui-specification/fieldUpdated', payload: { fieldName, newField } })
-    // }
-
     const updateDefault = (value: string) => {
         const newField = JSON.parse(JSON.stringify(field));
         newField['initialValue'] = value;
+        dispatch({ type: 'ui-specification/fieldUpdated', payload: { fieldName, newField } })
+    }
+
+    const updateMinControl = (value: number) => {
+        const newField = JSON.parse(JSON.stringify(field));
+        newField['validationSchema'][1][1] = value;
+
+        console.log('hi ', field['component-parameters'].id)
+        if (field['component-parameters'].id === 'controlled-number') {
+            newField['validationSchema'][1][2] = "Must be " + value + " or more"
+        }
+
+        dispatch({ type: 'ui-specification/fieldUpdated', payload: { fieldName, newField } })
+    }
+
+    const updateMaxControl = (value: number) => {
+        const newField = JSON.parse(JSON.stringify(field));
+        newField['validationSchema'][2][1] = value;
+
+        if (field['component-parameters'].id === 'controlled-number') {
+            newField['validationSchema'][2][2] = "Must be " + value + " or less"
+        }
+
         dispatch({ type: 'ui-specification/fieldUpdated', payload: { fieldName, newField } })
     }
 
@@ -48,6 +65,31 @@ export const TextFieldEditor = ({ fieldName }: any) => {
                         onChange={(e) => { updateDefault(e.target.value) }}
                     />
                 </Grid>
+            }
+
+            {(field['component-parameters'].id === 'controlled-number' || field['component-parameters'].id === 'number-field-val') &&
+                <>
+                    <Grid item sm={6}>
+                        <TextField
+                            name="min"
+                            variant="outlined"
+                            label="Min Control"
+                            type="number"
+                            helperText="What is the min this number must be?"
+                            onChange={(e) => { updateMinControl(parseInt(e.target.value)) }}
+                        />
+                    </Grid>
+                    <Grid item sm={6}>
+                        <TextField
+                            name="controlled-number"
+                            variant="outlined"
+                            label="Max Control"
+                            type="number"
+                            helperText="What is the max this number can be?"
+                            onChange={(e) => { updateMaxControl(parseInt(e.target.value)) }}
+                        />
+                    </Grid>
+                </>
             }
         </BaseFieldEditor>
     )
