@@ -35,6 +35,69 @@ const fields = {
       validationSchema: [['yup.string']],
       initialValue: '',
     },
+    'Email': {
+      'component-namespace': 'formik-material-ui', 
+      'component-name': 'TextField',
+      'type-returned': 'faims-core::Email', 
+      'component-parameters': {
+        fullWidth: true,
+        helperText: 'We can also store Email addresses.',
+        variant: 'outlined',
+        required: false,
+        InputProps: {
+          type: 'email', 
+        },
+        SelectProps: {},
+        InputLabelProps: {
+          label: 'Email',
+        },
+        FormHelperTextProps: {},
+      },
+      validationSchema: [['yup.string'], ['yup.email', 'Enter a valid email']],
+      initialValue: '',
+    },
+    'Number': {
+      'component-namespace': 'formik-material-ui', 
+      'component-name': 'TextField',
+      'type-returned': 'faims-core::Integer', 
+      'component-parameters': {
+        fullWidth: true,
+        helperText: 'We have fields for storing Numbers.',
+        variant: 'outlined',
+        required: false,
+        InputProps: {
+          type: 'number', 
+        },
+        SelectProps: {},
+        InputLabelProps: {
+          label: 'Number field',
+        },
+        FormHelperTextProps: {},
+      },
+      validationSchema: [['yup.number']],
+      initialValue: '',
+    },
+    'ControlledNumber': {
+      'component-namespace': 'formik-material-ui', 
+      'component-name': 'TextField',
+      'type-returned': 'faims-core::Integer', 
+      'component-parameters': {
+        fullWidth: true,
+        helperText: 'This number must be at least 10 and not more than 20.',
+        variant: 'outlined',
+        required: true,
+        InputProps: {
+          type: 'number', 
+        },
+        SelectProps: {},
+        InputLabelProps: {
+          label: 'Controlled number',
+        },
+        FormHelperTextProps: {},
+      },
+      validationSchema: [['yup.number'], ['yup.min', 10, 'Must be 10 or more'], ['yup.max', 20, 'Must be 20 or less'], ['yup.required', 'You must fill this in!']],
+      initialValue: '',
+    },
     'ActionButton': {
         'component-namespace': 'faims-custom', 
         'component-name': 'ActionButton',

@@ -17,6 +17,7 @@ import { MultipleTextFieldEditor } from "./Fields/MultipleTextField";
 import { BaseFieldEditor } from "./Fields/BaseFieldEditor";
 import { TakePhotoFieldEditor } from "./Fields/TakePhotoField";
 import { SelectFieldEditor } from "./Fields/SelectField";
+import { TextFieldEditor } from "./Fields/TextFieldEditor";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { useAppSelector } from "../state/hooks";
 
@@ -44,6 +45,8 @@ export const FieldEditor = ({fieldName}) => {
                 (fieldComponent === 'TakePhoto' && <TakePhotoFieldEditor fieldName={fieldName}  />)
                 ||
                 (fieldComponent === 'Select' && <SelectFieldEditor fieldName={fieldName} />)
+                ||
+                (fieldComponent === 'TextField' && <TextFieldEditor fieldName={fieldName} />)
                 ||
                 <BaseFieldEditor
                     fieldName={fieldName} 
