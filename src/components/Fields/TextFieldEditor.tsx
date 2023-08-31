@@ -21,53 +21,78 @@ export const TextFieldEditor = ({ fieldName }: any) => {
     const dispatch = useAppDispatch();
 
     const initVal = field['initialValue']
+    const subType = field['component-parameters'].InputProps.type
+    const schema: (string | number)[] = field['validationSchema']
 
-    const updateDefault = (value: string) => {
+    // flattens the validationSchema array of arrays so that I can run the .includes() function on it
+    const validationArr: (string | number)[] = schema.flat()
+    // flag to tell us if we're dealing with controlled-number / number-field-val
+    let hasMinMax = false;
+    if (validationArr.includes('yup.min') && validationArr.includes('yup.max')) {
+        hasMinMax = true;
+    }
+
+    const updateDefault = (value: string | number) => {
         const newField = JSON.parse(JSON.stringify(field));
         newField['initialValue'] = value;
         dispatch({ type: 'ui-specification/fieldUpdated', payload: { fieldName, newField } })
     }
 
+    // updates the min or max clause in the validationSchema
+    const updateSchema = (schema: (string | number)[], functor: string, ...args: any[]) => {
+        return schema.map((item: any, index) => {
+            // check if the first element of the subarray is the clause we want to update
+            if (item[0] === functor) {
+                const newField = JSON.parse(JSON.stringify(field));
+                newField['validationSchema'][index] = [functor, ...args]
+                dispatch({ type: 'ui-specification/fieldUpdated', payload: { fieldName, newField } })
+            } else {
+                return item
+            }
+        })
+    };
+
     const updateMinControl = (value: number) => {
-        const newField = JSON.parse(JSON.stringify(field));
-        newField['validationSchema'][1][1] = value;
-
-        console.log('hi ', field['component-parameters'].id)
-        if (field['component-parameters'].id === 'controlled-number') {
-            newField['validationSchema'][1][2] = "Must be " + value + " or more"
-        }
-
-        dispatch({ type: 'ui-specification/fieldUpdated', payload: { fieldName, newField } })
+        updateSchema(schema, "yup.min", value, "Must be " + value + " or more")
     }
 
     const updateMaxControl = (value: number) => {
-        const newField = JSON.parse(JSON.stringify(field));
-        newField['validationSchema'][2][1] = value;
-
-        if (field['component-parameters'].id === 'controlled-number') {
-            newField['validationSchema'][2][2] = "Must be " + value + " or less"
-        }
-
-        dispatch({ type: 'ui-specification/fieldUpdated', payload: { fieldName, newField } })
+        updateSchema(schema, "yup.max", value, "Must be " + value + " or less")
     }
 
     return (
         <BaseFieldEditor fieldName={fieldName}>
-            {/* only show this config if we want a prepop text field */}
-            {(field['component-parameters'].id === 'text-field-prepop') &&
+            {/* config option to add a default value for plain text fields */}
+            {(subType === 'string') &&
                 <Grid item sm={6} xs={12}>
                     <TextField
                         name="prepopulated"
                         variant="outlined"
                         label="Default Text"
                         value={initVal}
-                        helperText="Choose this field's default."
+                        helperText="Choose this field's default text."
                         onChange={(e) => { updateDefault(e.target.value) }}
                     />
                 </Grid>
             }
 
-            {(field['component-parameters'].id === 'controlled-number' || field['component-parameters'].id === 'number-field-val') &&
+            {/* config option to add a default value for number fields */}
+            {(subType === 'number') &&
+                <Grid item sm={6} xs={12}>
+                    <TextField
+                        name="prepopulated"
+                        variant="outlined"
+                        label="Default Number"
+                        type="number"
+                        value={initVal}
+                        helperText="Choose this field's default number."
+                        onChange={(e) => { updateDefault(parseFloat(e.target.value)) }}
+                    />
+                </Grid>
+            }
+
+            {/* config option to add min and max controls for controlled number fields */}
+            {hasMinMax &&
                 <>
                     <Grid item sm={6}>
                         <TextField
@@ -76,17 +101,17 @@ export const TextFieldEditor = ({ fieldName }: any) => {
                             label="Min Control"
                             type="number"
                             helperText="What is the min this number must be?"
-                            onChange={(e) => { updateMinControl(parseInt(e.target.value)) }}
+                            onChange={(e) => { updateMinControl(parseFloat(e.target.value)) }}
                         />
                     </Grid>
                     <Grid item sm={6}>
                         <TextField
-                            name="controlled-number"
+                            name="max"
                             variant="outlined"
                             label="Max Control"
                             type="number"
                             helperText="What is the max this number can be?"
-                            onChange={(e) => { updateMaxControl(parseInt(e.target.value)) }}
+                            onChange={(e) => { updateMaxControl(parseFloat(e.target.value)) }}
                         />
                     </Grid>
                 </>

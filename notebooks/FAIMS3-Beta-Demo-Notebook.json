@@ -487,7 +487,9 @@
           "InputLabelProps": {
             "label": "Controlled Number"
           },
-          "InputProps": {},
+          "InputProps": {
+            "type": "number"
+          },
           "SelectProps": {},
           "fullWidth": true,
           "helperText": "This number must be at least 10 and not more than 20. ",
