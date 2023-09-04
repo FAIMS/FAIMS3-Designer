@@ -190,6 +190,69 @@ const fields = {
       validationSchema: [['yup.string']],
       initialValue: '',
     },
+    'DatePicker': {
+      'component-namespace': 'formik-material-ui', 
+      'component-name': 'TextField',
+      'type-returned': 'faims-core::Date', 
+      'component-parameters': {
+        fullWidth: true,
+        helperText: 'We have a date picker with a calendar prompt.',
+        variant: 'outlined',
+        required: false,
+        InputProps: {
+          type: 'date', 
+        },
+        SelectProps: {},
+        InputLabelProps: {
+          label: 'Date picker',
+        },
+        FormHelperTextProps: {},
+      },
+      validationSchema: [['yup.string']],
+      initialValue: '',
+    },
+    'DateTimePicker': {
+      'component-namespace': 'formik-material-ui', 
+      'component-name': 'TextField',
+      'type-returned': 'faims-core::Datetime', 
+      'component-parameters': {
+        fullWidth: true,
+        helperText: 'And a calendar prompt with a timestamp.',
+        variant: 'outlined',
+        required: false,
+        InputProps: {
+          type: 'datetime-local', 
+        },
+        SelectProps: {},
+        InputLabelProps: {
+          label: 'Date and Time picker',
+        },
+        FormHelperTextProps: {},
+      },
+      validationSchema: [['yup.string']],
+      initialValue: '',
+    },
+    'MonthPicker': {
+      'component-namespace': 'formik-material-ui', 
+      'component-name': 'TextField',
+      'type-returned': 'faims-core::Date', 
+      'component-parameters': {
+        fullWidth: true,
+        helperText: 'And one to select just the month if that is all you need.',
+        variant: 'outlined',
+        required: false,
+        InputProps: {
+          type: 'month', 
+        },
+        SelectProps: {},
+        InputLabelProps: {
+          label: 'Month picker',
+        },
+        FormHelperTextProps: {},
+      },
+      validationSchema: [['yup.string']],
+      initialValue: '',
+    },
     'FileUploader': {
       'component-namespace': 'faims-custom', 
       'component-name': 'FileUploader',
