@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { Accordion, AccordionSummary, AccordionDetails } from "@mui/material";
+import { Accordion, AccordionSummary, AccordionDetails, Typography } from "@mui/material";
 import { MultipleTextFieldEditor } from "./Fields/MultipleTextField";
 import { BaseFieldEditor } from "./Fields/BaseFieldEditor";
 import { TakePhotoFieldEditor } from "./Fields/TakePhotoField";
@@ -35,7 +35,9 @@ export const FieldEditor = ({fieldName}) => {
 
     return (
         <Accordion key={fieldName}>
-            <AccordionSummary expandIcon={<ExpandMoreIcon />}>{getFieldLabel()} : {fieldComponent}</AccordionSummary>
+            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                <Typography>{getFieldLabel()} : {fieldComponent}</Typography>
+            </AccordionSummary>
             <AccordionDetails>
                 {(fieldComponent === 'MultipleTextField' && 
                     <MultipleTextFieldEditor
