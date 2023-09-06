@@ -128,12 +128,8 @@ export const FormEditor = ({ viewSetId }) => {
             </Grid>
 
             <Grid item xs={12}>
-                {/* {viewSet.views.map((view: any, index) => {
-                    // Each fView defines a Page in the form
-                    // return (<SectionEditor key={view} viewId={view} />)
-                })} */}
-
-                <Box sx={{ width: '100%' }}>
+                <Grid container spacing={2}>
+                    <Grid item xs={12}>
                     <Stepper nonLinear activeStep={activeStep} orientation="horizontal">
                         {viewSet.views.map((view: any, index: number) => (
                             <Step key={view}>
@@ -143,6 +139,8 @@ export const FormEditor = ({ viewSetId }) => {
                             </Step>
                         ))}
                     </Stepper>
+                    </Grid>
+                    <Grid item xs={12}>
                     {activeStep === viewSet.views.length ? (
                         <Paper square elevation={0} sx={{ p: 3 }}>
                             <Alert severity="success">All steps completed - you're finished.</Alert>
@@ -154,9 +152,9 @@ export const FormEditor = ({ viewSetId }) => {
                     (
                         <SectionEditor viewId={viewSet.views[activeStep]} />
                     )
-                }
-                </Box>
-
+                    }
+                    </Grid>
+                </Grid>
             </Grid>
         </Grid>
     );

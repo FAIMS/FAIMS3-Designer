@@ -24,7 +24,7 @@ export const SectionEditor = ({ viewId }) => {
 
     const fView = useAppSelector(state => state['ui-specification'].fviews[viewId]);
     // const metadata = useAppSelector(state => state.metadata);
-    // const dispatch = useAppDispatch();
+    const dispatch = useAppDispatch();
 
     // roles that can be used to access this form
     const roles = useAppSelector(state => state.metadata.accesses, shallowEqual) as string[];
@@ -35,78 +35,69 @@ export const SectionEditor = ({ viewId }) => {
         label: fView.label
     })
 
-    useEffect(() => {
-        setState({
-            inheritAccess: true,
-            access: ['admin'],
-            label: fView.label
-        });
-    }, [fView]);
-
     const updateProperty = (prop: string, value: any) => {
         const newState = { ...state, [prop]: value };
         setState(newState);
     };
 
+    const updateSectionLabel = (label: string) => {
+        dispatch({type: 'ui-specification/sectionNameUpdated', payload: {viewId, label}});
+    }   
+
     console.log('SectionEditor', viewId);
 
     return (
         <>
-    
-                <Grid container spacing={2}>
-
-                    <Grid item sm={12}>
-                    <Typography variant='h3'>Section: {state.label}</Typography>
-                    </Grid>
-                    <Grid item sm={6} p={2}>
-                        <TextField
-                            fullWidth
-                            required
-                            label="Page Name"
-                            helperText="Name for this page of the form."
-                            name="label"
-                            data-testid="label"
-                            value={state.label}
-                            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                                updateProperty('label', event.target.value);
-                            }}
-                        />
-                    </Grid>
-
-                    <Grid item sm={6}>
-                        <FormControlLabel required
-                            control={<Checkbox
-                                checked={state.inheritAccess}
-                                onChange={(e) => updateProperty('inheritAccess', e.target.checked)}
-                            />} label="Inherit Access from Form" />
-                    </Grid>
-
-                    {!state.inheritAccess &&
-                        (
-                            <Grid item sm={6}>
-                                <FormControl fullWidth>
-                                    <InputLabel id="demo-simple-select-label">Roles with access</InputLabel>
-                                    <Select
-                                        name="access"
-                                        multiple
-                                        label="Roles with access"
-                                        value={state.access}
-                                        onChange={(e) => updateProperty('access', e.target.value)}
-                                    >
-                                        {roles.map((role: string, index: number) => {
-                                            return (
-                                                <MenuItem key={index} value={role}>{role}</MenuItem>
-                                            )
-                                        })}
-                                    </Select>
-                                </FormControl>
-                            </Grid>
-                        )
-                    }
+            <Grid container spacing={2}>
+                <Grid item sm={6} p={2}>
+                    <TextField
+                        fullWidth
+                        required
+                        label="Page Name"
+                        helperText="Name for this page of the form."
+                        name="label"
+                        data-testid="label"
+                        value={fView.label}
+                        onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                            updateSectionLabel(event.target.value);
+                        }}
+                    />
                 </Grid>
 
+                <Grid item sm={6}>
+                    <FormControlLabel required
+                        control={<Checkbox
+                            checked={state.inheritAccess}
+                            onChange={(e) => updateProperty('inheritAccess', e.target.checked)}
+                        />} label="Inherit Access from Form" />
+                </Grid>
 
-                <FieldList viewId={viewId} />
-            </>
+                {!state.inheritAccess &&
+                    (
+                        <Grid item sm={6}>
+                            <FormControl fullWidth>
+                                <InputLabel id="demo-simple-select-label">Roles with access</InputLabel>
+                                <Select
+                                    name="access"
+                                    multiple
+                                    label="Roles with access"
+                                    value={state.access}
+                                    onChange={(e) => updateProperty('access', e.target.value)}
+                                >
+                                    {roles.map((role: string, index: number) => {
+                                        return (
+                                            <MenuItem key={index} value={role}>{role}</MenuItem>
+                                        )
+                                    })}
+                                </Select>
+                            </FormControl>
+                        </Grid>
+                    )
+                }
+            </Grid>
+
+
+            <FieldList viewId={viewId} />
+        </>
     );
 }
