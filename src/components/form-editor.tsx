@@ -22,11 +22,11 @@ export const FormEditor = ({ viewSetId }) => {
 
     const viewSet = useAppSelector(state => state['ui-specification'].viewsets[viewSetId],
         (left, right) => {
-            console.log('CMP FormEditor', viewSetId, left, right, shallowEqual(left, right));
             return shallowEqual(left, right);
         });
     // const metadata = useAppSelector(state => state.metadata);
     //const dispatch = useAppDispatch();
+    const views = useAppSelector(state => state['ui-specification'].fviews);
 
     const [state, setState] = useState({
         inheritAccess: true,
@@ -134,44 +134,27 @@ export const FormEditor = ({ viewSetId }) => {
                 })} */}
 
                 <Box sx={{ width: '100%' }}>
-                    <Stepper nonLinear activeStep={activeStep} orientation="vertical">
+                    <Stepper nonLinear activeStep={activeStep} orientation="horizontal">
                         {viewSet.views.map((view: any, index: number) => (
                             <Step key={view}>
                                 <StepButton color="inherit" onClick={handleStep(index)}>
-                                    <Typography>{view}</Typography>
+                                    <Typography>{views[view].label}</Typography>
                                 </StepButton>
-                                <StepContent sx={{ mt: 1 }}>
-                                    <SectionEditor viewId={view} />
-                                    <Box sx={{ mt: 2 }}>
-                                        <div>
-                                            <Button
-                                                disabled={index === 0}
-                                                onClick={handleBack}
-                                                sx={{ mt: 1, mr: 1 }}
-                                            >
-                                                Back
-                                            </Button>
-                                            <Button
-                                                variant="contained"
-                                                onClick={handleNext}
-                                                sx={{ mt: 1, mr: 1 }}
-                                            >
-                                                {index === viewSet.views.length - 1 ? 'Finish' : 'Continue'}
-                                            </Button>
-                                        </div>
-                                    </Box>
-                                </StepContent>
                             </Step>
                         ))}
                     </Stepper>
-                    {activeStep === viewSet.views.length && (
+                    {activeStep === viewSet.views.length ? (
                         <Paper square elevation={0} sx={{ p: 3 }}>
                             <Alert severity="success">All steps completed - you're finished.</Alert>
                             <Button onClick={handleReset} sx={{ mt: 1, mr: 1 }}>
                                 Go back to the beginning
                             </Button>
                         </Paper>
-                    )}
+                    ) :
+                    (
+                        <SectionEditor viewId={viewSet.views[activeStep]} />
+                    )
+                }
                 </Box>
 
             </Grid>

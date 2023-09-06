@@ -16,15 +16,15 @@ import { Accordion, AccordionDetails, AccordionSummary, Checkbox, FormControl, F
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 import { FieldList } from "./field-list";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAppSelector, useAppDispatch } from "../state/hooks";
 import { shallowEqual } from "react-redux";
 
 export const SectionEditor = ({ viewId }) => {
 
     const fView = useAppSelector(state => state['ui-specification'].fviews[viewId]);
-    const metadata = useAppSelector(state => state.metadata);
-    const dispatch = useAppDispatch();
+    // const metadata = useAppSelector(state => state.metadata);
+    // const dispatch = useAppDispatch();
 
     // roles that can be used to access this form
     const roles = useAppSelector(state => state.metadata.accesses, shallowEqual) as string[];
@@ -35,6 +35,14 @@ export const SectionEditor = ({ viewId }) => {
         label: fView.label
     })
 
+    useEffect(() => {
+        setState({
+            inheritAccess: true,
+            access: ['admin'],
+            label: fView.label
+        });
+    }, [fView]);
+
     const updateProperty = (prop: string, value: any) => {
         const newState = { ...state, [prop]: value };
         setState(newState);
@@ -43,12 +51,13 @@ export const SectionEditor = ({ viewId }) => {
     console.log('SectionEditor', viewId);
 
     return (
-        <Accordion>
-            <AccordionSummary expandIcon={<ExpandMoreIcon />}><Typography>Section: {state.label}</Typography></AccordionSummary>
-            <AccordionDetails>
-
+        <>
+    
                 <Grid container spacing={2}>
 
+                    <Grid item sm={12}>
+                    <Typography variant='h3'>Section: {state.label}</Typography>
+                    </Grid>
                     <Grid item sm={6} p={2}>
                         <TextField
                             fullWidth
@@ -98,7 +107,6 @@ export const SectionEditor = ({ viewId }) => {
 
 
                 <FieldList viewId={viewId} />
-            </AccordionDetails>
-        </Accordion>
+            </>
     );
 }
