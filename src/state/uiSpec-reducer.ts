@@ -15,6 +15,7 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { NotebookUISpec, initialState } from "./initial";
 import { getFieldSpec } from "../fields";
+import { StaticDatePicker } from "@mui/lab";
 
 
 /**
@@ -51,6 +52,16 @@ export const uiSpecificationReducer = createSlice({
         loaded: (state: NotebookUISpec, action: PayloadAction<NotebookUISpec>) => {
             return action.payload;
         },
+        sectionNameUpdated: (state: NotebookUISpec,
+            action : PayloadAction<{viewId: string, label: string}>) => {
+                const { viewId, label } = action.payload;
+                console.log('updating section name', viewId, 'with', label);
+                if (viewId in state.fviews) {
+                    state.fviews[viewId].label = label;
+                } else {
+                    throw new Error(`Can't update unknown section ${viewId} via sectionNameUpdated action`);
+                }
+            },
         fieldUpdated: (state: NotebookUISpec, 
                        action: PayloadAction<{fieldName: string, newField: any}>) => {
             const { fieldName, newField } = action.payload;
