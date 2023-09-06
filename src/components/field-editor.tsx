@@ -12,16 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { Accordion, AccordionSummary, AccordionDetails, Typography } from "@mui/material";
+import { Accordion, AccordionSummary, AccordionDetails } from "@mui/material";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import { useAppSelector } from "../state/hooks";
 import { MultipleTextFieldEditor } from "./Fields/MultipleTextField";
 import { BaseFieldEditor } from "./Fields/BaseFieldEditor";
 import { TakePhotoFieldEditor } from "./Fields/TakePhotoField";
 import { SelectFieldEditor } from "./Fields/SelectField";
 import { TextFieldEditor } from "./Fields/TextFieldEditor";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import { useAppSelector } from "../state/hooks";
+import { DateTimeNowEditor } from "./Fields/DateTimeNowEditor";
 
-export const FieldEditor = ({fieldName}) => {
+export const FieldEditor = ({ fieldName }: any) => {
 
     const field = useAppSelector(state => state['ui-specification'].fields[fieldName]); 
 
@@ -49,6 +50,8 @@ export const FieldEditor = ({fieldName}) => {
                 (fieldComponent === 'Select' && <SelectFieldEditor fieldName={fieldName} />)
                 ||
                 (fieldComponent === 'TextField' && <TextFieldEditor fieldName={fieldName} />)
+                ||
+                (fieldComponent === 'DateTimeNow' && <DateTimeNowEditor fieldName={fieldName} />)
                 ||
                 <BaseFieldEditor
                     fieldName={fieldName} 
