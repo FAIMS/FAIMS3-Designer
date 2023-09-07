@@ -20,8 +20,8 @@ export const TextFieldEditor = ({ fieldName }: any) => {
     const field = useAppSelector(state => state['ui-specification'].fields[fieldName]);
     const dispatch = useAppDispatch();
 
-    const initVal = field['initialValue']
-    const subType = field['component-parameters'].InputProps.type
+    const initVal: (string | number) = field['initialValue']
+    const subType: string = field['component-parameters'].InputProps.type
     const schema: (string | number)[] = field['validationSchema']
 
     // flattens the validationSchema array of arrays so that I can run the .includes() function on it
