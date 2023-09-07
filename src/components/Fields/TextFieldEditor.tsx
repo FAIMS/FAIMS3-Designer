@@ -94,7 +94,7 @@ export const TextFieldEditor = ({ fieldName }: any) => {
             {/* config option to add min and max controls for controlled number fields */}
             {hasMinMax &&
                 <>
-                    <Grid item sm={6}>
+                    <Grid item sm={6} xs={12}>
                         <TextField
                             name="min"
                             variant="outlined"
@@ -102,9 +102,8 @@ export const TextFieldEditor = ({ fieldName }: any) => {
                             type="number"
                             helperText="What is the min this number must be?"
                             onChange={(e) => { updateMinControl(parseFloat(e.target.value)) }}
+                            sx={{ mr: 2 }}
                         />
-                    </Grid>
-                    <Grid item sm={6}>
                         <TextField
                             name="max"
                             variant="outlined"

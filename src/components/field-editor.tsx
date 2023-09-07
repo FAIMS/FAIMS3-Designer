@@ -21,6 +21,7 @@ import { TakePhotoFieldEditor } from "./Fields/TakePhotoField";
 import { SelectFieldEditor } from "./Fields/SelectField";
 import { TextFieldEditor } from "./Fields/TextFieldEditor";
 import { DateTimeNowEditor } from "./Fields/DateTimeNowEditor";
+import { MultiSelectEditor } from "./Fields/MultiSelectEditor";
 
 export const FieldEditor = ({ fieldName }: any) => {
 
@@ -52,6 +53,8 @@ export const FieldEditor = ({ fieldName }: any) => {
                 (fieldComponent === 'TextField' && <TextFieldEditor fieldName={fieldName} />)
                 ||
                 (fieldComponent === 'DateTimeNow' && <DateTimeNowEditor fieldName={fieldName} />)
+                ||
+                (fieldComponent === 'MultiSelect' && <MultiSelectEditor fieldName={fieldName} />)
                 ||
                 <BaseFieldEditor
                     fieldName={fieldName} 
