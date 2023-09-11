@@ -20,12 +20,13 @@ import { BaseFieldEditor } from "./BaseFieldEditor"
 import { useAppSelector, useAppDispatch } from "../../state/hooks";
 import { useState } from "react";
 
-export const MultiSelectEditor = ({ fieldName }: any) => {
+export const SelectOptionsEditor = ({ fieldName }: any) => {
 
-    const field = useAppSelector(state => state['ui-specification'].fields[fieldName]);
-    const dispatch = useAppDispatch();
+    const field = useAppSelector(state => state['ui-specification'].fields[fieldName])
+    const dispatch = useAppDispatch()
 
-    const [newOption, setNewOption] = useState('');
+    const [newOption, setNewOption] = useState('')
+    const [errorMessage, setErrorMessage] = useState('')
 
     const getOptions = () => {
         let options = [];
@@ -35,10 +36,10 @@ export const MultiSelectEditor = ({ fieldName }: any) => {
         } else {
             field['component-parameters'].ElementProps = { options: [] }
         }
-        return options;
+        return options
     }
 
-    const options = getOptions();
+    const options = getOptions()
 
     const updateOptions = (updatedOptions: string[]) => {
         // take a deep copy of the field
@@ -48,8 +49,20 @@ export const MultiSelectEditor = ({ fieldName }: any) => {
     }
 
     const addOption = () => {
-        const newOptions = [...options, newOption]
-        updateOptions(newOptions)
+        const emptyOption: boolean = newOption.trim().length == 0
+        const duplicateOption: boolean = options.some((element: string) => element === newOption)
+
+        if (emptyOption) {
+            setErrorMessage('Cannot add an empty option!')
+        }
+        else if (duplicateOption) {
+            setErrorMessage('This option already exists in the list.')
+        } 
+        else {
+            const newOptions = [...options, newOption]
+            updateOptions(newOptions)
+            setErrorMessage('')
+        }
         setNewOption('')
     }
 
@@ -69,17 +82,18 @@ export const MultiSelectEditor = ({ fieldName }: any) => {
                                 label="Add Option"
                                 value={newOption}
                                 onChange={(e) => setNewOption(e.target.value)}
-                                sx={{ mt: 1.5 }} />
+                                sx={{ my: 1.5 }} />
                             <Button
                                 color="primary"
                                 startIcon={<AddCircleIcon />}
                                 variant="outlined"
                                 onClick={addOption}
-                                sx={{ mt: 1.5 }}
+                                sx={{ my: 1.5 }}
                             >
                                 ADD{' '}
                             </Button>
                         </Grid>
+                        {errorMessage && <Alert severity="error">{errorMessage}</Alert>}
                     </Grid>
                     <Grid item xs={6} sx={{ m: 1.5 }}>
                         <List>

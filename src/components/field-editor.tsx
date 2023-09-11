@@ -18,10 +18,9 @@ import { useAppSelector } from "../state/hooks";
 import { MultipleTextFieldEditor } from "./Fields/MultipleTextField";
 import { BaseFieldEditor } from "./Fields/BaseFieldEditor";
 import { TakePhotoFieldEditor } from "./Fields/TakePhotoField";
-import { SelectFieldEditor } from "./Fields/SelectField";
 import { TextFieldEditor } from "./Fields/TextFieldEditor";
 import { DateTimeNowEditor } from "./Fields/DateTimeNowEditor";
-import { MultiSelectEditor } from "./Fields/MultiSelectEditor";
+import { SelectOptionsEditor } from "./Fields/SelectOptionsEditor";
 
 export const FieldEditor = ({ fieldName }: any) => {
 
@@ -48,13 +47,13 @@ export const FieldEditor = ({ fieldName }: any) => {
                 ||
                 (fieldComponent === 'TakePhoto' && <TakePhotoFieldEditor fieldName={fieldName}  />)
                 ||
-                (fieldComponent === 'Select' && <SelectFieldEditor fieldName={fieldName} />)
-                ||
                 (fieldComponent === 'TextField' && <TextFieldEditor fieldName={fieldName} />)
                 ||
                 (fieldComponent === 'DateTimeNow' && <DateTimeNowEditor fieldName={fieldName} />)
                 ||
-                (fieldComponent === 'MultiSelect' && <MultiSelectEditor fieldName={fieldName} />)
+                (fieldComponent === 'Select' && <SelectOptionsEditor fieldName={fieldName} />)
+                ||
+                (fieldComponent === 'MultiSelect' && <SelectOptionsEditor fieldName={fieldName} />)
                 ||
                 <BaseFieldEditor
                     fieldName={fieldName} 
