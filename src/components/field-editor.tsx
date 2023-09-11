@@ -55,6 +55,8 @@ export const FieldEditor = ({ fieldName }: any) => {
                 ||
                 (fieldComponent === 'MultiSelect' && <SelectOptionsEditor fieldName={fieldName} />)
                 ||
+                (fieldComponent === 'RadioGroup' && <SelectOptionsEditor fieldName={fieldName} />)
+                ||
                 <BaseFieldEditor
                     fieldName={fieldName} 
                     children={undefined}  

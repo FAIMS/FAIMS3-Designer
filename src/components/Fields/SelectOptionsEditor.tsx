@@ -44,20 +44,44 @@ export const SelectOptionsEditor = ({ fieldName }: any) => {
     const updateOptions = (updatedOptions: string[]) => {
         // take a deep copy of the field
         const newField = JSON.parse(JSON.stringify(field))
-        newField['component-parameters'].ElementProps.options = updatedOptions.map(o => { return { label: o, value: o } })
+        newField['component-parameters'].ElementProps.options = updatedOptions.map((o, index) => {
+            if (fieldName.includes('radio')) {
+                return {
+                    RadioProps: {
+                        id: 'radio-group-field-' + index
+                    },
+                    label: o,
+                    value: o,
+                }
+            }
+            else {
+                return {
+                    label: o,
+                    value: o
+                }
+            }
+
+        })
+
         dispatch({ type: 'ui-specification/fieldUpdated', payload: { fieldName, newField } })
     }
 
     const addOption = () => {
         const emptyOption: boolean = newOption.trim().length == 0
-        const duplicateOption: boolean = options.some((element: string) => element === newOption)
+        const duplicateOption: boolean = options.some((element: string) => {
+            // Making sure duplicate check is case insensitive.
+            // eg if the array has an element 'hi', then a user should not be able to add 'Hi' since that's a duplicate
+            const lowerElement = element.toLowerCase()
+            const lowerNewOption = newOption.toLowerCase()
+            return lowerElement === lowerNewOption
+        })
 
         if (emptyOption) {
             setErrorMessage('Cannot add an empty option!')
         }
         else if (duplicateOption) {
             setErrorMessage('This option already exists in the list.')
-        } 
+        }
         else {
             const newOptions = [...options, newOption]
             updateOptions(newOptions)
