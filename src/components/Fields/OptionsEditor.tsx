@@ -20,7 +20,7 @@ import { BaseFieldEditor } from "./BaseFieldEditor"
 import { useAppSelector, useAppDispatch } from "../../state/hooks";
 import { useState } from "react";
 
-export const SelectOptionsEditor = ({ fieldName }: any) => {
+export const OptionsEditor = ({ fieldName }: any) => {
 
     const field = useAppSelector(state => state['ui-specification'].fields[fieldName])
     const dispatch = useAppDispatch()

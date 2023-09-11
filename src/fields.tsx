@@ -98,19 +98,6 @@ const fields = {
       validationSchema: [['yup.number'], ['yup.min', 10, 'Must be 10 or more'], ['yup.max', 20, 'Must be 20 or less'], ['yup.required', 'You must fill this in!']],
       initialValue: '',
     },
-    'ActionButton': {
-        'component-namespace': 'faims-custom', 
-        'component-name': 'ActionButton',
-        'type-returned': 'faims-core::String',
-        'component-parameters': {
-          fullWidth: true,
-          helperText: 'Click To Take Action!',
-          variant: 'outlined',
-          label: 'Action!',
-        },
-        validationSchema: [['yup.string']],
-        initialValue: 'hello',
-    },
     'BasicAutoIncrementer': {
         'component-namespace': 'faims-custom', 
         'component-name': 'BasicAutoIncrementer',
