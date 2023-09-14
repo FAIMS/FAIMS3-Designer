@@ -430,7 +430,7 @@ const fields = {
         fullWidth: true,
         name: 'take-photo-field',
         id: 'take-photo-field',
-        helpertext: 'Take a photo',
+        helperText: 'Take a photo',
         variant: 'outlined',
         label: 'Take Photo',
       },

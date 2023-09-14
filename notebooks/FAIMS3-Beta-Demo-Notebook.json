@@ -1349,7 +1349,7 @@
         "component-namespace": "faims-custom",
         "component-parameters": {
           "fullWidth": true,
-          "helpertext": "Take a photo",
+          "helperText": "Take a photo",
           "id": "take-photo",
           "label": "Take Photo",
           "name": "take-photo",
@@ -1593,7 +1593,7 @@
         "component-namespace": "faims-custom",
         "component-parameters": {
           "fullWidth": true,
-          "helpertext": "Take a photo",
+          "helperText": "Take a photo",
           "id": "take-photo-2",
           "label": "Take Photo",
           "name": "take-photo-2",

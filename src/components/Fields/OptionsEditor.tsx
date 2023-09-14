@@ -66,7 +66,9 @@ export const OptionsEditor = ({ fieldName }: any) => {
         dispatch({ type: 'ui-specification/fieldUpdated', payload: { fieldName, newField } })
     }
 
-    const addOption = () => {
+    const addOption = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault()
+        
         const emptyOption: boolean = newOption.trim().length == 0
         const duplicateOption: boolean = options.some((element: string) => {
             // Making sure duplicate check is case insensitive.
@@ -101,22 +103,24 @@ export const OptionsEditor = ({ fieldName }: any) => {
                 <Card variant="outlined" sx={{ display: 'flex' }}>
                     <Grid item xs={6} sx={{ m: 1.5 }}>
                         <Alert severity="info">Add and remove options as needed.</Alert>
-                        <Grid item alignItems="stretch" style={{ display: "flex" }}>
-                            <TextField
-                                label="Add Option"
-                                value={newOption}
-                                onChange={(e) => setNewOption(e.target.value)}
-                                sx={{ my: 1.5 }} />
-                            <Button
-                                color="primary"
-                                startIcon={<AddCircleIcon />}
-                                variant="outlined"
-                                onClick={addOption}
-                                sx={{ my: 1.5 }}
-                            >
-                                ADD{' '}
-                            </Button>
-                        </Grid>
+                        <form onSubmit={addOption}>
+                            <Grid item alignItems="stretch" style={{ display: "flex" }}>
+                                <TextField
+                                    label="Add Option"
+                                    value={newOption}
+                                    onChange={(e) => setNewOption(e.target.value)}
+                                    sx={{ my: 1.5 }} />
+                                <Button
+                                    color="primary"
+                                    startIcon={<AddCircleIcon />}
+                                    variant="outlined"
+                                    type="submit"
+                                    sx={{ my: 1.5 }}
+                                >
+                                    ADD{' '}
+                                </Button>
+                            </Grid>
+                        </form>
                         {errorMessage && <Alert severity="error">{errorMessage}</Alert>}
                     </Grid>
                     <Grid item xs={6} sx={{ m: 1.5 }}>
