@@ -21,6 +21,7 @@ import { TakePhotoFieldEditor } from "./Fields/TakePhotoField";
 import { TextFieldEditor } from "./Fields/TextFieldEditor";
 import { DateTimeNowEditor } from "./Fields/DateTimeNowEditor";
 import { OptionsEditor } from "./Fields/OptionsEditor";
+import { MapFormFieldEditor } from "./Fields/MapFormFieldEditor";
 
 export const FieldEditor = ({ fieldName }: any) => {
 
@@ -56,6 +57,8 @@ export const FieldEditor = ({ fieldName }: any) => {
                 (fieldComponent === 'MultiSelect' && <OptionsEditor fieldName={fieldName} />)
                 ||
                 (fieldComponent === 'RadioGroup' && <OptionsEditor fieldName={fieldName} />)
+                ||
+                (fieldComponent === 'MapFormField' && <MapFormFieldEditor fieldName={fieldName} />)
                 ||
                 <BaseFieldEditor
                     fieldName={fieldName} 
