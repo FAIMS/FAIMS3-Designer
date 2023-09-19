@@ -22,6 +22,8 @@ import { TextFieldEditor } from "./Fields/TextFieldEditor";
 import { DateTimeNowEditor } from "./Fields/DateTimeNowEditor";
 import { OptionsEditor } from "./Fields/OptionsEditor";
 import { MapFormFieldEditor } from "./Fields/MapFormFieldEditor";
+import { RandomStyleEditor } from "./Fields/RandomStyleEditor";
+import { RichTextEditor } from "./Fields/RichTextEditor";
 
 export const FieldEditor = ({ fieldName }: any) => {
 
@@ -59,6 +61,10 @@ export const FieldEditor = ({ fieldName }: any) => {
                 (fieldComponent === 'RadioGroup' && <OptionsEditor fieldName={fieldName} />)
                 ||
                 (fieldComponent === 'MapFormField' && <MapFormFieldEditor fieldName={fieldName} />)
+                ||
+                (fieldComponent === 'RandomStyle' && <RandomStyleEditor fieldName={fieldName} />)
+                ||
+                (fieldComponent === 'RichText' && <RichTextEditor fieldName={fieldName} />)
                 ||
                 <BaseFieldEditor
                     fieldName={fieldName} 
