@@ -12,17 +12,37 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { Grid, Alert, TextField, Card, } from "@mui/material";
+import { Grid, Alert, Card, } from "@mui/material";
 import { useAppSelector, useAppDispatch } from "../../state/hooks";
-import { Editor } from "../../lexicalEditor/Editor.tsx";
+import { useRef } from "react";
+
+import '@mdxeditor/editor/style.css'
+
+// importing the editor and the plugin from their full paths
+import { MDXEditor } from '@mdxeditor/editor/MDXEditor';
+import { MDXEditorMethods } from '@mdxeditor/editor';
+import { headingsPlugin } from '@mdxeditor/editor/plugins/headings';
+import { listsPlugin } from '@mdxeditor/editor/plugins/lists';
+import { quotePlugin } from '@mdxeditor/editor/plugins/quote';
+import { thematicBreakPlugin } from '@mdxeditor/editor/plugins/thematic-break';
+import { markdownShortcutPlugin } from '@mdxeditor/editor/plugins/markdown-shortcut';
+
+// importing the toolbar and desired toggle components
+import { UndoRedo } from '@mdxeditor/editor/plugins/toolbar/components/UndoRedo';
+import { BoldItalicUnderlineToggles } from '@mdxeditor/editor/plugins/toolbar/components/BoldItalicUnderlineToggles';
+import { BlockTypeSelect } from '@mdxeditor/editor/plugins/toolbar/components/BlockTypeSelect';
+import { ListsToggle } from '@mdxeditor/editor/plugins/toolbar/components/ListsToggle';
+import { Separator } from '@mdxeditor/editor';
+import { toolbarPlugin } from '@mdxeditor/editor/plugins/toolbar';
+
 
 export const RichTextEditor = ({ fieldName }: any) => {
 
     const field = useAppSelector(state => state['ui-specification'].fields[fieldName]);
     const dispatch = useAppDispatch();
 
-    const initContent: string = field['component-parameters'].content
-    console.log('init ', initContent)
+    const initContent: string = field['component-parameters'].content;
+    const ref = useRef<MDXEditorMethods>(null)
 
     const updateField = (fieldName: string, newField: any) => {
         dispatch({ type: 'ui-specification/fieldUpdated', payload: { fieldName, newField } })
@@ -42,7 +62,7 @@ export const RichTextEditor = ({ fieldName }: any) => {
         updateField(fieldName, newField);
     };
 
-    const updateProperty = (prop: string, value: string) => {
+    const updateProperty = (prop: string, value: string | undefined) => {
         const newState = { ...state, [prop]: value };
         updateFieldFromState(newState);
     };
@@ -52,7 +72,32 @@ export const RichTextEditor = ({ fieldName }: any) => {
             <Card variant="outlined" sx={{ display: 'flex' }}>
                 <Grid item sm={12} xs={12} sx={{ mx: 1.5, my: 2 }}>
                     <Alert severity="info">Use this editor for rich text.</Alert>
-                    <Editor content={initContent}/>
+                    <MDXEditor
+                        markdown={initContent}
+                        plugins={[
+                            headingsPlugin(),
+                            listsPlugin(),
+                            quotePlugin(),
+                            thematicBreakPlugin(),
+                            markdownShortcutPlugin(),
+                            toolbarPlugin({
+                                toolbarContents: () => (
+                                    <>
+                                        <UndoRedo />
+                                        <Separator />
+                                        <BoldItalicUnderlineToggles />
+                                        <Separator />
+                                        <BlockTypeSelect />
+                                        <Separator />
+                                        <ListsToggle />
+                                    </>
+                                )
+                            }),
+
+                        ]}
+                        ref={ref}
+                        onChange={() => updateProperty('content', ref.current?.getMarkdown())}
+                    />
                 </Grid>
             </Card>
         </Grid>
