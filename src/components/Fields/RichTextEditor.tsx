@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { Grid, Alert, Card, } from "@mui/material";
+import { Grid, Alert } from "@mui/material";
 import { useAppSelector, useAppDispatch } from "../../state/hooks";
 import { useRef } from "react";
 
@@ -26,12 +26,14 @@ import { listsPlugin } from '@mdxeditor/editor/plugins/lists';
 import { quotePlugin } from '@mdxeditor/editor/plugins/quote';
 import { thematicBreakPlugin } from '@mdxeditor/editor/plugins/thematic-break';
 import { markdownShortcutPlugin } from '@mdxeditor/editor/plugins/markdown-shortcut';
+import { tablePlugin } from '@mdxeditor/editor/plugins/table';
 
 // importing the toolbar and desired toggle components
 import { UndoRedo } from '@mdxeditor/editor/plugins/toolbar/components/UndoRedo';
 import { BoldItalicUnderlineToggles } from '@mdxeditor/editor/plugins/toolbar/components/BoldItalicUnderlineToggles';
 import { BlockTypeSelect } from '@mdxeditor/editor/plugins/toolbar/components/BlockTypeSelect';
 import { ListsToggle } from '@mdxeditor/editor/plugins/toolbar/components/ListsToggle';
+import { InsertTable } from '@mdxeditor/editor/plugins/toolbar/components/InsertTable';
 import { Separator } from '@mdxeditor/editor';
 import { toolbarPlugin } from '@mdxeditor/editor/plugins/toolbar';
 
@@ -68,38 +70,40 @@ export const RichTextEditor = ({ fieldName }: any) => {
     };
 
     return (
-        <Grid item xs={12}>
-            <Card variant="outlined" sx={{ display: 'flex' }}>
-                <Grid item sm={12} xs={12} sx={{ mx: 1.5, my: 2 }}>
-                    <Alert severity="info">Use this editor for rich text.</Alert>
-                    <MDXEditor
-                        markdown={initContent}
-                        plugins={[
-                            headingsPlugin(),
-                            listsPlugin(),
-                            quotePlugin(),
-                            thematicBreakPlugin(),
-                            markdownShortcutPlugin(),
-                            toolbarPlugin({
-                                toolbarContents: () => (
-                                    <>
-                                        <UndoRedo />
-                                        <Separator />
-                                        <BoldItalicUnderlineToggles />
-                                        <Separator />
-                                        <BlockTypeSelect />
-                                        <Separator />
-                                        <ListsToggle />
-                                    </>
-                                )
-                            }),
+        <Grid container sx={{ width: '45em', m: 'auto' }}>
+            <Grid item sm={12} xs={12} sx={{ m: 2 }}>
+                <Alert severity="info" sx={{ mb: 1 }}>Use this editor for rich text.</Alert>
+                <MDXEditor
+                    markdown={initContent}
+                    plugins={[
+                        headingsPlugin(),
+                        listsPlugin(),
+                        quotePlugin(),
+                        thematicBreakPlugin(),
+                        markdownShortcutPlugin(),
+                        tablePlugin(),
+                        toolbarPlugin({
+                            toolbarContents: () => (
+                                <>
+                                    <UndoRedo />
+                                    <Separator />
+                                    <BoldItalicUnderlineToggles />
+                                    <Separator />
+                                    <BlockTypeSelect />
+                                    <Separator />
+                                    <ListsToggle />
+                                    <Separator />
+                                    <InsertTable />
+                                </>
+                            )
+                        }),
 
-                        ]}
-                        ref={ref}
-                        onChange={() => updateProperty('content', ref.current?.getMarkdown())}
-                    />
-                </Grid>
-            </Card>
+                    ]}
+                    ref={ref}
+                    onChange={() => updateProperty('content', ref.current?.getMarkdown())}
+                    contentEditableClassName="mdxEditor"
+                />
+            </Grid>
         </Grid>
     )
 
