@@ -24,6 +24,7 @@ import { OptionsEditor } from "./Fields/OptionsEditor";
 import { MapFormFieldEditor } from "./Fields/MapFormFieldEditor";
 import { RandomStyleEditor } from "./Fields/RandomStyleEditor";
 import { RichTextEditor } from "./Fields/RichTextEditor";
+import { RelatedRecordEditor } from "./Fields/RelatedRecordEditor";
 
 export const FieldEditor = ({ fieldName }: any) => {
 
@@ -65,6 +66,8 @@ export const FieldEditor = ({ fieldName }: any) => {
                 (fieldComponent === 'RandomStyle' && <RandomStyleEditor fieldName={fieldName} />)
                 ||
                 (fieldComponent === 'RichText' && <RichTextEditor fieldName={fieldName} />)
+                ||
+                (fieldComponent === 'RelatedRecordSelector' && <RelatedRecordEditor fieldName={fieldName} />)
                 ||
                 <BaseFieldEditor
                     fieldName={fieldName} 

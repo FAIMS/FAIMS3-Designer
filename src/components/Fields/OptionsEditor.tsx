@@ -136,7 +136,8 @@ export const OptionsEditor = ({ fieldName }: any) => {
                                                 onClick={() => removeOption(option)}>
                                                 <DeleteIcon />
                                             </IconButton>
-                                        }>
+                                        }
+                                    >
                                         <ListItemText primary={option} />
                                     </ListItem>
                                 )
