@@ -20,6 +20,7 @@ import { useEffect, useState } from "react";
 import { InfoPanel } from "./info-panel";
 import { RolesPanel } from "./roles-panel";
 import { DesignPanel } from "./design-panel";
+import { ReviewPanel } from './review-panel';
 import { useAppDispatch } from '../state/hooks';
 
 export interface NotebookType {
@@ -86,7 +87,7 @@ export const NotebookEditor = ({ notebook }: { notebook: NotebookType }) => {
                                 <Tab label="Info" value="1" />
                                 <Tab label="Roles" value="2" />
                                 <Tab label="Design" value="3" />
-                                <Tab label="Behaviour" value="4" />
+                                <Tab label="Review" value="4" />
                                 <Tab label="Submit" value="5" />
                             </TabList>
                         </Box>
@@ -95,7 +96,7 @@ export const NotebookEditor = ({ notebook }: { notebook: NotebookType }) => {
                         <TabPanel value="1"><InfoPanel /></TabPanel>
                         <TabPanel value="2"><RolesPanel /></TabPanel>
                         <TabPanel value="3"><DesignPanel /></TabPanel>
-                        <TabPanel value="4">Behaviour</TabPanel>
+                        <TabPanel value="4"><ReviewPanel /></TabPanel>
                         <TabPanel value="5">Submit</TabPanel>
 
                         <Grid
