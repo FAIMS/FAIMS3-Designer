@@ -58,7 +58,7 @@ export const InfoPanel = () => {
             'ispublic', 'isrequest', 'sections',
             'project_status'];
         const unknownFields = Object.keys(metadata).filter((key) => !knownFields.includes(key));
-        const newExtraFields = {};
+        const newExtraFields: StringMap = {};
         unknownFields.forEach((key) => {
             newExtraFields[key] = metadata[key];
         });
@@ -119,18 +119,6 @@ export const InfoPanel = () => {
                     />
                 </Grid>
                 <Grid item xs={12}>
-                    {/* <TextField
-                        name="pre_description"
-                        fullWidth
-                        required
-                        label="Project Description"
-                        multiline={true}
-                        rows={4}
-                        value={metadata.pre_description}
-                        onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                            setProp('pre_description', event.target.value);
-                        }}
-                    /> */}
                     <Alert severity="info">Use the editor below for the project description.</Alert>
                     <MDXEditor
                         markdown={metadata.pre_description as string}

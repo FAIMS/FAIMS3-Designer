@@ -35,7 +35,7 @@ export const NotebookEditor = ({ notebook }: { notebook: NotebookType }) => {
         dispatch({ type: 'ui-specification/loaded', payload: notebook['ui-specification'] })
     }, [notebook, dispatch]);
 
-    const [tabNumber, setTabNumber] = useState(1);
+    const [tabNumber, setTabNumber] = useState(0);
 
     const maxTabs = 5;
 
@@ -82,6 +82,7 @@ export const NotebookEditor = ({ notebook }: { notebook: NotebookType }) => {
                     <TabContext value={tabNumber.toString()}>
                         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                             <TabList onChange={handleChange} aria-label="lab API tabs example">
+                                <Tab label="Start" value="0" />
                                 <Tab label="Info" value="1" />
                                 <Tab label="Roles" value="2" />
                                 <Tab label="Design" value="3" />
@@ -89,7 +90,8 @@ export const NotebookEditor = ({ notebook }: { notebook: NotebookType }) => {
                                 <Tab label="Submit" value="5" />
                             </TabList>
                         </Box>
-
+                        
+                        <TabPanel value="0">Placeholder for notebook loading.</TabPanel>
                         <TabPanel value="1"><InfoPanel /></TabPanel>
                         <TabPanel value="2"><RolesPanel /></TabPanel>
                         <TabPanel value="3"><DesignPanel /></TabPanel>
