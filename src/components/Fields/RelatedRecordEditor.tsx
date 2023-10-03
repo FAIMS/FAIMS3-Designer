@@ -38,7 +38,6 @@ export const RelatedRecordEditor = ({ fieldName }: any) => {
         if (field['component-parameters'].relation_linked_vocabPair) {
             pairs = field['component-parameters'].relation_linked_vocabPair
         }
-        console.log('pairs are ', pairs)
         return pairs;
     }
 
