@@ -21,12 +21,12 @@ export const RandomStyleEditor = ({ fieldName }: any) => {
     const field = useAppSelector(state => state['ui-specification'].fields[fieldName]);
     const dispatch = useAppDispatch();
 
-    const initVariantStyle = field['component-parameters'].variant_style
-    const initHtmlTag = field['component-parameters'].html_tag
+    const initVariantStyle = field['component-parameters'].variant_style || '';
+    const initHtmlTag = field['component-parameters'].html_tag;
 
     const updateField = (fieldName: string, newField: any) => {
-        dispatch({ type: 'ui-specification/fieldUpdated', payload: { fieldName, newField } })
-    }
+        dispatch({ type: 'ui-specification/fieldUpdated', payload: { fieldName, newField } });
+    };
 
     const state = {
         variantStyle: field['component-parameters'].variant_style || "",
@@ -36,7 +36,7 @@ export const RandomStyleEditor = ({ fieldName }: any) => {
     type newState = {
         variantStyle: string,
         htmlTag: string,
-    }
+    };
 
     const updateFieldFromState = (newState: newState) => {
         const newField = JSON.parse(JSON.stringify(field)); // deep copy
@@ -83,6 +83,8 @@ export const RandomStyleEditor = ({ fieldName }: any) => {
                             type="text"
                             value={initHtmlTag}
                             multiline
+                            fullWidth
+                            rows={5}
                             helperText="If you want html tag ONLY, leave the label empty and input the html tag."
                             onChange={(e) => updateProperty('htmlTag', e.target.value)}
                         />
