@@ -15,7 +15,6 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { NotebookUISpec, initialState } from "./initial";
 import { getFieldSpec } from "../fields";
-import { StaticDatePicker } from "@mui/lab";
 
 
 /**
@@ -73,14 +72,26 @@ export const uiSpecificationReducer = createSlice({
             }
         },
         fieldAdded: (state: NotebookUISpec, 
-                     action: PayloadAction<{fieldName: string, fieldType: string, viewId: string}>) => {
-            const { fieldName, fieldType, viewId } = action.payload;
-            console.log('adding field', fieldName, 'to', viewId, 'type', fieldType);
+                     action: PayloadAction<{
+                        fieldName: string, 
+                        fieldType: string, 
+                        viewId: string,
+                        viewSetId: string
+                    }>) => {
+            const { fieldName, fieldType, viewId, viewSetId } = action.payload;
+            console.log('adding field', fieldName, 'to', viewSetId, '-', viewId, 'type', fieldType);
             if (fieldName in state.fields) {
                 // change the field name to be unique
                 throw new Error(`Cannot add already existing field ${fieldName} via fieldAdded action`);
             } else {
                 const newField = getFieldSpec(fieldType);
+                // some field types need to be modified with extra info
+
+                if (fieldType === 'RelatedRecordSelector') {
+                    // need to set the related type to the form id
+                    newField['component-parameters'].related_type = viewSetId;
+                    newField['component-parameters'].related_type_label = state.viewsets[viewSetId].label;
+                }
                 // add in the meta field 
                 newField.meta = {
                     "annotation": true,

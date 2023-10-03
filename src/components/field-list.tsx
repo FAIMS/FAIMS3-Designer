@@ -20,7 +20,7 @@ import { getFieldNames } from "../fields";
 
 
 
-export const FieldList = ({viewId}) => {
+export const FieldList = ({viewSetId, viewId}) => {
 
     const fView = useAppSelector(state => state['ui-specification'].fviews[viewId]);
     const dispatch = useAppDispatch();
@@ -48,7 +48,8 @@ export const FieldList = ({viewId}) => {
             payload: {
                 fieldName: dialogState.name,
                 fieldType: dialogState.type,
-                viewId: viewId
+                viewId: viewId,
+                viewSetId: viewSetId
             }
         });
         setDialogOpen(false);

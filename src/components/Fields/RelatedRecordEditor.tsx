@@ -49,7 +49,7 @@ export const RelatedRecordEditor = ({ fieldName }: any) => {
         relatedType: field['component-parameters'].related_type || '',
         relatedTypeLabel: field['component-parameters'].related_type_label || '',
         relationType: field['component-parameters'].relation_type || '',
-        relationLinkedPair: field['component-parameters'].relation_linked_vocabPair || [['']]
+        relationLinkedPair: field['component-parameters'].relation_linked_vocabPair || []
     }
 
     type newState = {
@@ -86,8 +86,7 @@ export const RelatedRecordEditor = ({ fieldName }: any) => {
                     updateFieldFromState(newState);
                 }
             })
-        }
-        else {
+        } else {
             const newState: newState = { ...state, [prop]: value }
             updateFieldFromState(newState);
         }

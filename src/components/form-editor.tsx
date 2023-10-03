@@ -150,7 +150,7 @@ export const FormEditor = ({ viewSetId }) => {
                             </Paper>
                         ) :
                             (
-                                <SectionEditor viewId={viewSet.views[activeStep]} />
+                                <SectionEditor viewId={viewSet.views[activeStep]} viewSetId={viewSetId} />
                             )
                         }
                     </Grid>
