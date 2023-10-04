@@ -92,6 +92,11 @@ export const uiSpecificationReducer = createSlice({
                     newField['component-parameters'].related_type = viewSetId;
                     newField['component-parameters'].related_type_label = state.viewsets[viewSetId].label;
                 }
+
+                if (fieldType === 'BasicAutoIncrementer') {
+                    newField['component-parameters'].form_id = viewId;
+                }
+
                 // add in the meta field 
                 newField.meta = {
                     "annotation": true,

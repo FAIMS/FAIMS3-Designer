@@ -108,8 +108,8 @@ const fields = {
       variant: 'outlined',
       required: true,
       num_digits: 5,
-      form_id: 'default', // TODO: sort out this
-      label: 'Auto Increase Range',
+      form_id: 'default', // will be set to the viewId when inserted into the form
+      label: 'Auto Incrementing Field',
     },
     validationSchema: [['yup.string'], ['yup.required']],
     initialValue: null,

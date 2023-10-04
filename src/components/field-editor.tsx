@@ -25,8 +25,15 @@ import { MapFormFieldEditor } from "./Fields/MapFormFieldEditor";
 import { RandomStyleEditor } from "./Fields/RandomStyleEditor";
 import { RichTextEditor } from "./Fields/RichTextEditor";
 import { RelatedRecordEditor } from "./Fields/RelatedRecordEditor";
+import { BasicAutoIncrementerEditor } from "./Fields/BasicAutoIncrementer";
 
-export const FieldEditor = ({ fieldName }: any) => {
+type FieldEditorProps = {
+    fieldName: string,
+    viewSetId: string,
+    viewId: string
+};
+
+export const FieldEditor = ({ fieldName, viewSetId, viewId }: FieldEditorProps) => {
 
     const field = useAppSelector(state => state['ui-specification'].fields[fieldName]); 
 
@@ -68,6 +75,13 @@ export const FieldEditor = ({ fieldName }: any) => {
                 (fieldComponent === 'RichText' && <RichTextEditor fieldName={fieldName} />)
                 ||
                 (fieldComponent === 'RelatedRecordSelector' && <RelatedRecordEditor fieldName={fieldName} />)
+                ||
+                (fieldComponent === 'BasicAutoIncrementer' && 
+                    <BasicAutoIncrementerEditor 
+                        fieldName={fieldName}
+                        viewSetId={viewSetId}
+                        viewId={viewId}
+                        />)
                 ||
                 <BaseFieldEditor
                     fieldName={fieldName} 

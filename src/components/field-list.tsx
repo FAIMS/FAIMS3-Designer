@@ -55,15 +55,14 @@ export const FieldList = ({viewSetId, viewId}) => {
         setDialogOpen(false);
     }
 
-    console.log('FieldList')
-
     return (
         <>
          {fView.fields.map((fieldName : string) => {
                 return (
                         <FieldEditor 
                             key={fieldName}
-                            fieldName={fieldName}  
+                            fieldName={fieldName}
+                            viewId={viewId}
                         />
                         )
             })}
