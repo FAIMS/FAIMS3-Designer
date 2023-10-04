@@ -18,11 +18,23 @@ import { useAppSelector } from "../state/hooks";
 import { MultipleTextFieldEditor } from "./Fields/MultipleTextField";
 import { BaseFieldEditor } from "./Fields/BaseFieldEditor";
 import { TakePhotoFieldEditor } from "./Fields/TakePhotoField";
-import { SelectFieldEditor } from "./Fields/SelectField";
 import { TextFieldEditor } from "./Fields/TextFieldEditor";
 import { DateTimeNowEditor } from "./Fields/DateTimeNowEditor";
+import { OptionsEditor } from "./Fields/OptionsEditor";
+import { MapFormFieldEditor } from "./Fields/MapFormFieldEditor";
+import { RandomStyleEditor } from "./Fields/RandomStyleEditor";
+import { RichTextEditor } from "./Fields/RichTextEditor";
+import { RelatedRecordEditor } from "./Fields/RelatedRecordEditor";
+import { BasicAutoIncrementerEditor } from "./Fields/BasicAutoIncrementer";
+import { TemplatedStringFieldEditor } from "./Fields/TemplatedStringFieldEditor";
 
-export const FieldEditor = ({ fieldName }: any) => {
+type FieldEditorProps = {
+    fieldName: string,
+    viewSetId: string,
+    viewId: string
+};
+
+export const FieldEditor = ({ fieldName, viewSetId, viewId }: FieldEditorProps) => {
 
     const field = useAppSelector(state => state['ui-specification'].fields[fieldName]); 
 
@@ -47,12 +59,35 @@ export const FieldEditor = ({ fieldName }: any) => {
                 ||
                 (fieldComponent === 'TakePhoto' && <TakePhotoFieldEditor fieldName={fieldName}  />)
                 ||
-                (fieldComponent === 'Select' && <SelectFieldEditor fieldName={fieldName} />)
-                ||
                 (fieldComponent === 'TextField' && <TextFieldEditor fieldName={fieldName} />)
                 ||
                 (fieldComponent === 'DateTimeNow' && <DateTimeNowEditor fieldName={fieldName} />)
                 ||
+                (fieldComponent === 'Select' && <OptionsEditor fieldName={fieldName} />)
+                ||
+                (fieldComponent === 'MultiSelect' && <OptionsEditor fieldName={fieldName} />)
+                ||
+                (fieldComponent === 'RadioGroup' && <OptionsEditor fieldName={fieldName} />)
+                ||
+                (fieldComponent === 'MapFormField' && <MapFormFieldEditor fieldName={fieldName} />)
+                ||
+                (fieldComponent === 'RandomStyle' && <RandomStyleEditor fieldName={fieldName} />)
+                ||
+                (fieldComponent === 'RichText' && <RichTextEditor fieldName={fieldName} />)
+                ||
+                (fieldComponent === 'RelatedRecordSelector' && <RelatedRecordEditor fieldName={fieldName} />)
+                ||
+                (fieldComponent === 'BasicAutoIncrementer' && 
+                    <BasicAutoIncrementerEditor 
+                        fieldName={fieldName}
+                        viewSetId={viewSetId}
+                        viewId={viewId}
+                        />)
+                ||
+                (fieldComponent === 'TemplatedStringField' &&
+                    <TemplatedStringFieldEditor fieldName={fieldName} />
+                )
+                || 
                 <BaseFieldEditor
                     fieldName={fieldName} 
                     children={undefined}  

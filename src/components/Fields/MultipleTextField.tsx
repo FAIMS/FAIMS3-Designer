@@ -12,13 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { Checkbox, FormControlLabel, Grid, TextField } from "@mui/material";
+import { Grid, Card, TextField } from "@mui/material";
 import { useAppSelector, useAppDispatch } from "../../state/hooks";
 import { BaseFieldEditor } from "./BaseFieldEditor";
-import { useState } from "react";
 
-
-const sample =  {
+const sample = {
     "component-namespace": "formik-material-ui",
     "component-name": "MultipleTextField",
     "type-returned": "faims-core::String",
@@ -34,7 +32,7 @@ const sample =  {
             "type": "text",
             "rows": 4
         },
-        "SelectProps":{},
+        "SelectProps": {},
         "InputLabelProps": { "label": "Feature Description" },
         "FormHelperTextProps": {},
         "id": "newfieldc25e8929",
@@ -42,7 +40,7 @@ const sample =  {
     },
     "validationSchema": [["yup.string"]],
     "initialValue": "",
-    "access":["admin"],
+    "access": ["admin"],
     "meta":
     {
         "annotation_label": "annotation",
@@ -55,7 +53,7 @@ const sample =  {
     }
 };
 
-const couldBe =  {
+const couldBe = {
     "id": "newfieldc25e8929",
     "label": "Feature Description", /* EDIT */
     "componentNamespace": "formik-material-ui",
@@ -66,12 +64,12 @@ const couldBe =  {
     "rows": 4, /* EDIT */
     "validationSchema": [["yup.string"]],
     "initialValue": "",
-    "access":["admin"],
+    "access": ["admin"],
     "annotation": true, /* EDIT */
-    "uncertainty":false, /* EDIT */
+    "uncertainty": false, /* EDIT */
 };
 
-export const MultipleTextFieldEditor = ({fieldName}) => {
+export const MultipleTextFieldEditor = ({ fieldName }: any) => {
 
     const field = useAppSelector(state => state['ui-specification'].fields[fieldName]);
     const dispatch = useAppDispatch();
@@ -79,25 +77,29 @@ export const MultipleTextFieldEditor = ({fieldName}) => {
     const rows = field['component-parameters'].InputProps.rows || 4;
 
     const updateRows = (value: number) => {
-      const newField = JSON.parse(JSON.stringify(field)); // deep copy
-      newField['component-parameters'].InputProps.rows = value;
-      dispatch({type: 'ui-specification/fieldUpdated', payload: {fieldName, newField}})
+        const newField = JSON.parse(JSON.stringify(field)); // deep copy
+        newField['component-parameters'].InputProps.rows = value;
+        dispatch({ type: 'ui-specification/fieldUpdated', payload: { fieldName, newField } })
     }
 
-    return ( 
-            <BaseFieldEditor fieldName={fieldName}>
-                <Grid item sm={6} xs={12}>
-                    <TextField 
-                        name="rows" 
-                        variant="outlined"
-                        label="Rows to display"
-                        type="number"
-                        value={rows} 
-                        helperText="Number of rows in the text field."
-                        onChange={(e) => updateRows(e.target.value)} 
-                    />
-                </Grid>
-            </BaseFieldEditor>
+    return (
+        <BaseFieldEditor fieldName={fieldName}>
+            <Grid item sm={6} xs={12}>
+                <Card variant="outlined" sx={{ display: 'flex' }}>
+                    <Grid item xs={12} sx={{ mx: 1.5, my: 2 }}>
+                        <TextField
+                            name="rows"
+                            variant="outlined"
+                            label="Rows to display"
+                            type="number"
+                            value={rows}
+                            helperText="Number of rows in the text field."
+                            onChange={(e) => updateRows(parseInt(e.target.value))}
+                        />
+                    </Grid>
+                </Card>
+            </Grid>
+        </BaseFieldEditor>
     )
-
+    
 };

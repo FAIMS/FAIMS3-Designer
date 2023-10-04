@@ -12,11 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { Grid, FormHelperText, FormControlLabel, Checkbox } from "@mui/material";
+import { Grid, Card, FormHelperText, FormControlLabel, Checkbox } from "@mui/material";
 import { useAppSelector, useAppDispatch } from "../../state/hooks";
 import { BaseFieldEditor } from "./BaseFieldEditor";
 
 export const DateTimeNowEditor = ({ fieldName }: any) => {
+
     const field = useAppSelector(state => state['ui-specification'].fields[fieldName]);
     const dispatch = useAppDispatch();
 
@@ -29,20 +30,25 @@ export const DateTimeNowEditor = ({ fieldName }: any) => {
     return (
         <BaseFieldEditor fieldName={fieldName}>
             <Grid item sm={6} xs={12}>
-                <FormControlLabel
-                    required
-                    control={
-                        <Checkbox
-                            checked={field['component-parameters'].is_auto_pick}
-                            onChange={(e) => { updateIsAutoPick(e.target.checked) }}
+                <Card variant="outlined" sx={{ display: 'flex' }}>
+                    <Grid item xs={12} sx={{ mx: 1.5, my: 2 }}>
+                        <FormControlLabel
+                            required
+                            control={
+                                <Checkbox
+                                    checked={field['component-parameters'].is_auto_pick}
+                                    onChange={(e) => { updateIsAutoPick(e.target.checked) }}
+                                />
+                            }
+                            label="Time pre-populated"
                         />
-                    }
-                    label="Time pre-populated"
-                />
-                <FormHelperText>
-                    When the record is first created, populate this field with the current datetime.
-                </FormHelperText>
+                        <FormHelperText>
+                            When the record is first created, populate this field with the current datetime.
+                        </FormHelperText>
+                    </Grid>
+                </Card>
             </Grid>
         </BaseFieldEditor>
     )
+
 };

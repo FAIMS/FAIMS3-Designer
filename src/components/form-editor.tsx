@@ -112,7 +112,7 @@ export const FormEditor = ({ viewSetId }) => {
                                 control={<Checkbox
                                     checked={state.annotation}
                                     onChange={(e) => updateProperty('annotation', e.target.checked)}
-                                />} 
+                                />}
                                 label="Enable Annotation" />
                         </Grid>
 
@@ -130,29 +130,29 @@ export const FormEditor = ({ viewSetId }) => {
             <Grid item xs={12}>
                 <Grid container spacing={2}>
                     <Grid item xs={12}>
-                    <Stepper nonLinear activeStep={activeStep} orientation="horizontal">
-                        {viewSet.views.map((view: any, index: number) => (
-                            <Step key={view}>
-                                <StepButton color="inherit" onClick={handleStep(index)}>
-                                    <Typography>{views[view].label}</Typography>
-                                </StepButton>
-                            </Step>
-                        ))}
-                    </Stepper>
+                        <Stepper nonLinear activeStep={activeStep} alternativeLabel sx={{ my: 3 }}>
+                            {viewSet.views.map((view: any, index: number) => (
+                                <Step key={view}>
+                                    <StepButton color="inherit" onClick={handleStep(index)}>
+                                        <Typography>{views[view].label}</Typography>
+                                    </StepButton>
+                                </Step>
+                            ))}
+                        </Stepper>
                     </Grid>
                     <Grid item xs={12}>
-                    {activeStep === viewSet.views.length ? (
-                        <Paper square elevation={0} sx={{ p: 3 }}>
-                            <Alert severity="success">All steps completed - you're finished.</Alert>
-                            <Button onClick={handleReset} sx={{ mt: 1, mr: 1 }}>
-                                Go back to the beginning
-                            </Button>
-                        </Paper>
-                    ) :
-                    (
-                        <SectionEditor viewId={viewSet.views[activeStep]} />
-                    )
-                    }
+                        {activeStep === viewSet.views.length ? (
+                            <Paper square elevation={0} sx={{ p: 3 }}>
+                                <Alert severity="success">All steps completed - you're finished.</Alert>
+                                <Button onClick={handleReset} sx={{ mt: 1, mr: 1 }}>
+                                    Go back to the beginning
+                                </Button>
+                            </Paper>
+                        ) :
+                            (
+                                <SectionEditor viewId={viewSet.views[activeStep]} viewSetId={viewSetId} />
+                            )
+                        }
                     </Grid>
                 </Grid>
             </Grid>

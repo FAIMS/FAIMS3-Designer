@@ -12,15 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { Accordion, AccordionDetails, AccordionSummary, Checkbox, FormControl, FormControlLabel, Grid, InputLabel, MenuItem, Select, TextField, Typography } from "@mui/material";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import {Checkbox, FormControl, FormControlLabel, Grid, InputLabel, MenuItem, Select, TextField, Typography } from "@mui/material";
 
 import { FieldList } from "./field-list";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useAppSelector, useAppDispatch } from "../state/hooks";
 import { shallowEqual } from "react-redux";
 
-export const SectionEditor = ({ viewId }) => {
+export const SectionEditor = ({ viewSetId, viewId }) => {
 
     const fView = useAppSelector(state => state['ui-specification'].fviews[viewId]);
     // const metadata = useAppSelector(state => state.metadata);
@@ -97,7 +96,7 @@ export const SectionEditor = ({ viewId }) => {
             </Grid>
 
 
-            <FieldList viewId={viewId} />
+            <FieldList viewId={viewId} viewSetId={viewSetId}/>
         </>
     );
 }

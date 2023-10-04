@@ -333,6 +333,15 @@
           ]
         ]
       },
+      "rich-text": {
+        "component-namespace": "faims-custom",
+        "component-name": "RichText",
+        "type-returned": "faims-core::String",
+        "component-parameters": {
+          "label": "Unused",
+          "content": "Hello __World__"
+        }
+      },
       "radio-with-option-for-other": {
         "access": [
           "admin"
@@ -1349,7 +1358,7 @@
         "component-namespace": "faims-custom",
         "component-parameters": {
           "fullWidth": true,
-          "helpertext": "Take a photo",
+          "helperText": "Take a photo",
           "id": "take-photo",
           "label": "Take Photo",
           "name": "take-photo",
@@ -1593,7 +1602,7 @@
         "component-namespace": "faims-custom",
         "component-parameters": {
           "fullWidth": true,
-          "helpertext": "Take a photo",
+          "helperText": "Take a photo",
           "id": "take-photo-2",
           "label": "Take Photo",
           "name": "take-photo-2",
@@ -2339,7 +2348,8 @@
         "fields": [
           "html-text-2",
           "html-text-6",
-          "html-text-9"
+          "html-text-9",
+          "rich-text"
         ],
         "label": "Views",
         "uidesign": "form"

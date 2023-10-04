@@ -13,15 +13,38 @@
 // limitations under the License.
 
 import { Alert, Button, Grid, TextField, Typography } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useAppSelector, useAppDispatch } from "../state/hooks";
+
+import '@mdxeditor/editor/style.css'
+
+// importing the editor and the plugin from their full paths
+import { MDXEditor } from '@mdxeditor/editor/MDXEditor';
+import { MDXEditorMethods } from '@mdxeditor/editor';
+import { headingsPlugin } from '@mdxeditor/editor/plugins/headings';
+import { listsPlugin } from '@mdxeditor/editor/plugins/lists';
+import { quotePlugin } from '@mdxeditor/editor/plugins/quote';
+import { thematicBreakPlugin } from '@mdxeditor/editor/plugins/thematic-break';
+import { markdownShortcutPlugin } from '@mdxeditor/editor/plugins/markdown-shortcut';
+import { tablePlugin } from '@mdxeditor/editor/plugins/table';
+
+// importing the toolbar and desired toggle components
+import { UndoRedo } from '@mdxeditor/editor/plugins/toolbar/components/UndoRedo';
+import { BoldItalicUnderlineToggles } from '@mdxeditor/editor/plugins/toolbar/components/BoldItalicUnderlineToggles';
+import { BlockTypeSelect } from '@mdxeditor/editor/plugins/toolbar/components/BlockTypeSelect';
+import { ListsToggle } from '@mdxeditor/editor/plugins/toolbar/components/ListsToggle';
+import { InsertTable } from '@mdxeditor/editor/plugins/toolbar/components/InsertTable';
+import { Separator } from '@mdxeditor/editor';
+import { toolbarPlugin } from '@mdxeditor/editor/plugins/toolbar';
 
 interface StringMap { [key: string]: string };
 
 export const InfoPanel = () => {
 
-    const metadata = useAppSelector(state => state.metadata);
+    const metadata: any = useAppSelector(state => state.metadata);
     const dispatch = useAppDispatch();
+
+    const ref = useRef<MDXEditorMethods>(null)
 
     const [metadataFieldName, setMetadataFieldName] = useState('');
     const [metadataFieldValue, setMetadataFieldValue] = useState('');
@@ -35,14 +58,14 @@ export const InfoPanel = () => {
             'ispublic', 'isrequest', 'sections',
             'project_status'];
         const unknownFields = Object.keys(metadata).filter((key) => !knownFields.includes(key));
-        const newExtraFields = {};
+        const newExtraFields: StringMap = {};
         unknownFields.forEach((key) => {
             newExtraFields[key] = metadata[key];
         });
         setExtraFields(newExtraFields);
     }, [metadata]);
 
-    const setProp = (property: string, value: string) => {
+    const setProp = (property: string, value: string | undefined) => {
         dispatch({ type: 'metadata/propertyUpdated', payload: { property, value } });
     };
 
@@ -96,17 +119,36 @@ export const InfoPanel = () => {
                     />
                 </Grid>
                 <Grid item xs={12}>
-                    <TextField
-                        name="pre_description"
-                        fullWidth
-                        required
-                        label="Project Description"
-                        multiline={true}
-                        rows={4}
-                        value={metadata.pre_description}
-                        onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                            setProp('pre_description', event.target.value);
-                        }}
+                    <Alert severity="info">Use the editor below for the project description.</Alert>
+                    <MDXEditor
+                        markdown={metadata.pre_description as string}
+                        plugins={[
+                            headingsPlugin(),
+                            listsPlugin(),
+                            quotePlugin(),
+                            thematicBreakPlugin(),
+                            markdownShortcutPlugin(),
+                            tablePlugin(),
+                            toolbarPlugin({
+                                toolbarContents: () => (
+                                    <>
+                                        <UndoRedo />
+                                        <Separator />
+                                        <BoldItalicUnderlineToggles />
+                                        <Separator />
+                                        <BlockTypeSelect />
+                                        <Separator />
+                                        <ListsToggle />
+                                        <Separator />
+                                        <InsertTable />
+                                    </>
+                                )
+                            }),
+
+                        ]}
+                        ref={ref}
+                        onChange={() => setProp('pre_description', ref.current?.getMarkdown())}
+                        contentEditableClassName="mdxEditor"
                     />
                 </Grid>
                 <Grid item xs={12} sm={6}>
