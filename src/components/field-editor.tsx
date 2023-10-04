@@ -26,6 +26,7 @@ import { RandomStyleEditor } from "./Fields/RandomStyleEditor";
 import { RichTextEditor } from "./Fields/RichTextEditor";
 import { RelatedRecordEditor } from "./Fields/RelatedRecordEditor";
 import { BasicAutoIncrementerEditor } from "./Fields/BasicAutoIncrementer";
+import { TemplatedStringFieldEditor } from "./Fields/TemplatedStringFieldEditor";
 
 type FieldEditorProps = {
     fieldName: string,
@@ -83,6 +84,10 @@ export const FieldEditor = ({ fieldName, viewSetId, viewId }: FieldEditorProps) 
                         viewId={viewId}
                         />)
                 ||
+                (fieldComponent === 'TemplatedStringField' &&
+                    <TemplatedStringFieldEditor fieldName={fieldName} />
+                )
+                || 
                 <BaseFieldEditor
                     fieldName={fieldName} 
                     children={undefined}  
