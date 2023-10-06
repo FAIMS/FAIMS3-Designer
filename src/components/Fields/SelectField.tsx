@@ -15,91 +15,36 @@
 import { Grid, TextField } from "@mui/material";
 import { BaseFieldEditor } from "./BaseFieldEditor"
 import { useAppSelector, useAppDispatch } from "../../state/hooks";
+import { FieldType, Notebook } from "../../state/initial";
 
-const sample = {
-    "component-namespace": "faims-custom",
-    "component-name": "Select",
-    "type-returned": "faims-core::String",
-    "component-parameters":{
-        "fullWidth": true,
-        "helperText": "This is the type of feature",
-        "variant": "outlined",
-        "required": false,
-        "select": true,
-        "InputProps": {},
-        "SelectProps": {},
-        "ElementProps":{
-            "options":
-            [
-                {
-                    "value": "Other ",
-                    "label": "Other "
-                },
-                {
-                    "value": "Metal Feature",
-                    "label": "Metal Feature"
-                },
-                {
-                    "value": "Masonry",
-                    "label": "Masonry"
-                },
-                {
-                    "value": "Rock cutting",
-                    "label": "Rock cutting"
-                },
-                {
-                    "value": "Hearth",
-                    "label": "Hearth"
-                },
-                {
-                    "value": "",
-                    "label": ""
-                }
-            ]
-        },
-        "InputLabelProps":{ "label": "Feature Type" },
-        "id": "newfield83238a4d",
-        "name": "newfield83238a4d"
-    },
-    "validationSchema": [["yup.string"]],
-    "initialValue": "",
-    "access":["admin"],
-    "meta":
-    {
-        "annotation_label": "annotation",
-        "annotation": true,
-        "uncertainty":
-        {
-            "include": false,
-            "label": "uncertainty"
-        }
-    }
-}
-
-export const SelectFieldEditor = ({fieldName}) => {
+export const SelectFieldEditor = ({fieldName}: {fieldName: string}) => {
     
-    const field = useAppSelector(state => state['ui-specification'].fields[fieldName]);
+    const field = useAppSelector((state: Notebook) => state['ui-specification'].fields[fieldName]);
     const dispatch = useAppDispatch();
 
     const getOptions = () => {
-        let options = [];
+        let options;
         if (field['component-parameters'].ElementProps) {
             options = field['component-parameters'].ElementProps.options
-            options = options.map(pair => pair.label.trim())
+            if (options)
+                options = options.map(pair => pair.label.trim());
         } else {
             field['component-parameters'].ElementProps = {options: []}
         }
-        return options.join(', ');
+        if (options)
+            return options.join(', ');
+        else 
+            return '';
     }
 
     const options = getOptions();
 
-    const updateProperty = (value: any) => {
+    const updateProperty = (value: string) => {
         const optionArray = value.split(',').map(v => v.trim());
         // take a deep copy of the field
-        const newField = JSON.parse(JSON.stringify(field));
-        newField['component-parameters'].ElementProps.options =
-            optionArray.map(o => {return {label: o, value: o}})
+        const newField = JSON.parse(JSON.stringify(field)) as FieldType;
+        newField['component-parameters'].ElementProps =
+            {options: optionArray.map(o => {return {label: o, value: o}})}
         dispatch({type: 'ui-specification/fieldUpdated', payload: {fieldName, newField}})
     }
 

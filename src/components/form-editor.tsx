@@ -12,21 +12,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { Grid, Paper, Alert, FormControlLabel, Checkbox, FormControl, InputLabel, Select, MenuItem, Box, Stepper, Typography, Step, Button, StepButton, StepContent } from "@mui/material";
-import { useAppSelector, useAppDispatch } from "../state/hooks";
+import { Grid, Paper, Alert, FormControlLabel, Checkbox, FormControl, InputLabel, Select, MenuItem, Stepper, Typography, Step, Button, StepButton } from "@mui/material";
+import { useAppSelector } from "../state/hooks";
 import { SectionEditor } from "./section-editor";
 import { useState } from "react";
 import { shallowEqual } from "react-redux";
+import { Notebook } from "../state/initial";
 
-export const FormEditor = ({ viewSetId }) => {
+export const FormEditor = ({ viewSetId }: {viewSetId: string}) => {
 
-    const viewSet = useAppSelector(state => state['ui-specification'].viewsets[viewSetId],
+    const viewSet = useAppSelector((state: Notebook) => state['ui-specification'].viewsets[viewSetId],
         (left, right) => {
             return shallowEqual(left, right);
         });
-    // const metadata = useAppSelector(state => state.metadata);
+    // const metadata = useAppSelector((state: Notebook) => state.metadata);
     //const dispatch = useAppDispatch();
-    const views = useAppSelector(state => state['ui-specification'].fviews);
+    const views = useAppSelector((state: Notebook) => state['ui-specification'].fviews);
 
     const [state, setState] = useState({
         inheritAccess: true,
@@ -35,7 +36,7 @@ export const FormEditor = ({ viewSetId }) => {
         uncertainty: true
     })
 
-    const updateProperty = (prop: string, value: any) => {
+    const updateProperty = (prop: string, value: (boolean | string | string[])) => {
         const newState = { ...state, [prop]: value };
         setState(newState);
     };
@@ -43,14 +44,6 @@ export const FormEditor = ({ viewSetId }) => {
     console.log('FormEditor', viewSetId);
 
     const [activeStep, setActiveStep] = useState(0);
-
-    const handleNext = () => {
-        setActiveStep((prevActiveStep) => prevActiveStep + 1);
-    };
-
-    const handleBack = () => {
-        setActiveStep((prevActiveStep) => prevActiveStep - 1);
-    };
 
     const handleReset = () => {
         setActiveStep(0);
@@ -131,7 +124,7 @@ export const FormEditor = ({ viewSetId }) => {
                 <Grid container spacing={2}>
                     <Grid item xs={12}>
                         <Stepper nonLinear activeStep={activeStep} alternativeLabel sx={{ my: 3 }}>
-                            {viewSet.views.map((view: any, index: number) => (
+                            {viewSet.views.map((view: string, index: number) => (
                                 <Step key={view}>
                                     <StepButton color="inherit" onClick={handleStep(index)}>
                                         <Typography>{views[view].label}</Typography>

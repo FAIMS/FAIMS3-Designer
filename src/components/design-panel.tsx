@@ -19,14 +19,15 @@ import { useState } from "react";
 import { useAppSelector } from "../state/hooks";
 import { FormEditor } from "./form-editor";
 import { shallowEqual } from "react-redux";
+import { Notebook } from "../state/initial";
 
 export const DesignPanel = () => {
 
-    const viewSets = useAppSelector(state => state['ui-specification'].viewsets, shallowEqual);
+    const viewSets = useAppSelector((state: Notebook) => state['ui-specification'].viewsets, shallowEqual);
 
     const [tabIndex, setTabIndex] = useState('0');
 
-    const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+    const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
         setTabIndex(newValue.toString());
     };
 

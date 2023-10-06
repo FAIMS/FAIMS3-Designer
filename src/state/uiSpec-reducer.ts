@@ -13,8 +13,9 @@
 // limitations under the License.
 
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-import { NotebookUISpec, initialState } from "./initial";
+import { NotebookUISpec, initialState, FieldType } from "./initial";
 import { getFieldSpec } from "../fields";
+
 
 
 /**
@@ -48,7 +49,7 @@ export const uiSpecificationReducer = createSlice({
     name: 'ui-specification',
     initialState:  initialState["ui-specification"],
     reducers: {
-        loaded: (state: NotebookUISpec, action: PayloadAction<NotebookUISpec>) => {
+        loaded: (_state: NotebookUISpec, action: PayloadAction<NotebookUISpec>) => {
             return action.payload;
         },
         sectionNameUpdated: (state: NotebookUISpec,
@@ -62,7 +63,7 @@ export const uiSpecificationReducer = createSlice({
                 }
             },
         fieldUpdated: (state: NotebookUISpec, 
-                       action: PayloadAction<{fieldName: string, newField: any}>) => {
+                       action: PayloadAction<{fieldName: string, newField: FieldType}>) => {
             const { fieldName, newField } = action.payload;
             console.log('updating field', fieldName, 'with', newField);
             if (fieldName in state.fields) {
@@ -84,7 +85,7 @@ export const uiSpecificationReducer = createSlice({
                 // change the field name to be unique
                 throw new Error(`Cannot add already existing field ${fieldName} via fieldAdded action`);
             } else {
-                const newField = getFieldSpec(fieldType);
+                const newField: FieldType = getFieldSpec(fieldType);
                 // some field types need to be modified with extra info
 
                 if (fieldType === 'RelatedRecordSelector') {
@@ -106,7 +107,7 @@ export const uiSpecificationReducer = createSlice({
                       "label": "uncertainty"
                     }
                 };
-                newField.name = fieldName;
+                newField['component-parameters'].name = fieldName;
                 let fieldLabel = slugify(fieldName);
                 let N = 1;
                 while(fieldLabel in state.fields) { 

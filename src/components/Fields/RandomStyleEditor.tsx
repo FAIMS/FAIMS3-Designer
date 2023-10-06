@@ -15,16 +15,17 @@
 import { Grid, TextField, Card, FormControl, InputLabel, Select, MenuItem } from "@mui/material";
 import { useAppSelector, useAppDispatch } from "../../state/hooks";
 import { BaseFieldEditor } from "./BaseFieldEditor";
+import {Notebook, FieldType} from "../../state/initial";
 
-export const RandomStyleEditor = ({ fieldName }: any) => {
+export const RandomStyleEditor = ({ fieldName }: {fieldName: string}) => {
 
-    const field = useAppSelector(state => state['ui-specification'].fields[fieldName]);
+    const field = useAppSelector((state: Notebook) => state['ui-specification'].fields[fieldName]);
     const dispatch = useAppDispatch();
 
     const initVariantStyle = field['component-parameters'].variant_style || '';
     const initHtmlTag = field['component-parameters'].html_tag;
 
-    const updateField = (fieldName: string, newField: any) => {
+    const updateField = (fieldName: string, newField: FieldType) => {
         dispatch({ type: 'ui-specification/fieldUpdated', payload: { fieldName, newField } });
     };
 
@@ -39,7 +40,7 @@ export const RandomStyleEditor = ({ fieldName }: any) => {
     };
 
     const updateFieldFromState = (newState: newState) => {
-        const newField = JSON.parse(JSON.stringify(field)); // deep copy
+        const newField = JSON.parse(JSON.stringify(field)) as FieldType; // deep copy
         newField['component-parameters'].variant_style = newState.variantStyle;
         newField['component-parameters'].html_tag = newState.htmlTag;
         updateField(fieldName, newField);

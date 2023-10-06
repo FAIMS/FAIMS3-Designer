@@ -14,10 +14,27 @@
 
 import { Checkbox, FormControlLabel, Grid, TextField, Card } from "@mui/material";
 import { useAppSelector, useAppDispatch } from "../../state/hooks";
+import { FieldType, Notebook } from "../../state/initial";
 
-export const BaseFieldEditor = ({ fieldName, children }) => {
+type Props = {
+    fieldName: string,
+    children?: React.ReactNode
+}
 
-    const field = useAppSelector(state => state['ui-specification'].fields[fieldName]);
+// gets rid of the type error in updateFieldFromState func
+type StateType = {
+    label?: string,
+    helperText: string,
+    required: boolean,
+    annotation: boolean,
+    annotationLabel: string,
+    uncertainty: boolean,
+    uncertaintyLabel: string
+}
+
+export const BaseFieldEditor = ({ fieldName, children }: Props) => {
+
+    const field = useAppSelector((state: Notebook) => state['ui-specification'].fields[fieldName]);
     const dispatch = useAppDispatch();
 
     // These are needed because there is no consistency in how
@@ -28,7 +45,7 @@ export const BaseFieldEditor = ({ fieldName, children }) => {
             field['component-parameters'].name;
     }
 
-    const setFieldLabel = (newField: any, label: string) => {
+    const setFieldLabel = (newField: FieldType, label: string) => {
         if (newField['component-parameters'].label)
             newField['component-parameters'].label = label;
         if (newField['component-parameters'].InputLabelProps && newField['component-parameters'].InputLabelProps.label)
@@ -37,7 +54,7 @@ export const BaseFieldEditor = ({ fieldName, children }) => {
             newField['component-parameters'].name = label;
     }
 
-    const updateField = (fieldName: string, newField: any) => {
+    const updateField = (fieldName: string, newField: FieldType) => {
         dispatch({ type: 'ui-specification/fieldUpdated', payload: { fieldName, newField } })
     }
 
@@ -47,37 +64,35 @@ export const BaseFieldEditor = ({ fieldName, children }) => {
         label: getFieldLabel(),
         helperText: cParams.helperText || "",
         required: cParams.required || false,
-        annotation: field.meta.annotation || false,
-        annotationLabel: field.meta.annotation_label || "",
-        uncertainty: field.meta.uncertainty.include || false,
-        uncertaintyLabel: field.meta.uncertainty.label || ""
+        annotation: field.meta ? field.meta.annotation || false : false,
+        annotationLabel: field.meta ? field.meta.annotation_label || '' : '',
+        uncertainty: field.meta ? field.meta.uncertainty.include || false : false,
+        uncertaintyLabel: field.meta ? field.meta.uncertainty.label || '' : '',
     };
 
-    // gets rid of the type error in updateFieldFromState func
-    type newState = {
-        label: string,
-        helperText: string,
-        required: boolean,
-        annotation: boolean,
-        annotationLabel: string,
-        uncertainty: boolean,
-        uncertaintyLabel: string
-    }
-
-    const updateFieldFromState = (newState: newState) => {
-        const newField = JSON.parse(JSON.stringify(field)); // deep copy
-        setFieldLabel(newField, newState.label);
+    const updateFieldFromState = (newState: StateType) => {
+        const newField = JSON.parse(JSON.stringify(field)) as FieldType; // deep copy
+        if (newState.label) 
+            setFieldLabel(newField, newState.label);
         newField['component-parameters'].helperText = newState.helperText;
         newField['component-parameters'].required = newState.required;
-        newField.meta.annotation = newState.annotation;
-        newField.meta.annotation_label = newState.annotationLabel;
-        newField.meta.uncertainty.include = newState.uncertainty;
-        newField.meta.uncertainty.label = newState.uncertaintyLabel;
+        if (newField.meta) {
+            if (newState.annotation) {
+                newField.meta.annotation = newState.annotation;
+                newField.meta.annotation_label = newState.annotationLabel || '';
+            }
+            if (newState.uncertainty) {
+                newField.meta.uncertainty = {
+                    include: newState.uncertainty,
+                    label: newState.uncertaintyLabel || ''
+                }
+            }
+        }
         updateField(fieldName, newField);
     };
 
-    const updateProperty = (prop: string, value: any) => {
-        const newState = { ...state, [prop]: value };
+    const updateProperty = (prop: string, value: string | boolean) => {
+        const newState: StateType = { ...state, [prop]: value };
         updateFieldFromState(newState);
     };
 

@@ -15,70 +15,18 @@
 import { Grid, Card, TextField } from "@mui/material";
 import { useAppSelector, useAppDispatch } from "../../state/hooks";
 import { BaseFieldEditor } from "./BaseFieldEditor";
+import { FieldType, Notebook } from "../../state/initial";
 
-const sample = {
-    "component-namespace": "formik-material-ui",
-    "component-name": "MultipleTextField",
-    "type-returned": "faims-core::String",
-    "component-parameters":
-    {
-        "fullWidth": true,
-        "helperText": "Enter a detailed description of the feature",
-        "variant": "outlined",
-        "required": false,
-        "multiline": true,
-        "InputProps":
-        {
-            "type": "text",
-            "rows": 4
-        },
-        "SelectProps": {},
-        "InputLabelProps": { "label": "Feature Description" },
-        "FormHelperTextProps": {},
-        "id": "newfieldc25e8929",
-        "name": "newfieldc25e8929"
-    },
-    "validationSchema": [["yup.string"]],
-    "initialValue": "",
-    "access": ["admin"],
-    "meta":
-    {
-        "annotation_label": "annotation",
-        "annotation": true,
-        "uncertainty":
-        {
-            "include": false,
-            "label": "uncertainty"
-        }
-    }
-};
+export const MultipleTextFieldEditor = ({ fieldName }: { fieldName: string }) => {
 
-const couldBe = {
-    "id": "newfieldc25e8929",
-    "label": "Feature Description", /* EDIT */
-    "componentNamespace": "formik-material-ui",
-    "componentName": "MultipleTextField",
-    "typeReturned": "faims-core::String",
-    "helperText": "Enter a detailed description of the feature", /* EDIT */
-    "required": false, /* EDIT */
-    "rows": 4, /* EDIT */
-    "validationSchema": [["yup.string"]],
-    "initialValue": "",
-    "access": ["admin"],
-    "annotation": true, /* EDIT */
-    "uncertainty": false, /* EDIT */
-};
-
-export const MultipleTextFieldEditor = ({ fieldName }: any) => {
-
-    const field = useAppSelector(state => state['ui-specification'].fields[fieldName]);
+    const field = useAppSelector((state: Notebook) => state['ui-specification'].fields[fieldName]);
     const dispatch = useAppDispatch();
 
-    const rows = field['component-parameters'].InputProps.rows || 4;
+    const rows = field['component-parameters'].InputProps?.rows || 4;
 
     const updateRows = (value: number) => {
-        const newField = JSON.parse(JSON.stringify(field)); // deep copy
-        newField['component-parameters'].InputProps.rows = value;
+        const newField = JSON.parse(JSON.stringify(field)) as FieldType; // deep copy
+        newField['component-parameters'].InputProps = {rows: value};
         dispatch({ type: 'ui-specification/fieldUpdated', payload: { fieldName, newField } })
     }
 

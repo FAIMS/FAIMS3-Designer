@@ -15,17 +15,18 @@
 import { Card, Grid, TextField } from "@mui/material";
 import { useAppSelector, useAppDispatch } from "../../state/hooks";
 import { BaseFieldEditor } from "./BaseFieldEditor";
+import { FieldType, Notebook, ValidationSchemaElement } from "../../state/initial";
 
-export const TextFieldEditor = ({ fieldName }: any) => {
-    const field = useAppSelector(state => state['ui-specification'].fields[fieldName]);
+export const TextFieldEditor = ({ fieldName }: {fieldName: string}) => {
+    const field = useAppSelector((state: Notebook) => state['ui-specification'].fields[fieldName]);
     const dispatch = useAppDispatch();
 
-    const initVal: (string | number) = field['initialValue']
-    const subType: string = field['component-parameters'].InputProps.type
-    const schema: (string | number)[] = field['validationSchema']
+    const initVal = field['initialValue'] as (string | number);
+    const subType = field['component-parameters'].InputProps?.type || '';
+    const schema = field['validationSchema'] || [];
 
     // flattens the validationSchema array of arrays so that I can run the .includes() function on it
-    const validationArr: (string | number)[] = schema.flat()
+    const validationArr: (string | number)[] = schema.flat();
     // flag to tell us if we're dealing with controlled-number / number-field-val
     let hasMinMax = false;
     if (validationArr.includes('yup.min') && validationArr.includes('yup.max')) {
@@ -33,23 +34,28 @@ export const TextFieldEditor = ({ fieldName }: any) => {
     }
 
     const updateDefault = (value: string | number) => {
-        const newField = JSON.parse(JSON.stringify(field));
+        const newField = JSON.parse(JSON.stringify(field)) as FieldType;
         newField['initialValue'] = value;
         dispatch({ type: 'ui-specification/fieldUpdated', payload: { fieldName, newField } })
     }
 
     // updates the min or max clause in the validationSchema
-    const updateSchema = (schema: (string | number)[], functor: string, ...args: any[]) => {
-        return schema.map((item: any, index) => {
-            // check if the first element of the subarray is the clause we want to update
-            if (item[0] === functor) {
-                const newField = JSON.parse(JSON.stringify(field));
-                newField['validationSchema'][index] = [functor, ...args]
-                dispatch({ type: 'ui-specification/fieldUpdated', payload: { fieldName, newField } })
-            } else {
-                return item
-            }
-        })
+    const updateSchema = (schema: ValidationSchemaElement[] | undefined, functor: string, ...args: (string | number)[]) => {
+        if (schema)
+            return schema.map((item: ValidationSchemaElement, index) => {
+                // check if the first element of the subarray is the clause we want to update
+                if (item[0] === functor) {
+                    const newField = JSON.parse(JSON.stringify(field)) as FieldType;
+                    if (!newField['validationSchema']) {
+                        newField['validationSchema'] = [[functor, ...args]]
+                    } else {
+                        newField['validationSchema'][index] = [functor, ...args]
+                    }
+                    dispatch({ type: 'ui-specification/fieldUpdated', payload: { fieldName, newField } })
+                } else {
+                    return item
+                }
+            })
     };
 
     const updateMinControl = (value: number) => {
@@ -68,7 +74,7 @@ export const TextFieldEditor = ({ fieldName }: any) => {
                     <Card variant="outlined" sx={{ display: 'flex' }}>
                         <Grid item xs={12} sx={{ mx: 1.5, my: 2 }}>
                             <TextField
-                                name="prepopulated"
+                                name="pre-populated"
                                 variant="outlined"
                                 label="Default Text"
                                 value={initVal}
@@ -86,7 +92,7 @@ export const TextFieldEditor = ({ fieldName }: any) => {
                     <Card variant="outlined" sx={{ display: 'flex' }}>
                         <Grid item xs={12} sx={{ mx: 1.5, my: 2 }}>
                             <TextField
-                                name="prepopulated"
+                                name="pre-populated"
                                 variant="outlined"
                                 label="Default Number"
                                 type="number"

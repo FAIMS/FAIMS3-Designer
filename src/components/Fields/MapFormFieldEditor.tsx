@@ -15,16 +15,17 @@
 import { Grid, TextField, Card, FormControl, InputLabel, Select, MenuItem } from "@mui/material";
 import { useAppSelector, useAppDispatch } from "../../state/hooks";
 import { BaseFieldEditor } from "./BaseFieldEditor";
+import { FieldType, Notebook } from "../../state/initial";
 
-export const MapFormFieldEditor = ({ fieldName }: any) => {
+export const MapFormFieldEditor = ({ fieldName }: {fieldName: string}) => {
 
-    const field = useAppSelector(state => state['ui-specification'].fields[fieldName]);
+    const field = useAppSelector((state: Notebook) => state['ui-specification'].fields[fieldName]);
     const dispatch = useAppDispatch();
 
     const initZoom = field['component-parameters'].zoom;
     const initFeatureType = field['component-parameters'].featureType
 
-    const updateField = (fieldName: string, newField: any) => {
+    const updateField = (fieldName: string, newField: FieldType) => {
         dispatch({ type: 'ui-specification/fieldUpdated', payload: { fieldName, newField } })
     }
 
@@ -39,7 +40,7 @@ export const MapFormFieldEditor = ({ fieldName }: any) => {
     }
 
     const updateFieldFromState = (newState: newState) => {
-        const newField = JSON.parse(JSON.stringify(field)); // deep copy
+        const newField = JSON.parse(JSON.stringify(field)) as FieldType; // deep copy
         newField['component-parameters'].featureType = newState.featureType;
         newField['component-parameters'].zoom = newState.zoom;
         updateField(fieldName, newField);

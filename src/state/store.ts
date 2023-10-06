@@ -12,18 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { configureStore } from '@reduxjs/toolkit'
+import { Middleware, configureStore } from '@reduxjs/toolkit'
 import metadataReducer from './metadata-reducer'
 import uiSpecificationReducer from './uiSpec-reducer'
+import { ToolkitStore } from '@reduxjs/toolkit/dist/configureStore';
+import { Notebook } from './initial';
 
-const loggerMiddleware = store => next => action => {
-  console.log('dispatching', action)
-  let result = next(action)
-  console.log('next state', store.getState())
-  return result
+const loggerMiddleware: Middleware<object, Notebook> = storeAPI => next => action => {
+  console.log('dispatching', action);
+  next(action);
+  console.log('next state', storeAPI.getState())
 }
 
-export const store = configureStore({
+export const store: ToolkitStore<Notebook> = configureStore({
   reducer: {
     metadata: metadataReducer,
     "ui-specification": uiSpecificationReducer
@@ -32,7 +33,5 @@ export const store = configureStore({
     getDefaultMiddleware().concat(loggerMiddleware),
 })
 
-// Infer the `RootState` and `AppDispatch` types from the store itself
-export type RootState = ReturnType<typeof store.getState>
-// Inferred type: {posts: PostsState, comments: CommentsState, users: UsersState}
+
 export type AppDispatch = typeof store.dispatch

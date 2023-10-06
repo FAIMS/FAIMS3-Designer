@@ -22,12 +22,9 @@ import { RolesPanel } from "./roles-panel";
 import { DesignPanel } from "./design-panel";
 import { ReviewPanel } from './review-panel';
 import { useAppDispatch } from '../state/hooks';
+import { Notebook } from '../state/initial';
 
-export interface NotebookType {
-    [key: string]: unknown;
-}
-
-export const NotebookEditor = ({ notebook }: { notebook: NotebookType }) => {
+export const NotebookEditor = ({ notebook }: { notebook: Notebook }) => {
 
     const dispatch = useAppDispatch();
 
@@ -40,8 +37,8 @@ export const NotebookEditor = ({ notebook }: { notebook: NotebookType }) => {
 
     const maxTabs = 5;
 
-    const handleChange = (event: React.SyntheticEvent, newValue: number) => {
-        setTabNumber(newValue.toString());
+    const handleChange = (_event: React.SyntheticEvent, newValue: number) => {
+        setTabNumber(newValue);
     };
 
     const nextTab = () => {

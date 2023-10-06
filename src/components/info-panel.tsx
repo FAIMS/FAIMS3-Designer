@@ -36,19 +36,18 @@ import { ListsToggle } from '@mdxeditor/editor/plugins/toolbar/components/ListsT
 import { InsertTable } from '@mdxeditor/editor/plugins/toolbar/components/InsertTable';
 import { Separator } from '@mdxeditor/editor';
 import { toolbarPlugin } from '@mdxeditor/editor/plugins/toolbar';
-
-interface StringMap { [key: string]: string };
+import { Notebook, PropertyMap } from "../state/initial";
 
 export const InfoPanel = () => {
 
-    const metadata: any = useAppSelector(state => state.metadata);
+    const metadata = useAppSelector((state: Notebook) => state.metadata);
     const dispatch = useAppDispatch();
 
     const ref = useRef<MDXEditorMethods>(null)
 
     const [metadataFieldName, setMetadataFieldName] = useState('');
     const [metadataFieldValue, setMetadataFieldValue] = useState('');
-    const [extraFields, setExtraFields] = useState<StringMap>({});
+    const [extraFields, setExtraFields] = useState<PropertyMap>({});
     const [alert, setAlert] = useState('');
 
     useEffect(() => {
@@ -58,7 +57,7 @@ export const InfoPanel = () => {
             'ispublic', 'isrequest', 'sections',
             'project_status'];
         const unknownFields = Object.keys(metadata).filter((key) => !knownFields.includes(key));
-        const newExtraFields: StringMap = {};
+        const newExtraFields: PropertyMap = {};
         unknownFields.forEach((key) => {
             newExtraFields[key] = metadata[key];
         });

@@ -19,32 +19,38 @@ import AddCircleIcon from '@mui/icons-material/AddCircle';
 import { BaseFieldEditor } from "./BaseFieldEditor"
 import { useAppSelector, useAppDispatch } from "../../state/hooks";
 import { useState } from "react";
+import { FieldType, Notebook } from "../../state/initial";
 
-export const OptionsEditor = ({ fieldName }: any) => {
+export const OptionsEditor = ({ fieldName }: {fieldName: string}) => {
 
-    const field = useAppSelector(state => state['ui-specification'].fields[fieldName])
+    const field = useAppSelector((state: Notebook) => state['ui-specification'].fields[fieldName])
     const dispatch = useAppDispatch()
 
     const [newOption, setNewOption] = useState('')
     const [errorMessage, setErrorMessage] = useState('')
 
     const getOptions = () => {
-        let options = [];
+        let options;
         if (field['component-parameters'].ElementProps) {
-            options = field['component-parameters'].ElementProps.options
-            options = options.map((pair: any) => pair.label.trim())
+            options = field['component-parameters'].ElementProps.options;
+            if (options)
+               options = options.map((pair) => pair.label.trim())
         } else {
             field['component-parameters'].ElementProps = { options: [] }
         }
-        return options
+        if (options)
+            return options
+        else
+            return []
     }
 
     const options = getOptions()
 
     const updateOptions = (updatedOptions: string[]) => {
         // take a deep copy of the field
-        const newField = JSON.parse(JSON.stringify(field))
-        newField['component-parameters'].ElementProps.options = updatedOptions.map((o, index) => {
+        const newField = JSON.parse(JSON.stringify(field)) as FieldType;
+        newField['component-parameters'].ElementProps = {
+            options: updatedOptions.map((o, index) => {
             if (fieldName.includes('radio')) {
                 return {
                     RadioProps: {
@@ -61,7 +67,7 @@ export const OptionsEditor = ({ fieldName }: any) => {
                 }
             }
 
-        })
+        })};
 
         dispatch({ type: 'ui-specification/fieldUpdated', payload: { fieldName, newField } })
     }

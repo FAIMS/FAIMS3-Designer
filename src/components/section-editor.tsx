@@ -12,21 +12,27 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {Checkbox, FormControl, FormControlLabel, Grid, InputLabel, MenuItem, Select, TextField, Typography } from "@mui/material";
+import {Checkbox, FormControl, FormControlLabel, Grid, InputLabel, MenuItem, Select, TextField } from "@mui/material";
 
 import { FieldList } from "./field-list";
 import { useState } from "react";
 import { useAppSelector, useAppDispatch } from "../state/hooks";
 import { shallowEqual } from "react-redux";
+import { Notebook } from '../state/initial';
 
-export const SectionEditor = ({ viewSetId, viewId }) => {
+type Props = {
+    viewSetId: string,
+    viewId: string
+};
 
-    const fView = useAppSelector(state => state['ui-specification'].fviews[viewId]);
-    // const metadata = useAppSelector(state => state.metadata);
+export const SectionEditor = ({ viewSetId, viewId }: Props) => {
+
+    const fView = useAppSelector((state: Notebook) => state['ui-specification'].fviews[viewId]);
+    // const metadata = useAppSelector((state: Notebook) => state.metadata);
     const dispatch = useAppDispatch();
 
     // roles that can be used to access this form
-    const roles = useAppSelector(state => state.metadata.accesses, shallowEqual) as string[];
+    const roles = useAppSelector((state: Notebook) => state.metadata.accesses, shallowEqual) as string[];
 
     const [state, setState] = useState({
         inheritAccess: true,
@@ -34,7 +40,7 @@ export const SectionEditor = ({ viewSetId, viewId }) => {
         label: fView.label
     })
 
-    const updateProperty = (prop: string, value: any) => {
+    const updateProperty = (prop: string, value: (boolean | string | string[])) => {
         const newState = { ...state, [prop]: value };
         setState(newState);
     };

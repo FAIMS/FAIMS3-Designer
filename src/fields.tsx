@@ -12,8 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import {FieldType} from './state/initial';
 
-const fields = {
+const fields: {[key: string]: FieldType } = {
   'TextField': {
     'component-namespace': 'formik-material-ui',
     'component-name': 'TextField',
@@ -265,9 +266,6 @@ const fields = {
       zoom: 12,
       label: '',
       geoTiff: '',
-      FormLabelProps: {
-        children: '',
-      },
     },
     validationSchema: [['yup.string']],
     initialValue: '1',
@@ -509,5 +507,5 @@ export const getFieldNames = () => {
 
 // Return a copy of the spec for this field type
 export const getFieldSpec = (fieldType: string) => {
-  return JSON.parse(JSON.stringify(fields[fieldType]));
+  return JSON.parse(JSON.stringify(fields[fieldType])) as FieldType;
 }

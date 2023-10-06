@@ -27,16 +27,17 @@ import { RichTextEditor } from "./Fields/RichTextEditor";
 import { RelatedRecordEditor } from "./Fields/RelatedRecordEditor";
 import { BasicAutoIncrementerEditor } from "./Fields/BasicAutoIncrementer";
 import { TemplatedStringFieldEditor } from "./Fields/TemplatedStringFieldEditor";
+import { Notebook } from "../state/initial";
 
 type FieldEditorProps = {
     fieldName: string,
-    viewSetId: string,
+    viewSetId?: string,
     viewId: string
 };
 
-export const FieldEditor = ({ fieldName, viewSetId, viewId }: FieldEditorProps) => {
+export const FieldEditor = ({ fieldName, viewId }: FieldEditorProps) => {
 
-    const field = useAppSelector(state => state['ui-specification'].fields[fieldName]); 
+    const field = useAppSelector((state: Notebook) => state['ui-specification'].fields[fieldName]); 
 
     const fieldComponent = field['component-name'];
 
@@ -80,17 +81,15 @@ export const FieldEditor = ({ fieldName, viewSetId, viewId }: FieldEditorProps) 
                 (fieldComponent === 'BasicAutoIncrementer' && 
                     <BasicAutoIncrementerEditor 
                         fieldName={fieldName}
-                        viewSetId={viewSetId}
                         viewId={viewId}
                         />)
                 ||
                 (fieldComponent === 'TemplatedStringField' &&
-                    <TemplatedStringFieldEditor fieldName={fieldName} />
+                    <TemplatedStringFieldEditor fieldName={fieldName} viewId={viewId}/>
                 )
                 || 
                 <BaseFieldEditor
                     fieldName={fieldName} 
-                    children={undefined}  
                 />
                 }
             </AccordionDetails>

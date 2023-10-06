@@ -15,34 +15,106 @@
 
 export type NotebookMetadata = PropertyMap;
 
-type PropertyMap = {
+export type PropertyMap = {
     [key: string]: unknown 
 }
 
-type NotebookMetadataFixedProperties = {
-    notebook_version: string,
-    schema_version: string,
-    name: string,
-    lead_institution: string,
-    pre_description: string,
-    project_lead: string,
-    project_status: string,
-    // ---- 
-    sections: any,
-    access: any,
-    accesses: string[],
-    filenames: string[],
-    forms: any,
-    ispublic: boolean,
-    isrequest: boolean,
-    meta: any,
-}
+// type NotebookMetadataFixedProperties = {
+//     notebook_version: string,
+//     schema_version: string,
+//     name: string,
+//     lead_institution: string,
+//     pre_description: string,
+//     project_lead: string,
+//     project_status: string,
+//     // ---- 
+//     sections: any,
+//     access: any,
+//     accesses: string[],
+//     filenames: string[],
+//     forms: any,
+//     ispublic: boolean,
+//     isrequest: boolean,
+//     meta: any,
+// }
+
+export type ComponentParameters = {
+    fullWidth?: boolean,
+    name?: string,
+    id?: string,
+    helperText?: string,
+    variant?: string,
+    label?: string,
+    multiline?: boolean,
+    multiple?: boolean,
+    SelectProps?: unknown,
+    ElementProps?: { 
+        options?: {
+            value: string, 
+            label: string, 
+            RadioProps?: unknown,
+        }[],
+        optiontree?: unknown,
+    },
+    InputLabelProps?: {label: string},
+    InputProps?: {rows?: number, type?: string},
+    FormLabelProps?: {children?: string},
+    FormHelperTextProps?: {children?: string},
+    FormControlLabelProps?: {label: string},
+    initialValue?: unknown,
+    related_type?: string,
+    relation_type?: string,
+    related_type_label?: string,
+    relation_linked_vocabPair?: [string, string][],
+    required?: boolean,
+    template?: string,
+    num_digits?: number,
+    form_id?: string,
+    is_auto_pick?: boolean,
+    zoom?: number,
+    featureType?: string,
+    variant_style?: string,
+    html_tag?: string,
+    content?: string,
+    hrid?: boolean,
+    select?: boolean,
+    geoTiff?: string,
+    type?: string,
+    valuetype?: string,
+};
+
+export type ValidationSchemaElement =  (string | number)[];
+
+export type FieldType = {
+    "component-namespace": string,
+    "component-name": string,
+    "type-returned": string,
+    "component-parameters": ComponentParameters,
+    "validationSchema"?: ValidationSchemaElement[],
+    "initialValue"?: unknown,
+    "access"?: string[],
+    "meta"?: {
+        "annotation_label": string,
+        "annotation": boolean,
+        "uncertainty": {
+            "include" : boolean,
+            "label": string,
+        }
+    }
+}; 
 
 export type NotebookUISpec = {
-    fields: any,
-    fviews: any,
-    viewsets: any,
-    visible_types: string[]
+    fields: {[key: string]: FieldType},
+    fviews: {[key: string]: {
+        "fields": string[],
+        "uidesign": string,
+        "label": string
+    }},
+    viewsets: {[key: string]: {
+        "views": string[],
+        "label": string
+    }},
+    visible_types: string[],
 }
 
 export type Notebook = {

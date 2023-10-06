@@ -17,12 +17,16 @@ import { FieldEditor } from "./field-editor";
 import { useState } from "react";
 import { useAppDispatch, useAppSelector } from "../state/hooks";
 import { getFieldNames } from "../fields";
+import { Notebook } from "../state/initial";
 
+type Props = {
+    viewSetId: string,
+    viewId: string
+};
 
+export const FieldList = ({viewSetId, viewId}: Props) => {
 
-export const FieldList = ({viewSetId, viewId}) => {
-
-    const fView = useAppSelector(state => state['ui-specification'].fviews[viewId]);
+    const fView = useAppSelector((state: Notebook) => state['ui-specification'].fviews[viewId]);
     const dispatch = useAppDispatch();
 
     const [dialogOpen, setDialogOpen] = useState(false);
@@ -62,6 +66,7 @@ export const FieldList = ({viewSetId, viewId}) => {
                         <FieldEditor 
                             key={fieldName}
                             fieldName={fieldName}
+                            viewSetId={viewSetId}
                             viewId={viewId}
                         />
                         )

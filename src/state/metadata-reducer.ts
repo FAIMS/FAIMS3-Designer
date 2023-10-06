@@ -22,7 +22,7 @@ const metadataReducer = createSlice({
     name: 'metadata',
     initialState:  initialState.metadata,
     reducers: {
-        loaded: (state: NotebookMetadata, action: PayloadAction<NotebookMetadata>) => {
+        loaded: (_state: NotebookMetadata, action: PayloadAction<NotebookMetadata>) => {
             return action.payload;
         },
         propertyUpdated: (state: NotebookMetadata, action: PayloadAction<{property: string, value: string}>) => {
@@ -38,7 +38,7 @@ const metadataReducer = createSlice({
             state.accesses = roles;
         },
     }
-})
+});
 
 export const { loaded, propertyUpdated, rolesUpdated } = metadataReducer.actions;
 

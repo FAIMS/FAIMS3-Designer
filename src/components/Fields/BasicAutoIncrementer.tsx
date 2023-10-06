@@ -1,5 +1,6 @@
 import { Grid, Card, TextField } from "@mui/material";
 import { useAppDispatch, useAppSelector } from "../../state/hooks";
+import { FieldType, Notebook } from "../../state/initial";
 
 type PropType = {
     fieldName: string,
@@ -8,23 +9,21 @@ type PropType = {
 
 export const BasicAutoIncrementerEditor = ({ fieldName, viewId }: PropType) => {
 
-    const field = useAppSelector(state => state['ui-specification'].fields[fieldName]);
+    const field = useAppSelector((state: Notebook) => state['ui-specification'].fields[fieldName]);
     const dispatch = useAppDispatch();
 
     const label = field['component-parameters'].label;
     const digits = field['component-parameters'].num_digits || 4;
 
-
-
     const updateDigits = (value: number) => {
-        const newField = JSON.parse(JSON.stringify(field)); // deep copy
+        const newField = JSON.parse(JSON.stringify(field)) as FieldType; // deep copy
         // ensure that the form_id in the field is set correctly
         newField['component-parameters'].form_id = viewId;
         newField['component-parameters'].num_digits = value;
         dispatch({ type: 'ui-specification/fieldUpdated', payload: { fieldName, newField } })
     }
-    const updateLabel = (value: number) => {
-        const newField = JSON.parse(JSON.stringify(field)); // deep copy
+    const updateLabel = (value: string) => {
+        const newField = JSON.parse(JSON.stringify(field)) as FieldType; // deep copy
         // ensure that the form_id in the field is set correctly
         newField['component-parameters'].form_id = viewId;
         newField['component-parameters'].label = value;

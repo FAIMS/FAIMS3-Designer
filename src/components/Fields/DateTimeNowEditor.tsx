@@ -15,14 +15,15 @@
 import { Grid, Card, FormHelperText, FormControlLabel, Checkbox } from "@mui/material";
 import { useAppSelector, useAppDispatch } from "../../state/hooks";
 import { BaseFieldEditor } from "./BaseFieldEditor";
+import { FieldType, Notebook } from "../../state/initial";
 
-export const DateTimeNowEditor = ({ fieldName }: any) => {
+export const DateTimeNowEditor = ({ fieldName }: {fieldName: string}) => {
 
-    const field = useAppSelector(state => state['ui-specification'].fields[fieldName]);
+    const field = useAppSelector((state: Notebook) => state['ui-specification'].fields[fieldName]);
     const dispatch = useAppDispatch();
 
     const updateIsAutoPick = (value: boolean) => {
-        const newField = JSON.parse(JSON.stringify(field));
+        const newField = JSON.parse(JSON.stringify(field)) as FieldType;
         newField['component-parameters'].is_auto_pick = value;
         dispatch({ type: 'ui-specification/fieldUpdated', payload: { fieldName, newField } })
     }

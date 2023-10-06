@@ -2,10 +2,11 @@ import { Alert } from "@mui/material";
 import { useAppSelector } from "../state/hooks";
 import { JsonView, collapseAllNested, defaultStyles } from 'react-json-view-lite';
 import 'react-json-view-lite/dist/index.css';
+import { Notebook } from '../state/initial';
 
 export const ReviewPanel = () => {
 
-    const state = useAppSelector((state) => state);
+    const state = useAppSelector((state: Notebook) => state);
 
     return (
         <div>

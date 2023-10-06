@@ -19,11 +19,17 @@ import AddCircleIcon from '@mui/icons-material/AddCircle';
 import { useState } from "react";
 import { useAppSelector, useAppDispatch } from "../../state/hooks";
 import { BaseFieldEditor } from "./BaseFieldEditor";
+import { FieldType, Notebook } from "../../state/initial";
 
-export const RelatedRecordEditor = ({ fieldName }: any) => {
+type PairList = [string, string][];
+type Props = {
+    fieldName: string,
+};
 
-    const field = useAppSelector(state => state['ui-specification'].fields[fieldName]);
-    const viewsets = useAppSelector(state => state['ui-specification'].viewsets);
+export const RelatedRecordEditor = ({ fieldName }: Props) => {
+
+    const field = useAppSelector((state: Notebook) => state['ui-specification'].fields[fieldName]);
+    const viewsets = useAppSelector((state: Notebook) => state['ui-specification'].viewsets);
     const dispatch = useAppDispatch();
 
     const [newOption1, setNewOption1] = useState('')
@@ -31,12 +37,12 @@ export const RelatedRecordEditor = ({ fieldName }: any) => {
     const [errorMessage, setErrorMessage] = useState('')
 
     // returns array of key-value pairs (entries) with format: [[string, {}]]
-    const arrOfEntries: [string, any][] = Object.entries(viewsets);
+    const arrOfEntries = Object.entries(viewsets);
 
     const getPairs = () => {
-        let pairs = [];
+        let pairs: PairList = [];
         if (field['component-parameters'].relation_linked_vocabPair) {
-            pairs = field['component-parameters'].relation_linked_vocabPair
+            pairs = field['component-parameters'].relation_linked_vocabPair;
         }
         return pairs;
     }
@@ -45,11 +51,11 @@ export const RelatedRecordEditor = ({ fieldName }: any) => {
 
     // initial value of each property
     const state = {
-        multiple: field['component-parameters'].multiple || false,
-        relatedType: field['component-parameters'].related_type || '',
-        relatedTypeLabel: field['component-parameters'].related_type_label || '',
-        relationType: field['component-parameters'].relation_type || '',
-        relationLinkedPair: field['component-parameters'].relation_linked_vocabPair || []
+        multiple: field['component-parameters'].multiple as boolean || false,
+        relatedType: field['component-parameters'].related_type as string || '',
+        relatedTypeLabel: field['component-parameters'].related_type_label as string || '',
+        relationType: field['component-parameters'].relation_type as string || '',
+        relationLinkedPair: field['component-parameters'].relation_linked_vocabPair as PairList|| []
     }
 
     type newState = {
@@ -57,15 +63,15 @@ export const RelatedRecordEditor = ({ fieldName }: any) => {
         relatedType: string,
         relatedTypeLabel: string,
         relationType: string,
-        relationLinkedPair: string[][],
+        relationLinkedPair: PairList,
     }
 
-    const updateField = (fieldName: string, newField: any) => {
+    const updateField = (fieldName: string, newField: FieldType) => {
         dispatch({ type: 'ui-specification/fieldUpdated', payload: { fieldName, newField } })
     }
 
     const updateFieldFromState = (newState: newState) => {
-        const newField = JSON.parse(JSON.stringify(field)); // deep copy
+        const newField = JSON.parse(JSON.stringify(field)) as FieldType; // deep copy
 
         newField['component-parameters'].multiple = newState.multiple;
         newField['component-parameters'].related_type = newState.relatedType;
@@ -76,13 +82,12 @@ export const RelatedRecordEditor = ({ fieldName }: any) => {
         updateField(fieldName, newField);
     }
 
-    const updateProperty = (prop: string, value: string | boolean | string[]) => {
+    const updateProperty = (prop: string, value: string | boolean | string[] | PairList) => {
         if (prop === 'relatedType') {
             arrOfEntries.forEach((key) => {
-                if (key.indexOf(value) === 0) {
+                if (key.indexOf(value as string) === 0) {
                     // update the related_type prop along with the related_type_label prop
-                    // TO DO: fix type error on [prop] (I don't understand TypeScript's issue)
-                    const newState: newState = { ...state, [prop]: value, relatedTypeLabel: key[1].label }
+                    const newState: newState = { ...state, relatedType: value as string, relatedTypeLabel: key[1].label }
                     updateFieldFromState(newState);
                 }
             })
@@ -98,17 +103,16 @@ export const RelatedRecordEditor = ({ fieldName }: any) => {
         const empty = () => {
             if (newOption1.trim().length == 0 || newOption2.trim().length == 0) {
                 return true;
-            }
-            else return false;
+            } else 
+                return false;
         }
 
-        // TO DO: duplicates check, both between other subarrays and within own pair 
+        // TO DO: duplicates check, both between other sub-arrays and within own pair 
 
         if (empty()) {
             setErrorMessage('Cannot add an empty option!')
-        }
-        else {
-            const newPairs = [...pairs, [newOption1, newOption2]]
+        } else {
+            const newPairs: PairList = [...pairs, [newOption1, newOption2]]
             updateProperty('relationLinkedPair', newPairs)
             setErrorMessage('')
         }
@@ -118,13 +122,13 @@ export const RelatedRecordEditor = ({ fieldName }: any) => {
 
     const removePair = (pair: string[]) => {
         // inspired by https://stackoverflow.com/questions/62629289/remove-subarray-from-array-in-javascript
-        let i = pairs.length
-        while (i--) {
-            if (pairs[i].length === pair.length && pair.every((item, j) => item === pairs[i][j])) {
-                const newPairs = pairs.toSpliced(i, 1);
-                updateProperty('relationLinkedPair', newPairs)
+        const newPairs = [];
+        for (let i = 0; i < pairs.length; i++) {
+            if (pairs[i].length !== pair.length || !pair.every((item, j) => item === pairs[i][j])) {
+                newPairs.push(pairs[i]);
             }
         }
+        updateProperty('relationLinkedPair', newPairs)
     }
 
     return (

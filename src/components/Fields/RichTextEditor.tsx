@@ -36,17 +36,18 @@ import { ListsToggle } from '@mdxeditor/editor/plugins/toolbar/components/ListsT
 import { InsertTable } from '@mdxeditor/editor/plugins/toolbar/components/InsertTable';
 import { Separator } from '@mdxeditor/editor';
 import { toolbarPlugin } from '@mdxeditor/editor/plugins/toolbar';
+import { FieldType, Notebook } from "../../state/initial";
 
 
-export const RichTextEditor = ({ fieldName }: any) => {
+export const RichTextEditor = ({ fieldName }: {fieldName: string}) => {
 
-    const field = useAppSelector(state => state['ui-specification'].fields[fieldName]);
+    const field = useAppSelector((state: Notebook) => state['ui-specification'].fields[fieldName]);
     const dispatch = useAppDispatch();
 
-    const initContent: string = field['component-parameters'].content;
-    const ref = useRef<MDXEditorMethods>(null)
+    const initContent = field['component-parameters'].content || "";
+    const ref = useRef<MDXEditorMethods>(null);
 
-    const updateField = (fieldName: string, newField: any) => {
+    const updateField = (fieldName: string, newField: FieldType) => {
         dispatch({ type: 'ui-specification/fieldUpdated', payload: { fieldName, newField } })
     }
 
@@ -59,7 +60,7 @@ export const RichTextEditor = ({ fieldName }: any) => {
     }
 
     const updateFieldFromState = (newState: newState) => {
-        const newField = JSON.parse(JSON.stringify(field)); // deep copy
+        const newField = JSON.parse(JSON.stringify(field)) as FieldType; // deep copy
         newField['component-parameters'].content = newState.content;
         updateField(fieldName, newField);
     };

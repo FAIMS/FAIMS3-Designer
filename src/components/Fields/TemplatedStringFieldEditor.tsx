@@ -1,36 +1,37 @@
 import { Grid, Card, TextField, FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import { useAppDispatch, useAppSelector } from "../../state/hooks";
-import { useRef } from "react";
+import { MutableRefObject, useRef } from "react";
+import { ComponentParameters, FieldType, Notebook } from "../../state/initial";
 
 type PropType = {
     fieldName: string,
     viewId: string
 };
 
-export const TemplatedStringFieldEditor = ({ fieldName, viewId }: PropType) => {
+export const TemplatedStringFieldEditor = ({ fieldName }: PropType) => {
 
-    const field = useAppSelector(state => state['ui-specification'].fields[fieldName]);
-    const allFields = useAppSelector(state => state['ui-specification'].fields);
+    const field = useAppSelector((state: Notebook) => state['ui-specification'].fields[fieldName]);
+    const allFields = useAppSelector((state: Notebook) => state['ui-specification'].fields);
     const dispatch = useAppDispatch();
-    const textAreaRef = useRef(null);
+    const textAreaRef = useRef(null) as MutableRefObject<unknown>;
 
     const state = field['component-parameters']
 
-    const getFieldLabel = (f) => {
+    const getFieldLabel = (f: FieldType) => {
         return (f['component-parameters'] && f['component-parameters'].label) ||
             (f['component-parameters'].InputLabelProps && f['component-parameters'].InputLabelProps.label) ||
             f['component-parameters'].name;
     }
 
-    const updateFieldFromState = (newState: newState) => {
-        const newField = JSON.parse(JSON.stringify(field)); // deep copy
+    const updateFieldFromState = (newState: ComponentParameters) => {
+        const newField = JSON.parse(JSON.stringify(field)) as FieldType; // deep copy
         newField['component-parameters'].label = newState.label;
         newField['component-parameters'].helperText = newState.helperText;
         newField['component-parameters'].template = newState.template;
         dispatch({ type: 'ui-specification/fieldUpdated', payload: { fieldName, newField } })
     };
 
-    const updateProperty = (prop: string, value: any) => {
+    const updateProperty = (prop: string, value: string) => {
         const newState = { ...state, [prop]: value };
         updateFieldFromState(newState);
     };
@@ -86,7 +87,7 @@ export const TemplatedStringFieldEditor = ({ fieldName, viewId }: PropType) => {
                         <Grid item sm={6} xs={12} sx={{ mx: 1.5, my: 2 }}>
                             <TextField
                                 name="template"
-                                inputRef={(ref) => textAreaRef.current = ref}
+                                inputRef={(ref: MutableRefObject<HTMLElement>) => textAreaRef.current = ref}
                                 variant="outlined"
                                 fullWidth
                                 multiline
@@ -105,6 +106,7 @@ export const TemplatedStringFieldEditor = ({ fieldName, viewId }: PropType) => {
                                     labelId="featureType-label"
                                     label="Insert Field Identifier"
                                     onChange={(e) => insertFieldId(e.target.value)}
+                                    value={''}
                                 >
                                     {Object.keys(allFields).map((fieldId) => {
                                         return (
