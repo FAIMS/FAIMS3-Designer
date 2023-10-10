@@ -107,7 +107,15 @@ export const uiSpecificationReducer = createSlice({
                       "label": "uncertainty"
                     }
                 };
-                newField['component-parameters'].name = fieldName;
+                // try to set the field label
+                if (newField['component-parameters'] && newField['component-parameters'].label) {
+                    newField['component-parameters'].label = fieldName;
+                } else if (newField['component-parameters'].InputLabelProps  && 
+                           newField['component-parameters'].InputLabelProps.label) {
+                    newField['component-parameters'].InputLabelProps.label = fieldName;
+                }
+
+                // generate a unique field name
                 let fieldLabel = slugify(fieldName);
                 let N = 1;
                 while(fieldLabel in state.fields) { 
@@ -115,6 +123,7 @@ export const uiSpecificationReducer = createSlice({
                     N += 1;
                 }
                 console.log('adding field', fieldLabel, 'to', viewId, 'as', newField);
+                newField['component-parameters'].name = fieldLabel;
                 // add to fields and to the fview section
                 state.fields[fieldLabel] = newField;
                 state.fviews[viewId].fields.push(fieldLabel);
