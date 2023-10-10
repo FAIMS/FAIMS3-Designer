@@ -41,8 +41,9 @@ export const FormEditor = ({ viewSetId }: {viewSetId: string}) => {
     const addNewSection = () => {
         try {
             dispatch({type: 'ui-specification/formSectionAdded', payload: {viewSetId: viewSetId, sectionLabel: newSectionName}});
-        } catch (error) {
-            setAlertMessage(error.message);
+        } catch (error: unknown) {
+            error instanceof Error &&
+                setAlertMessage(error.message);
         }
     }
 

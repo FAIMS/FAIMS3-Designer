@@ -12,12 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {Checkbox, FormControl, FormControlLabel, Grid, InputLabel, MenuItem, Select, TextField } from "@mui/material";
+import {Grid, TextField } from "@mui/material";
 
 import { FieldList } from "./field-list";
-import { useState } from "react";
-import { useAppSelector, useAppDispatch } from "../state/hooks";
-import { shallowEqual } from "react-redux";
+import { useAppSelector, useAppDispatch } from "../state/hooks"; 
 import { Notebook } from '../state/initial';
 
 type Props = {
@@ -28,19 +26,7 @@ type Props = {
 export const SectionEditor = ({ viewSetId, viewId }: Props) => {
 
     const fView = useAppSelector((state: Notebook) => state['ui-specification'].fviews[viewId]);
-    // const metadata = useAppSelector((state: Notebook) => state.metadata);
     const dispatch = useAppDispatch();
-
-    const [state, setState] = useState({
-        inheritAccess: true,
-        access: ['admin'],
-        label: fView.label
-    })
-
-    const updateProperty = (prop: string, value: (boolean | string | string[])) => {
-        const newState = { ...state, [prop]: value };
-        setState(newState);
-    };
 
     const updateSectionLabel = (label: string) => {
         dispatch({type: 'ui-specification/sectionNameUpdated', payload: {viewId, label}});

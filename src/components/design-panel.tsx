@@ -28,7 +28,7 @@ export const DesignPanel = () => {
 
     const [tabIndex, setTabIndex] = useState('0');
     const [newFormName, setNewFormName] = useState('New Form');
-    const [alertMessage, setAlertMessage] = useState('');
+    const [alertMessage, setAlertMessage] = useState<string>('');
 
     const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
         setTabIndex(newValue.toString());
@@ -37,8 +37,9 @@ export const DesignPanel = () => {
     const addNewForm = () => {
         try {
             dispatch({type: 'ui-specification/viewSetAdded', payload: {formName: newFormName}})
-        } catch (error) {
-            setAlertMessage(error.message);
+        } catch (error: unknown) {
+            error instanceof Error &&
+                setAlertMessage(error.message);
         }
     }
 
