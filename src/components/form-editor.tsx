@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { Grid, Paper, Alert, FormControlLabel, Checkbox, FormControl, InputLabel, Select, MenuItem, Stepper, Typography, Step, Button, StepButton } from "@mui/material";
+import { Grid, Paper, Alert, Stepper, Typography, Step, Button, StepButton } from "@mui/material";
 import { useAppSelector } from "../state/hooks";
 import { SectionEditor } from "./section-editor";
 import { useState } from "react";
