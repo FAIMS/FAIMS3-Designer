@@ -82,7 +82,6 @@ export const NotebookEditor = ({ notebook }: { notebook: Notebook }) => {
                             <TabList onChange={handleChange} aria-label="lab API tabs example">
                                 <Tab label="Start" value="0" />
                                 <Tab label="Info" value="1" />
-                                <Tab label="Roles" value="2" />
                                 <Tab label="Design" value="3" />
                                 <Tab label="Review" value="4" />
                                 <Tab label="Submit" value="5" />
@@ -91,7 +90,6 @@ export const NotebookEditor = ({ notebook }: { notebook: Notebook }) => {
                         
                         <TabPanel value="0">Placeholder for notebook loading.</TabPanel>
                         <TabPanel value="1"><InfoPanel /></TabPanel>
-                        <TabPanel value="2"><RolesPanel /></TabPanel>
                         <TabPanel value="3"><DesignPanel /></TabPanel>
                         <TabPanel value="4"><ReviewPanel /></TabPanel>
                         <TabPanel value="5">Submit</TabPanel>

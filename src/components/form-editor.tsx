@@ -59,41 +59,6 @@ export const FormEditor = ({ viewSetId }: {viewSetId: string}) => {
             <Grid item xs={12}>
                 <Paper elevation={3}>
 
-                    <Alert severity="info">Configure who can access this form.</Alert>
-
-                    <Grid container spacing={2}>
-                        <Grid item sm={6}>
-                            <FormControlLabel
-                                required
-                                sx={{ pl: 1.5 }}
-                                control={<Checkbox
-                                    checked={state.inheritAccess}
-                                    onChange={(e) => updateProperty('inheritAccess', e.target.checked)}
-                                />}
-                                label="Inherit Access from Notebook" />
-                        </Grid>
-
-                        {!state.inheritAccess &&
-                            (
-                                <Grid item sm={6}>
-                                    <FormControl fullWidth>
-                                        <InputLabel id="demo-simple-select-label">Roles with access</InputLabel>
-                                        <Select
-                                            name="access"
-                                            multiple
-                                            label="Roles with access"
-                                            value={state.access}
-                                            onChange={(e) => updateProperty('access', e.target.value)}
-                                        >
-                                            <MenuItem value="admin">Admin</MenuItem>
-                                            <MenuItem value="team">Team</MenuItem>
-                                        </Select>
-                                    </FormControl>
-                                </Grid>
-                            )
-                        }
-                    </Grid>
-
                     <Alert severity="info">Configure annotation and uncertainty options
                         for all fields in this form.</Alert>
                     <Grid container spacing={2}>
