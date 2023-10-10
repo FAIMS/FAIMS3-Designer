@@ -13,12 +13,11 @@
 // limitations under the License.
 
 import { TabContext, TabList, TabPanel } from "@mui/lab";
-import { Box, Button, Grid, Tab, Typography, AppBar, Toolbar, IconButton } from "@mui/material";
+import { Box, Button, Tab, Typography, AppBar, Toolbar, IconButton } from "@mui/material";
 import MenuIcon from '@mui/icons-material/Menu';
 
 import { useEffect, useState } from "react";
 import { InfoPanel } from "./info-panel";
-import { RolesPanel } from "./roles-panel";
 import { DesignPanel } from "./design-panel";
 import { ReviewPanel } from './review-panel';
 import { useAppDispatch } from '../state/hooks';
@@ -35,18 +34,8 @@ export const NotebookEditor = ({ notebook }: { notebook: Notebook }) => {
 
     const [tabNumber, setTabNumber] = useState(0);
 
-    const maxTabs = 5;
-
     const handleChange = (_event: React.SyntheticEvent, newValue: number) => {
         setTabNumber(newValue);
-    };
-
-    const nextTab = () => {
-        tabNumber < maxTabs ? setTabNumber(tabNumber + 1) : setTabNumber(maxTabs);
-    };
-
-    const previousTab = () => {
-        tabNumber > 1 ? setTabNumber((tabNumber - 1)) : setTabNumber(1);
     };
 
     return (
@@ -93,25 +82,6 @@ export const NotebookEditor = ({ notebook }: { notebook: Notebook }) => {
                         <TabPanel value="3"><DesignPanel /></TabPanel>
                         <TabPanel value="4"><ReviewPanel /></TabPanel>
                         <TabPanel value="5">Submit</TabPanel>
-
-                        <Grid
-                            container
-                            spacing={2}
-                            justifyContent="space-between"
-                        >
-                            <Grid item>
-                                {tabNumber > 1 ?
-                                    <Button variant="contained" color="primary" onClick={previousTab} >&lt; Previous</Button>
-                                    : <div>&nbsp;</div>
-                                }
-                            </Grid>
-                            <Grid item>
-                                {tabNumber < maxTabs ?
-                                    <Button variant="contained" color="primary" onClick={nextTab} >Next &gt;</Button>
-                                    : <div>&nbsp;</div>
-                                }
-                            </Grid>
-                        </Grid>
 
                     </TabContext>
                 </Box>
