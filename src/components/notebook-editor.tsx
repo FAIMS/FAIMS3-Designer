@@ -16,23 +16,32 @@ import { TabContext, TabList, TabPanel } from "@mui/lab";
 import { Box, Button, Tab, Typography, AppBar, Toolbar, IconButton } from "@mui/material";
 import MenuIcon from '@mui/icons-material/Menu';
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { InfoPanel } from "./info-panel";
 import { DesignPanel } from "./design-panel";
 import { ReviewPanel } from './review-panel';
 import { useAppDispatch } from '../state/hooks';
 import { Notebook } from '../state/initial';
+import { NotebookLoader } from "./notebook-loader";
 
 export const NotebookEditor = ({ notebook }: { notebook: Notebook }) => {
 
     const dispatch = useAppDispatch();
 
-    useEffect(() => {
+    const loadNotebook = useCallback((notebook: Notebook) => {
         dispatch({ type: 'metadata/loaded', payload: notebook.metadata })
         dispatch({ type: 'ui-specification/loaded', payload: notebook['ui-specification'] })
-    }, [notebook, dispatch]);
+    }, [dispatch]);
+
+    useEffect(() => {
+        loadNotebook(notebook);
+    }, [notebook, loadNotebook]);
 
     const [tabNumber, setTabNumber] = useState(0);
+
+    const goToFirstTab = () => {
+        setTabNumber(1);
+    }
 
     const handleChange = (_event: React.SyntheticEvent, newValue: number) => {
         setTabNumber(newValue);
@@ -77,7 +86,7 @@ export const NotebookEditor = ({ notebook }: { notebook: Notebook }) => {
                             </TabList>
                         </Box>
                         
-                        <TabPanel value="0">Placeholder for notebook loading.</TabPanel>
+                        <TabPanel value="0"><NotebookLoader loadFn={loadNotebook} afterLoad={goToFirstTab} /></TabPanel>
                         <TabPanel value="1"><InfoPanel /></TabPanel>
                         <TabPanel value="3"><DesignPanel /></TabPanel>
                         <TabPanel value="4"><ReviewPanel /></TabPanel>

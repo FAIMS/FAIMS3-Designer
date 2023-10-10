@@ -17,26 +17,7 @@ export type NotebookMetadata = PropertyMap;
 
 export type PropertyMap = {
     [key: string]: unknown 
-}
-
-// type NotebookMetadataFixedProperties = {
-//     notebook_version: string,
-//     schema_version: string,
-//     name: string,
-//     lead_institution: string,
-//     pre_description: string,
-//     project_lead: string,
-//     project_status: string,
-//     // ---- 
-//     sections: any,
-//     access: any,
-//     accesses: string[],
-//     filenames: string[],
-//     forms: any,
-//     ispublic: boolean,
-//     isrequest: boolean,
-//     meta: any,
-// }
+};
 
 export type ComponentParameters = {
     fullWidth?: boolean,
