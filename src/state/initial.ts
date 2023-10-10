@@ -107,7 +107,7 @@ export type NotebookUISpec = {
     fields: {[key: string]: FieldType},
     fviews: {[key: string]: {
         "fields": string[],
-        "uidesign": string,
+        "uidesign"?: string,
         "label": string
     }},
     viewsets: {[key: string]: {

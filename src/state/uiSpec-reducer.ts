@@ -24,7 +24,7 @@ import { getFieldSpec } from "../fields";
  * @returns url safe version of the string
  * https://ourcodeworld.com/articles/read/255/creating-url-slugs-properly-in-javascript-including-transliteration-for-utf-8
  */
-const slugify = (str: string) => {
+export const slugify = (str: string) => {
     str = str.trim();
     str = str.toLowerCase();
   
@@ -119,7 +119,37 @@ export const uiSpecificationReducer = createSlice({
                 state.fields[fieldLabel] = newField;
                 state.fviews[viewId].fields.push(fieldLabel);
             }
-        }
+        },
+        viewSetAdded: (state: NotebookUISpec,
+                       action: PayloadAction<{formName: string}>) => {
+                            const {formName} = action.payload;
+                            const newViewSet = {
+                                label: formName,
+                                views: []
+                            };
+                            const formID = slugify(formName);
+                            // add this to the viewsets
+                            if (formID in state.viewsets) {
+                                throw new Error(`Form ${formID} already exists in notebook`);
+                            } else {
+                                state.viewsets[formID] = newViewSet;
+                            }
+                       },
+        formSectionAdded: (state: NotebookUISpec,
+            action: PayloadAction<{viewSetId: string, sectionLabel: string}>) => {
+                const {viewSetId, sectionLabel} = action.payload;
+                const sectionId = viewSetId + '-' + slugify(sectionLabel);
+                const newSection = {
+                    label: sectionLabel,
+                    fields: []
+                };
+                if (sectionId in state.fviews) {
+                    throw new Error(`Section ${sectionLabel} already exists in this form.`);
+                } else {
+                    state.fviews[sectionId] = newSection;
+                    state.viewsets[viewSetId].views.push(sectionId);
+                }
+            }
     }
 })
 

@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { Alert, Box, Tab, Tabs } from "@mui/material";
+import { Alert, Box, Button, Grid, Tab, Tabs, TextField } from "@mui/material";
 import AddIcon from '@mui/icons-material/Add';
 import { TabContext, TabPanel } from "@mui/lab";
 import { useState } from "react";
-import { useAppSelector } from "../state/hooks";
+import { useAppDispatch, useAppSelector } from "../state/hooks";
 import { FormEditor } from "./form-editor";
 import { shallowEqual } from "react-redux";
 import { Notebook } from "../state/initial";
@@ -24,12 +24,23 @@ import { Notebook } from "../state/initial";
 export const DesignPanel = () => {
 
     const viewSets = useAppSelector((state: Notebook) => state['ui-specification'].viewsets, shallowEqual);
+    const dispatch = useAppDispatch();
 
     const [tabIndex, setTabIndex] = useState('0');
+    const [newFormName, setNewFormName] = useState('New Form');
+    const [alertMessage, setAlertMessage] = useState('');
 
     const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
         setTabIndex(newValue.toString());
     };
+
+    const addNewForm = () => {
+        try {
+            dispatch({type: 'ui-specification/viewSetAdded', payload: {formName: newFormName}})
+        } catch (error) {
+            setAlertMessage(error.message);
+        }
+    }
 
     const maxKeys = Object.keys(viewSets).length;
     console.log('DesignPanel');
@@ -64,7 +75,32 @@ export const DesignPanel = () => {
                 )
         })}
         <TabPanel key={maxKeys} value={maxKeys.toString()}>
-            <h4>Adding a new section</h4>
+            <Grid container spacing={2} pt={3}>
+                <Grid item xs={12} sm={6}>
+                    <TextField
+                        fullWidth
+                        required
+                        label="Form Name"
+                        helperText="Enter a name for the form"
+                        name="formName"
+                        data-testid="formName"
+                        value={newFormName}
+                        onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                            setNewFormName(event.target.value);
+                        }}
+                    />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                    <Button variant="contained" color="primary" onClick={addNewForm}>
+                        Add New Form
+                    </Button>
+                </Grid>
+                <Grid item xs={12}>
+                    {alertMessage && <Alert severity="error">{alertMessage}</Alert>}
+                </Grid>
+            </Grid>
+
+
         </TabPanel>
         </TabContext>
     )

@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { Grid, Paper, Alert, Stepper, Typography, Step, Button, StepButton } from "@mui/material";
-import { useAppSelector } from "../state/hooks";
+import { Grid, Paper, Alert, Stepper, Typography, Step, Button, StepButton, TextField } from "@mui/material";
+import { useAppDispatch, useAppSelector } from "../state/hooks";
 import { SectionEditor } from "./section-editor";
 import { useState } from "react";
 import { shallowEqual } from "react-redux";
@@ -26,22 +26,29 @@ export const FormEditor = ({ viewSetId }: {viewSetId: string}) => {
             return shallowEqual(left, right);
         });
     const views = useAppSelector((state: Notebook) => state['ui-specification'].fviews);
+    const dispatch = useAppDispatch();
 
     console.log('FormEditor', viewSetId);
 
     const [activeStep, setActiveStep] = useState(0);
-
-    const handleReset = () => {
-        setActiveStep(0);
-    };
+    const [newSectionName, setNewSectionName] = useState('New Section');
+    const [alertMessage, setAlertMessage] = useState('');
 
     const handleStep = (step: number) => () => {
         setActiveStep(step);
     };
 
+    const addNewSection = () => {
+        try {
+            dispatch({type: 'ui-specification/formSectionAdded', payload: {viewSetId: viewSetId, sectionLabel: newSectionName}});
+        } catch (error) {
+            setAlertMessage(error.message);
+        }
+    }
+
     return (
         <Grid container spacing={2}>
-
+  
             <Grid item xs={12}>
                 <Grid container spacing={2}>
                     <Grid item xs={12}>
@@ -58,16 +65,40 @@ export const FormEditor = ({ viewSetId }: {viewSetId: string}) => {
                     <Grid item xs={12}>
                         {activeStep === viewSet.views.length ? (
                             <Paper square elevation={0} sx={{ p: 3 }}>
-                                <Alert severity="success">All steps completed - you're finished.</Alert>
-                                <Button onClick={handleReset} sx={{ mt: 1, mr: 1 }}>
-                                    Go back to the beginning
-                                </Button>
+                                <Typography>Form has been created. No fields added yet.</Typography> 
                             </Paper>
                         ) :
                             (
                                 <SectionEditor viewId={viewSet.views[activeStep]} viewSetId={viewSetId} />
                             )
                         }
+                    </Grid>
+                </Grid>
+            </Grid>
+
+            <Grid item xs={12}>
+                <Grid container spacing={2} pt={3}>
+                    <Grid item xs={12} sm={6}>
+                        <TextField
+                            fullWidth
+                            required
+                            label="Section Name"
+                            helperText="Enter a name for the form section"
+                            name="sectionName"
+                            data-testid="sectionName"
+                            value={newSectionName}
+                            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                                setNewSectionName(event.target.value);
+                            }}
+                        />
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                        <Button variant="contained" color="primary" onClick={addNewSection}>
+                            Add New Section
+                        </Button>
+                    </Grid>
+                    <Grid item xs={12}>
+                        {alertMessage && <Alert severity="error">{alertMessage}</Alert>}
                     </Grid>
                 </Grid>
             </Grid>

@@ -31,9 +31,6 @@ export const SectionEditor = ({ viewSetId, viewId }: Props) => {
     // const metadata = useAppSelector((state: Notebook) => state.metadata);
     const dispatch = useAppDispatch();
 
-    // roles that can be used to access this form
-    const roles = useAppSelector((state: Notebook) => state.metadata.accesses, shallowEqual) as string[];
-
     const [state, setState] = useState({
         inheritAccess: true,
         access: ['admin'],
@@ -58,8 +55,8 @@ export const SectionEditor = ({ viewSetId, viewId }: Props) => {
                     <TextField
                         fullWidth
                         required
-                        label="Page Name"
-                        helperText="Name for this page of the form."
+                        label="Section Name"
+                        helperText="Name for this section of the form."
                         name="label"
                         data-testid="label"
                         value={fView.label}
@@ -68,37 +65,6 @@ export const SectionEditor = ({ viewSetId, viewId }: Props) => {
                         }}
                     />
                 </Grid>
-
-                <Grid item sm={6}>
-                    <FormControlLabel required
-                        control={<Checkbox
-                            checked={state.inheritAccess}
-                            onChange={(e) => updateProperty('inheritAccess', e.target.checked)}
-                        />} label="Inherit Access from Form" />
-                </Grid>
-
-                {!state.inheritAccess &&
-                    (
-                        <Grid item sm={6}>
-                            <FormControl fullWidth>
-                                <InputLabel id="demo-simple-select-label">Roles with access</InputLabel>
-                                <Select
-                                    name="access"
-                                    multiple
-                                    label="Roles with access"
-                                    value={state.access}
-                                    onChange={(e) => updateProperty('access', e.target.value)}
-                                >
-                                    {roles.map((role: string, index: number) => {
-                                        return (
-                                            <MenuItem key={index} value={role}>{role}</MenuItem>
-                                        )
-                                    })}
-                                </Select>
-                            </FormControl>
-                        </Grid>
-                    )
-                }
             </Grid>
 
 
