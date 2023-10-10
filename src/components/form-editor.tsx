@@ -25,21 +25,7 @@ export const FormEditor = ({ viewSetId }: {viewSetId: string}) => {
         (left, right) => {
             return shallowEqual(left, right);
         });
-    // const metadata = useAppSelector((state: Notebook) => state.metadata);
-    //const dispatch = useAppDispatch();
     const views = useAppSelector((state: Notebook) => state['ui-specification'].fviews);
-
-    const [state, setState] = useState({
-        inheritAccess: true,
-        access: ['admin'],
-        annotation: true,
-        uncertainty: true
-    })
-
-    const updateProperty = (prop: string, value: (boolean | string | string[])) => {
-        const newState = { ...state, [prop]: value };
-        setState(newState);
-    };
 
     console.log('FormEditor', viewSetId);
 
@@ -55,35 +41,6 @@ export const FormEditor = ({ viewSetId }: {viewSetId: string}) => {
 
     return (
         <Grid container spacing={2}>
-
-            <Grid item xs={12}>
-                <Paper elevation={3}>
-
-                    <Alert severity="info">Configure annotation and uncertainty options
-                        for all fields in this form.</Alert>
-                    <Grid container spacing={2}>
-
-                        <Grid item sm={6}>
-                            <FormControlLabel
-                                required
-                                sx={{ pl: 1.5 }}
-                                control={<Checkbox
-                                    checked={state.annotation}
-                                    onChange={(e) => updateProperty('annotation', e.target.checked)}
-                                />}
-                                label="Enable Annotation" />
-                        </Grid>
-
-                        <Grid item sm={6}>
-                            <FormControlLabel required
-                                control={<Checkbox
-                                    checked={state.uncertainty}
-                                    onChange={(e) => updateProperty('uncertainty', e.target.checked)}
-                                />} label="Enable Uncertainty" />
-                        </Grid>
-                    </Grid>
-                </Paper>
-            </Grid>
 
             <Grid item xs={12}>
                 <Grid container spacing={2}>
