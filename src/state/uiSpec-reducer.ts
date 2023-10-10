@@ -133,6 +133,7 @@ export const uiSpecificationReducer = createSlice({
                                 throw new Error(`Form ${formID} already exists in notebook`);
                             } else {
                                 state.viewsets[formID] = newViewSet;
+                                state.visible_types.push(formID);
                             }
                        },
         formSectionAdded: (state: NotebookUISpec,
