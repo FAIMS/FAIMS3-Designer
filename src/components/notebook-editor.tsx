@@ -81,8 +81,7 @@ export const NotebookEditor = ({ notebook }: { notebook: Notebook }) => {
                                 <Tab label="Start" value="0" />
                                 <Tab label="Info" value="1" />
                                 <Tab label="Design" value="3" />
-                                <Tab label="Review" value="4" />
-                                <Tab label="Submit" value="5" />
+                                <Tab label="Export" value="4" />
                             </TabList>
                         </Box>
                         
@@ -90,7 +89,6 @@ export const NotebookEditor = ({ notebook }: { notebook: Notebook }) => {
                         <TabPanel value="1"><InfoPanel /></TabPanel>
                         <TabPanel value="3"><DesignPanel /></TabPanel>
                         <TabPanel value="4"><ReviewPanel /></TabPanel>
-                        <TabPanel value="5">Submit</TabPanel>
 
                     </TabContext>
                 </Box>
