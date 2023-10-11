@@ -11,7 +11,7 @@ export const ReviewPanel = () => {
         const element = document.createElement("a");
         const file = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
         element.href = URL.createObjectURL(file);
-        const name = slugify(state.metadata.name);
+        const name = slugify(state.metadata.name as string);
         element.download = `${name}.json`;
         document.body.appendChild(element);
         element.click();
