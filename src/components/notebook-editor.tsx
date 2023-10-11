@@ -16,7 +16,7 @@ import { TabContext, TabList, TabPanel } from "@mui/lab";
 import { Box, Button, Tab, Typography, AppBar, Toolbar, IconButton } from "@mui/material";
 import MenuIcon from '@mui/icons-material/Menu';
 
-import { useEffect, useState, useCallback } from "react";
+import { useState, useCallback } from "react";
 import { InfoPanel } from "./info-panel";
 import { DesignPanel } from "./design-panel";
 import { ReviewPanel } from './review-panel';
@@ -24,7 +24,7 @@ import { useAppDispatch } from '../state/hooks';
 import { Notebook } from '../state/initial';
 import { NotebookLoader } from "./notebook-loader";
 
-export const NotebookEditor = ({ notebook }: { notebook: Notebook }) => {
+export const NotebookEditor = () => {
 
     const dispatch = useAppDispatch();
 
@@ -32,10 +32,6 @@ export const NotebookEditor = ({ notebook }: { notebook: Notebook }) => {
         dispatch({ type: 'metadata/loaded', payload: notebook.metadata })
         dispatch({ type: 'ui-specification/loaded', payload: notebook['ui-specification'] })
     }, [dispatch]);
-
-    useEffect(() => {
-        loadNotebook(notebook);
-    }, [notebook, loadNotebook]);
 
     const [tabNumber, setTabNumber] = useState(0);
 
