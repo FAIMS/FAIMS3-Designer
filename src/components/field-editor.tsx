@@ -12,9 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { Accordion, AccordionSummary, AccordionDetails, Typography } from "@mui/material";
+import { Accordion, AccordionSummary, AccordionDetails, Typography, IconButton, Tooltip } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import { useAppSelector } from "../state/hooks";
+import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import { useAppDispatch, useAppSelector } from "../state/hooks";
 import { MultipleTextFieldEditor } from "./Fields/MultipleTextField";
 import { BaseFieldEditor } from "./Fields/BaseFieldEditor";
 import { TakePhotoFieldEditor } from "./Fields/TakePhotoField";
@@ -38,7 +40,7 @@ type FieldEditorProps = {
 export const FieldEditor = ({ fieldName, viewId }: FieldEditorProps) => {
 
     const field = useAppSelector((state: Notebook) => state['ui-specification'].fields[fieldName]); 
-
+    const dispatch = useAppDispatch();
     const fieldComponent = field['component-name'];
 
     const getFieldLabel = () => {
@@ -47,9 +49,29 @@ export const FieldEditor = ({ fieldName, viewId }: FieldEditorProps) => {
                field['component-parameters'].name;
     }
 
+    const moveFieldDown = (event: React.SyntheticEvent) => {
+        event.stopPropagation();
+        dispatch({type: 'ui-specification/fieldMoved', payload: {fieldName, viewId, direction: 'down'}})
+    }
+
+    const moveFieldUp = (event: React.SyntheticEvent) => {
+        event.stopPropagation(); 
+        dispatch({type: 'ui-specification/fieldMoved', payload: {fieldName, viewId, direction: 'up'}})
+    }
+
     return (
         <Accordion key={fieldName}>
             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                <Tooltip title='Move up'>
+                    <IconButton onClick={moveFieldUp} aria-label='up' size='small'>
+                        <ArrowDropUpIcon />
+                    </IconButton>
+                </Tooltip>
+                <Tooltip title='Move down'>
+                    <IconButton onClick={moveFieldDown} aria-label='down' size='small'>
+                        <ArrowDropDownIcon />
+                    </IconButton>
+                </Tooltip>
                 <Typography>{getFieldLabel()} : {fieldComponent}</Typography>
             </AccordionSummary>
             <AccordionDetails>

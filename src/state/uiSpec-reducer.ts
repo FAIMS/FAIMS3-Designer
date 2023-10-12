@@ -72,6 +72,34 @@ export const uiSpecificationReducer = createSlice({
                 throw new Error(`Cannot update unknown field ${fieldName} via fieldUpdated action`);
             }
         },
+        fieldMoved: (state: NotebookUISpec,
+                     action: PayloadAction<{fieldName: string, viewId: string, direction: 'up' | 'down'}>) => {
+
+            const { fieldName, viewId, direction } = action.payload;
+            // this involves finding the field in the list of fields in the view
+            // and moving it up or down one
+            const fieldList = state.fviews[viewId].fields;
+            for (let i = 0; i < fieldList.length; i++) {
+                if (fieldList[i] == fieldName) {
+                    if (direction === 'up') {
+                        if (i > 0) {
+                            const tmp = fieldList[i-1];
+                            fieldList[i-1] = fieldList[i];
+                            fieldList[i] = tmp;
+                        }
+                    } else {
+                        if (i < fieldList.length - 1) {
+                            const tmp = fieldList[i+1];
+                            fieldList[i+1] = fieldList[i];
+                            fieldList[i] = tmp;
+                        }
+                    }
+                    // we're done
+                    break;
+                }
+            }
+            state.fviews[viewId].fields = fieldList;
+        },
         fieldAdded: (state: NotebookUISpec, 
                      action: PayloadAction<{
                         fieldName: string, 
