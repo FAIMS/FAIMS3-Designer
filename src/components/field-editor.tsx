@@ -36,7 +36,7 @@ type FieldEditorProps = {
     viewSetId?: string,
     viewId: string,
     expanded: boolean,
-    handleExpandChange: (newState: boolean) => void
+    handleExpandChange: (event: React.SyntheticEvent, newState: boolean) => void
 };
 
 export const FieldEditor = ({ fieldName, viewId, expanded, handleExpandChange }: FieldEditorProps) => {

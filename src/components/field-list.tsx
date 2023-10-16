@@ -60,7 +60,7 @@ export const FieldList = ({viewSetId, viewId}: Props) => {
         setDialogOpen(false);
     }
 
-    const allClosed = {};
+    const allClosed : {[key: string]: boolean} = {};
     fView.fields.map((fieldName: string) => {
         allClosed[fieldName] = false;
     });
@@ -78,7 +78,7 @@ export const FieldList = ({viewSetId, viewId}: Props) => {
     });
 
     const handleExpandChange = (fieldName: string) => {
-        return (event: React.SyntheticEvent, expanded: boolean) => {
+        return (_event: React.SyntheticEvent, expanded: boolean) => {
             setIsExpanded(prevState => ({...prevState, 
                                          [fieldName]: expanded
                                         }));
