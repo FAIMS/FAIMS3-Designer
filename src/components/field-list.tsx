@@ -26,7 +26,8 @@ type Props = {
 
 export const FieldList = ({viewSetId, viewId}: Props) => {
 
-    const fView = useAppSelector((state: Notebook) => state['ui-specification'].fviews[viewId]);
+    const fView = useAppSelector(
+        (state: Notebook) => state['ui-specification'].fviews[viewId]);
     const dispatch = useAppDispatch();
 
     const [dialogOpen, setDialogOpen] = useState(false);
@@ -59,6 +60,31 @@ export const FieldList = ({viewSetId, viewId}: Props) => {
         setDialogOpen(false);
     }
 
+    const allClosed = {};
+    fView.fields.map((fieldName: string) => {
+        allClosed[fieldName] = false;
+    });
+    const [isExpanded, setIsExpanded] = useState(allClosed);
+
+    // if any of the fields is not in the isExpanded state it is because
+    // they were just added or their name was changed
+    // so add them to the list as expanded in both cases
+    fView.fields.map((fieldName: string) => {
+        if (isExpanded[fieldName] === undefined) {
+            setIsExpanded(prevState => ({...prevState, 
+                                         [fieldName]: true
+                                        }));
+        }
+    });
+
+    const handleExpandChange = (fieldName: string) => {
+        return (event: React.SyntheticEvent, expanded: boolean) => {
+            setIsExpanded(prevState => ({...prevState, 
+                                         [fieldName]: expanded
+                                        }));
+        };
+    };
+
     return (
         <>
          {fView.fields.map((fieldName : string) => {
@@ -68,6 +94,8 @@ export const FieldList = ({viewSetId, viewId}: Props) => {
                             fieldName={fieldName}
                             viewSetId={viewSetId}
                             viewId={viewId}
+                            expanded={isExpanded[fieldName]}
+                            handleExpandChange={handleExpandChange(fieldName)}
                         />
                         )
             })}

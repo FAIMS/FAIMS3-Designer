@@ -1,6 +1,6 @@
-import { Grid, Card, TextField, FormControl, InputLabel, MenuItem, Select } from "@mui/material";
+import { Alert, Grid, Card, TextField, FormControl, InputLabel, MenuItem, Select, FormControlLabel, Checkbox, Typography } from "@mui/material";
 import { useAppDispatch, useAppSelector } from "../../state/hooks";
-import { MutableRefObject, useRef } from "react";
+import { MutableRefObject, useRef, useState } from "react";
 import { ComponentParameters, FieldType, Notebook } from "../../state/initial";
 
 type PropType = {
@@ -8,27 +8,54 @@ type PropType = {
     viewId: string
 };
 
-export const TemplatedStringFieldEditor = ({ fieldName }: PropType) => {
+export const TemplatedStringFieldEditor = ({ fieldName, viewId }: PropType) => {
 
     const field = useAppSelector((state: Notebook) => state['ui-specification'].fields[fieldName]);
+    const formHasHRID = useAppSelector((state: Notebook) => {
+        return Object.keys(state['ui-specification'].fields).some((fieldName) => {
+            return fieldName.startsWith('HRID') && fieldName.endsWith(viewId);
+        });
+    });
     const allFields = useAppSelector((state: Notebook) => state['ui-specification'].fields);
     const dispatch = useAppDispatch();
     const textAreaRef = useRef(null) as MutableRefObject<unknown>;
 
-    const state = field['component-parameters']
+    const [alertMessage, setAlertMessage] = useState('');
+
+    const state = field['component-parameters'];
+
+    const isHRID = () => {
+        return fieldName.startsWith('HRID') && fieldName.endsWith(viewId);
+    };
 
     const getFieldLabel = (f: FieldType) => {
-        return (f['component-parameters'] && f['component-parameters'].label) ||
-            (f['component-parameters'].InputLabelProps && f['component-parameters'].InputLabelProps.label) ||
-            f['component-parameters'].name;
-    }
+        return (f['component-parameters'].InputLabelProps && 
+                  f['component-parameters'].InputLabelProps.label) ||
+                f['component-parameters'].name;
+    };
 
     const updateFieldFromState = (newState: ComponentParameters) => {
         const newField = JSON.parse(JSON.stringify(field)) as FieldType; // deep copy
-        newField['component-parameters'].label = newState.label;
+        newField['component-parameters'].InputLabelProps = {label: newState.label || fieldName};
         newField['component-parameters'].helperText = newState.helperText;
         newField['component-parameters'].template = newState.template;
-        dispatch({ type: 'ui-specification/fieldUpdated', payload: { fieldName, newField } })
+        newField['component-parameters'].hrid = newState.hrid;
+        dispatch({ type: 'ui-specification/fieldUpdated', payload: { fieldName, newField } });
+    };
+
+    const setHRID = (newState: boolean) => {
+        let newFieldName = state.InputLabelProps ? state.InputLabelProps.label : fieldName;
+        if (newState) {
+            // need to check whether there is already an HRID field in this form
+            // if so we show an alert
+            if (formHasHRID) {
+                setAlertMessage('There is already an HRID field in this form.  You can only have one HRID field per form.');
+                return;
+            } else {
+                newFieldName = 'HRID' + viewId;
+            }
+        }
+        dispatch({type: 'ui-specification/fieldRenamed', payload: {viewId, fieldName, newFieldName}})
     };
 
     const updateProperty = (prop: string, value: string) => {
@@ -37,7 +64,6 @@ export const TemplatedStringFieldEditor = ({ fieldName }: PropType) => {
     };
 
     const insertFieldId = (fieldId: string) => {
-        console.log('insertFieldId', fieldId);
         // insert {{fieldId}} at the cursor in the text area
         if (textAreaRef.current) {
             const el = textAreaRef.current as HTMLTextAreaElement;
@@ -47,11 +73,12 @@ export const TemplatedStringFieldEditor = ({ fieldName }: PropType) => {
             el.setRangeText(`{{${fieldId}}}`, start, end, 'select'); 
             el.dispatchEvent(new Event('change', { bubbles: true }));
         }
-        };
+    };
 
     return (
         <Grid container spacing={2}>
             <Grid item xs={12}>
+               { alertMessage && <Alert onClose={() => {setAlertMessage('')}} severity="error">{alertMessage}</Alert> }
                 <Card variant="outlined" sx={{ display: 'flex' }}>
                     <Grid item sm={6} xs={12} sx={{ mx: 1.5, my: 2 }}>
                         <TextField
@@ -75,6 +102,17 @@ export const TemplatedStringFieldEditor = ({ fieldName }: PropType) => {
                             helperText="Help text shown along with the field (like this text)."
                             onChange={(e) => updateProperty('helperText', e.target.value)}
                         />
+                    </Grid>
+                    <Grid item sm={6} xs={12} sx={{ mx: 1.5, my: 2 }}>
+                        <FormControlLabel required
+                                control={<Checkbox
+                                    checked={isHRID()}
+                                    onChange={(e) => setHRID(e.target.checked)}
+                                />} label="Use as Human Readable ID" />
+
+                        <Typography variant="body2" color="text.secondary">
+                            HRID is the primary identifier for the record.
+                        </Typography>
                     </Grid>
                 </Card>
 
@@ -121,10 +159,7 @@ export const TemplatedStringFieldEditor = ({ fieldName }: PropType) => {
                     </Grid>
                     </Card>
                 </Grid>
-
-
             </Grid>
-
         </Grid>
     )
 };

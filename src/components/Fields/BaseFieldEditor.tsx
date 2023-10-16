@@ -48,10 +48,8 @@ export const BaseFieldEditor = ({ fieldName, children }: Props) => {
     const setFieldLabel = (newField: FieldType, label: string) => {
         if (newField['component-parameters'].label)
             newField['component-parameters'].label = label;
-        if (newField['component-parameters'].InputLabelProps && newField['component-parameters'].InputLabelProps.label)
+        else if (newField['component-parameters'].InputLabelProps && newField['component-parameters'].InputLabelProps.label)
             newField['component-parameters'].InputLabelProps.label = label;
-        if (newField['component-parameters'].name)
-            newField['component-parameters'].name = label;
     }
 
     const updateField = (fieldName: string, newField: FieldType) => {

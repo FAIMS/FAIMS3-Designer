@@ -26,7 +26,7 @@ import { getFieldSpec } from "../fields";
  */
 export const slugify = (str: string) => {
     str = str.trim();
-    str = str.toLowerCase();
+    //str = str.toLowerCase();
   
     // remove accents, swap ñ for n, etc
     const from = 'ãàáäâáº½èéëêìíïîõòóöôùúüûñç·/_,:;';
@@ -36,7 +36,7 @@ export const slugify = (str: string) => {
     }
   
     str = str
-      .replace(/[^a-z0-9 -]/g, '') // remove invalid chars
+      .replace(/[^A-Za-z0-9 -]/g, '') // remove invalid chars
       .replace(/\s+/g, '-') // collapse whitespace and replace by -
       .replace(/-+/g, '-'); // collapse dashes
   
@@ -100,6 +100,38 @@ export const uiSpecificationReducer = createSlice({
             }
             state.fviews[viewId].fields = fieldList;
         },
+        fieldRenamed: (state: NotebookUISpec,
+            action: PayloadAction<{viewId: string, fieldName: string, newFieldName: string}>) => {
+
+            const {viewId, fieldName, newFieldName} = action.payload;
+            if (fieldName in state.fields) {
+                const field = state.fields[fieldName];
+
+                // ensure newFieldName is unique
+                let fieldLabel = slugify(newFieldName);
+                let N = 1;
+                while(fieldLabel in state.fields) { 
+                    fieldLabel = slugify(fieldName + ' ' + N);
+                    N += 1;
+                }
+
+                field['component-parameters'].name = fieldLabel;
+                state.fields[fieldLabel] = field;
+                delete state.fields[fieldName];
+                // replace reference in the view
+                const viewFields = state.fviews[viewId].fields;
+                for (let i = 0; i < viewFields.length; i++) {
+                    if (viewFields[i] === fieldName) {
+                        viewFields[i] = fieldLabel;
+                        break;
+                    }
+                }
+                console.log('renamed field', fieldName, 'to', newFieldName, 'in view', viewId);
+                console.log(viewFields);
+            } else {
+                throw new Error(`Cannot rename unknown field ${fieldName} via fieldRenamed action`);
+            }
+        },
         fieldAdded: (state: NotebookUISpec, 
                      action: PayloadAction<{
                         fieldName: string, 
@@ -109,53 +141,66 @@ export const uiSpecificationReducer = createSlice({
                     }>) => {
             const { fieldName, fieldType, viewId, viewSetId } = action.payload;
             console.log('adding field', fieldName, 'to', viewSetId, '-', viewId, 'type', fieldType);
-            if (fieldName in state.fields) {
-                // change the field name to be unique
-                throw new Error(`Cannot add already existing field ${fieldName} via fieldAdded action`);
-            } else {
-                const newField: FieldType = getFieldSpec(fieldType);
-                // some field types need to be modified with extra info
+            
+            const newField: FieldType = getFieldSpec(fieldType);
 
-                if (fieldType === 'RelatedRecordSelector') {
-                    // need to set the related type to the form id
-                    newField['component-parameters'].related_type = viewSetId;
-                    newField['component-parameters'].related_type_label = state.viewsets[viewSetId].label;
-                }
+            let fieldLabel = slugify(fieldName);
 
-                if (fieldType === 'BasicAutoIncrementer') {
-                    newField['component-parameters'].form_id = viewId;
-                }
-
-                // add in the meta field 
-                newField.meta = {
-                    "annotation": true,
-                    "annotation_label": "annotation",
-                    "uncertainty": {
-                      "include": true,
-                      "label": "uncertainty"
-                    }
-                };
-                // try to set the field label
-                if (newField['component-parameters'] && newField['component-parameters'].label) {
-                    newField['component-parameters'].label = fieldName;
-                } else if (newField['component-parameters'].InputLabelProps  && 
-                           newField['component-parameters'].InputLabelProps.label) {
-                    newField['component-parameters'].InputLabelProps.label = fieldName;
-                }
-
-                // generate a unique field name
-                let fieldLabel = slugify(fieldName);
-                let N = 1;
-                while(fieldLabel in state.fields) { 
-                    fieldLabel = slugify(fieldName + ' ' + N);
-                    N += 1;
-                }
-                console.log('adding field', fieldLabel, 'to', viewId, 'as', newField);
-                newField['component-parameters'].name = fieldLabel;
-                // add to fields and to the fview section
-                state.fields[fieldLabel] = newField;
-                state.fviews[viewId].fields.push(fieldLabel);
+            // some field types need to be modified with extra info
+            if (fieldType === 'RelatedRecordSelector') {
+                // need to set the related type to the form id
+                newField['component-parameters'].related_type = viewSetId;
+                newField['component-parameters'].related_type_label = state.viewsets[viewSetId].label;
             }
+
+            if (fieldType === 'BasicAutoIncrementer') {
+                newField['component-parameters'].form_id = viewId;
+            }
+
+            if (fieldType === 'TemplatedStringField') {
+                // if there is no existing HRID field in this form, then
+                // this field becomes one by getting a name starting 'HRID'
+                let hasHRID = false;
+                for (const fieldName of state.fviews[viewId].fields) {
+                    if (fieldName.startsWith('HRID') && fieldName.endsWith(viewId)) {
+                        hasHRID = true;
+                        break;
+                    }
+                }
+                if (!hasHRID) {
+                    fieldLabel = 'HRID' + viewId;
+                }
+            }
+
+            // add in the meta field 
+            newField.meta = {
+                "annotation": true,
+                "annotation_label": "annotation",
+                "uncertainty": {
+                    "include": true,
+                    "label": "uncertainty"
+                }
+            };
+            // try to set the field label
+            if (newField['component-parameters'] && newField['component-parameters'].label) {
+                newField['component-parameters'].label = fieldName;
+            } else if (newField['component-parameters'].InputLabelProps  && 
+                        newField['component-parameters'].InputLabelProps.label) {
+                newField['component-parameters'].InputLabelProps.label = fieldName;
+            }
+
+            // ensure a unique field name
+            let N = 1;
+            while(fieldLabel in state.fields) { 
+                fieldLabel = slugify(fieldName + ' ' + N);
+                N += 1;
+            }
+            console.log('adding field', fieldLabel, 'to', viewId, 'as', newField);
+            newField['component-parameters'].name = fieldLabel;
+            // add to fields and to the fview section
+            state.fields[fieldLabel] = newField;
+            state.fviews[viewId].fields.push(fieldLabel);
+        
         },
         viewSetAdded: (state: NotebookUISpec,
                        action: PayloadAction<{formName: string}>) => {

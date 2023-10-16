@@ -34,13 +34,16 @@ import { Notebook } from "../state/initial";
 type FieldEditorProps = {
     fieldName: string,
     viewSetId?: string,
-    viewId: string
+    viewId: string,
+    expanded: boolean,
+    handleExpandChange: (newState: boolean) => void
 };
 
-export const FieldEditor = ({ fieldName, viewId }: FieldEditorProps) => {
+export const FieldEditor = ({ fieldName, viewId, expanded, handleExpandChange }: FieldEditorProps) => {
 
     const field = useAppSelector((state: Notebook) => state['ui-specification'].fields[fieldName]); 
     const dispatch = useAppDispatch();
+
     const fieldComponent = field['component-name'];
 
     const getFieldLabel = () => {
@@ -60,7 +63,7 @@ export const FieldEditor = ({ fieldName, viewId }: FieldEditorProps) => {
     }
 
     return (
-        <Accordion key={fieldName}>
+        <Accordion key={fieldName} expanded={expanded} onChange={handleExpandChange}>
             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                 <Tooltip title='Move up'>
                     <IconButton onClick={moveFieldUp} aria-label='up' size='small'>
