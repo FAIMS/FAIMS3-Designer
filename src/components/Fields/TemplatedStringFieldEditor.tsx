@@ -13,7 +13,7 @@ export const TemplatedStringFieldEditor = ({ fieldName, viewId }: PropType) => {
     const field = useAppSelector((state: Notebook) => state['ui-specification'].fields[fieldName]);
     const formHasHRID = useAppSelector((state: Notebook) => {
         return Object.keys(state['ui-specification'].fields).some((fieldName) => {
-            return fieldName.startsWith('HRID') && fieldName.endsWith(viewId);
+            return fieldName.startsWith('hrid') && fieldName.endsWith(viewId);
         });
     });
     const allFields = useAppSelector((state: Notebook) => state['ui-specification'].fields);
@@ -25,7 +25,7 @@ export const TemplatedStringFieldEditor = ({ fieldName, viewId }: PropType) => {
     const state = field['component-parameters'];
 
     const isHRID = () => {
-        return fieldName.startsWith('HRID') && fieldName.endsWith(viewId);
+        return fieldName.startsWith('hrid') && fieldName.endsWith(viewId);
     };
 
     const getFieldLabel = (f: FieldType) => {
@@ -52,7 +52,7 @@ export const TemplatedStringFieldEditor = ({ fieldName, viewId }: PropType) => {
                 setAlertMessage('There is already an HRID field in this form.  You can only have one HRID field per form.');
                 return;
             } else {
-                newFieldName = 'HRID' + viewId;
+                newFieldName = 'hrid' + viewId;
             }
         }
         dispatch({type: 'ui-specification/fieldRenamed', payload: {viewId, fieldName, newFieldName}})

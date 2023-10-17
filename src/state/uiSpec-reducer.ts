@@ -159,16 +159,16 @@ export const uiSpecificationReducer = createSlice({
 
             if (fieldType === 'TemplatedStringField') {
                 // if there is no existing HRID field in this form, then
-                // this field becomes one by getting a name starting 'HRID'
+                // this field becomes one by getting a name starting 'hrid'
                 let hasHRID = false;
                 for (const fieldName of state.fviews[viewId].fields) {
-                    if (fieldName.startsWith('HRID') && fieldName.endsWith(viewId)) {
+                    if (fieldName.startsWith('hrid') && fieldName.endsWith(viewId)) {
                         hasHRID = true;
                         break;
                     }
                 }
                 if (!hasHRID) {
-                    fieldLabel = 'HRID' + viewId;
+                    fieldLabel = 'hrid' + viewId;
                 }
             }
 
