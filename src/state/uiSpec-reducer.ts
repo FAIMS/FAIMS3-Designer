@@ -185,6 +185,7 @@ export const uiSpecificationReducer = createSlice({
             if (newField['component-parameters'] && 'label' in newField['component-parameters']) {
                 newField['component-parameters'].label = fieldName;
             } else if ('InputLabelProps' in newField['component-parameters']  && 
+                        newField['component-parameters'].InputLabelProps &&
                         'label' in newField['component-parameters'].InputLabelProps) {
                 newField['component-parameters'].InputLabelProps.label = fieldName;
             }
