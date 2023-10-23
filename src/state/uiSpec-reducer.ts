@@ -182,10 +182,10 @@ export const uiSpecificationReducer = createSlice({
                 }
             };
             // try to set the field label
-            if (newField['component-parameters'] && newField['component-parameters'].label) {
+            if (newField['component-parameters'] && 'label' in newField['component-parameters']) {
                 newField['component-parameters'].label = fieldName;
-            } else if (newField['component-parameters'].InputLabelProps  && 
-                        newField['component-parameters'].InputLabelProps.label) {
+            } else if ('InputLabelProps' in newField['component-parameters']  && 
+                        'label' in newField['component-parameters'].InputLabelProps) {
                 newField['component-parameters'].InputLabelProps.label = fieldName;
             }
 
