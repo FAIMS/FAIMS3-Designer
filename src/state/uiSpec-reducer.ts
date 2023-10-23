@@ -202,37 +202,49 @@ export const uiSpecificationReducer = createSlice({
             state.fviews[viewId].fields.push(fieldLabel);
         
         },
+        fieldDeleted: (state: NotebookUISpec,
+                       action: PayloadAction<{fieldName: string, viewId: string}>) => {
+            const {fieldName, viewId} = action.payload;
+            // remove the field from fields and the viewSet
+            if (fieldName in state.fields) {
+                delete state.fields[fieldName];
+                const newView = state.fviews[viewId].fields.filter((field) => field !== fieldName);
+                state.fviews[viewId].fields = newView;
+            } else {
+                throw new Error(`Cannot delete unknown field ${fieldName} via fieldDeleted action`);
+            }
+        },
         viewSetAdded: (state: NotebookUISpec,
                        action: PayloadAction<{formName: string}>) => {
-                            const {formName} = action.payload;
-                            const newViewSet = {
-                                label: formName,
-                                views: []
-                            };
-                            const formID = slugify(formName);
-                            // add this to the viewsets
-                            if (formID in state.viewsets) {
-                                throw new Error(`Form ${formID} already exists in notebook`);
-                            } else {
-                                state.viewsets[formID] = newViewSet;
-                                state.visible_types.push(formID);
-                            }
-                       },
+            const {formName} = action.payload;
+            const newViewSet = {
+                label: formName,
+                views: []
+            };
+            const formID = slugify(formName);
+            // add this to the viewsets
+            if (formID in state.viewsets) {
+                throw new Error(`Form ${formID} already exists in notebook`);
+            } else {
+                state.viewsets[formID] = newViewSet;
+                state.visible_types.push(formID);
+            }
+        },
         formSectionAdded: (state: NotebookUISpec,
             action: PayloadAction<{viewSetId: string, sectionLabel: string}>) => {
-                const {viewSetId, sectionLabel} = action.payload;
-                const sectionId = viewSetId + '-' + slugify(sectionLabel);
-                const newSection = {
-                    label: sectionLabel,
-                    fields: []
-                };
-                if (sectionId in state.fviews) {
-                    throw new Error(`Section ${sectionLabel} already exists in this form.`);
-                } else {
-                    state.fviews[sectionId] = newSection;
-                    state.viewsets[viewSetId].views.push(sectionId);
-                }
+            const {viewSetId, sectionLabel} = action.payload;
+            const sectionId = viewSetId + '-' + slugify(sectionLabel);
+            const newSection = {
+                label: sectionLabel,
+                fields: []
+            };
+            if (sectionId in state.fviews) {
+                throw new Error(`Section ${sectionLabel} already exists in this form.`);
+            } else {
+                state.fviews[sectionId] = newSection;
+                state.viewsets[viewSetId].views.push(sectionId);
             }
+        }
     }
 })
 

@@ -12,10 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { Accordion, AccordionSummary, AccordionDetails, Typography, IconButton, Tooltip } from "@mui/material";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import { Accordion, AccordionDetails, Stack, 
+         Typography, IconButton, Tooltip } from "@mui/material";
+import MuiAccordionSummary, {
+    AccordionSummaryProps,
+  } from '@mui/material/AccordionSummary';
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import DeleteIcon from '@mui/icons-material/Delete';
 import { useAppDispatch, useAppSelector } from "../state/hooks";
 import { MultipleTextFieldEditor } from "./Fields/MultipleTextField";
 import { BaseFieldEditor } from "./Fields/BaseFieldEditor";
@@ -30,6 +34,25 @@ import { RelatedRecordEditor } from "./Fields/RelatedRecordEditor";
 import { BasicAutoIncrementerEditor } from "./Fields/BasicAutoIncrementer";
 import { TemplatedStringFieldEditor } from "./Fields/TemplatedStringFieldEditor";
 import { Notebook } from "../state/initial";
+import { styled } from '@mui/material/styles';
+import ArrowForwardIosSharpIcon from '@mui/icons-material/ArrowForwardIosSharp';
+
+// customise the accordion summary a little 
+const AccordionSummary = styled((props: AccordionSummaryProps) => (
+    <MuiAccordionSummary
+      expandIcon={<ArrowForwardIosSharpIcon sx={{ fontSize: '0.9rem' }} />}
+      {...props}
+    />
+  ))(({ theme }) => ({
+    flexDirection: 'row-reverse',
+    '& .MuiAccordionSummary-expandIconWrapper.Mui-expanded': {
+      transform: 'rotate(90deg)',
+    },
+    '& .MuiAccordionSummary-content': {
+      marginLeft: theme.spacing(1),
+    },
+  }));
+
 
 type FieldEditorProps = {
     fieldName: string,
@@ -54,28 +77,41 @@ export const FieldEditor = ({ fieldName, viewId, expanded, handleExpandChange }:
 
     const moveFieldDown = (event: React.SyntheticEvent) => {
         event.stopPropagation();
-        dispatch({type: 'ui-specification/fieldMoved', payload: {fieldName, viewId, direction: 'down'}})
+        dispatch({type: 'ui-specification/fieldMoved', payload: {fieldName, viewId, direction: 'down'}});
     }
 
     const moveFieldUp = (event: React.SyntheticEvent) => {
         event.stopPropagation(); 
-        dispatch({type: 'ui-specification/fieldMoved', payload: {fieldName, viewId, direction: 'up'}})
+        dispatch({type: 'ui-specification/fieldMoved', payload: {fieldName, viewId, direction: 'up'}});
+    }
+
+    const deleteField = (event: React.SyntheticEvent) => {
+        event.stopPropagation(); 
+        dispatch({type: 'ui-specification/fieldDeleted', payload: {fieldName, viewId}});
     }
 
     return (
         <Accordion key={fieldName} expanded={expanded} onChange={handleExpandChange}>
-            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                <Tooltip title='Move up'>
-                    <IconButton onClick={moveFieldUp} aria-label='up' size='small'>
-                        <ArrowDropUpIcon />
-                    </IconButton>
-                </Tooltip>
-                <Tooltip title='Move down'>
-                    <IconButton onClick={moveFieldDown} aria-label='down' size='small'>
-                        <ArrowDropDownIcon />
-                    </IconButton>
-                </Tooltip>
+            <AccordionSummary>
                 <Typography>{getFieldLabel()} : {fieldComponent}</Typography>
+
+                <Stack direction='row' style={{width: '100%'}} justifyContent='right'>
+                    <Tooltip title="Delete Field">
+                        <IconButton onClick={deleteField} aria-label='delete' size='small'>
+                            <DeleteIcon />
+                        </IconButton>        
+                    </Tooltip>
+                    <Tooltip title='Move up'>
+                        <IconButton onClick={moveFieldUp} aria-label='up' size='small'>
+                            <ArrowDropUpIcon />
+                        </IconButton>
+                    </Tooltip>
+                    <Tooltip title='Move down'>
+                        <IconButton onClick={moveFieldDown} aria-label='down' size='small'>
+                            <ArrowDropDownIcon />
+                        </IconButton>
+                    </Tooltip>
+                </Stack>
             </AccordionSummary>
             <AccordionDetails>
                 {(fieldComponent === 'MultipleTextField' && 
