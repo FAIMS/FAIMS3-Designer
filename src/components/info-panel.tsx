@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { Alert, Button, Grid, TextField, Typography } from "@mui/material";
+import { Alert, Button, Checkbox, FormControlLabel, Grid, TextField, Typography } from "@mui/material";
 import { useEffect, useState, useRef } from "react";
 import { useAppSelector, useAppDispatch } from "../state/hooks";
 
@@ -52,10 +52,10 @@ export const InfoPanel = () => {
 
     useEffect(() => {
         const knownFields = ['name', 'pre_description', 'behaviours', 'meta',
-            'project_lead', 'lead_institution',
+            'project_lead', 'lead_institution', 'showQRCodeButton',
             'access', 'accesses', 'forms', 'filenames',
             'ispublic', 'isrequest', 'sections',
-            'project_status'];
+            'project_status', 'schema_version'];
         const unknownFields = Object.keys(metadata).filter((key) => !knownFields.includes(key));
         const newExtraFields: PropertyMap = {};
         unknownFields.forEach((key) => {
@@ -160,6 +160,15 @@ export const InfoPanel = () => {
                             setProp('lead_institution', event.target.value);
                         }}
                     />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                    <FormControlLabel
+                            control={<Checkbox
+                            checked={metadata.showQRCodeButton || false}
+                            onChange={(e) => setProp('showQRCodeButton', e.target.checked)}
+                    />} label="Enable QR Code Search of records" />
+                    <br/>
+                    <Typography variant='caption'>Useful if your form includes a QR code field.</Typography>
                 </Grid>
 
                 <Grid container item xs={12} spacing={2}>
