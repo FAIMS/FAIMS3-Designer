@@ -114,9 +114,7 @@ export const initialState: Notebook = {
         "ispublic": false,
         "isrequest": false,
         "lead_institution": "",
-        "meta": {
-            "showQRCodeButton": false,
-        },
+        "showQRCodeButton": false,
         "pre_description": "",
         "project_lead": "",
         "project_status": "New",

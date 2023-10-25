@@ -164,8 +164,8 @@ export const InfoPanel = () => {
                 <Grid item xs={12} sm={6}>
                     <FormControlLabel
                             control={<Checkbox
-                            checked={metadata.showQRCodeButton || false}
-                            onChange={(e) => setProp('showQRCodeButton', e.target.checked)}
+                            checked={metadata.showQRCodeButton === "true" ? true : false}
+                            onChange={(e) => setProp('showQRCodeButton', e.target.checked ? "true" : "false")}
                     />} label="Enable QR Code Search of records" />
                     <br/>
                     <Typography variant='caption'>Useful if your form includes a QR code field.</Typography>
