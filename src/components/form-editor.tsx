@@ -37,6 +37,8 @@ export const FormEditor = ({ viewSetId }: { viewSetId: string }) => {
     const [alertMessage, setAlertMessage] = useState('');
     const [open, setOpen] = useState(false);
     const [deleteAlertMessage, setDeleteAlertMessage] = useState('');
+    const [deleteAlertTitle, setDeleteAlertTitle] = useState('');
+    const [preventDeleteDialog, setPreventDeleteDialog] = useState(false);
 
     const handleStep = (step: number) => () => {
         setActiveStep(step);
@@ -53,6 +55,13 @@ export const FormEditor = ({ viewSetId }: { viewSetId: string }) => {
             error instanceof Error &&
                 setAlertMessage(error.message);
         }
+    }
+
+    const deleteConfirmation = () => {
+        setOpen(true);
+        setPreventDeleteDialog(false);
+        setDeleteAlertTitle("Are you sure you want to delete this form?");
+        setDeleteAlertMessage("You will lose all your progress.");
     }
 
     const preventFormDelete = () => {
@@ -72,17 +81,20 @@ export const FormEditor = ({ viewSetId }: { viewSetId: string }) => {
         // SANITY CHECK. Don't allow the user to delete the form if they've used it in a RelatedRecordSelector field
         if (preventFormDelete()) {
             setOpen(true);
+            setPreventDeleteDialog(true);
+            setDeleteAlertTitle("Form cannot be deleted.");
             setDeleteAlertMessage("This form is being referred to in a RelatedRecordSelector field. Please fix this and try again.");
         }
         else {
             dispatch({ type: 'ui-specification/viewSetDeleted', payload: { viewSetId: viewSetId } });
+            handleClose();
         }
     }
 
     return (
         <Grid container spacing={2}>
             <Grid item xs={12}>
-                <Button variant="text" color="secondary" startIcon={<DeleteIcon />} onClick={deleteForm}>
+                <Button variant="text" color="secondary" startIcon={<DeleteIcon />} onClick={deleteConfirmation}>
                     Delete this form
                 </Button>
                 <Dialog
@@ -92,16 +104,23 @@ export const FormEditor = ({ viewSetId }: { viewSetId: string }) => {
                     aria-describedby="alert-dialog-description"
                 >
                     <DialogTitle id="alert-dialog-title">
-                        {"Form cannot be deleted."}
+                        {deleteAlertTitle}
                     </DialogTitle>
                     <DialogContent>
                         <DialogContentText id="alert-dialog-description">
                             {deleteAlertMessage}
                         </DialogContentText>
                     </DialogContent>
-                    <DialogActions>
-                        <Button onClick={handleClose}>OK</Button>
-                    </DialogActions>
+                    {preventDeleteDialog ?
+                        <DialogActions>
+                            <Button onClick={handleClose}>OK</Button>
+                        </DialogActions>
+                        :
+                        <DialogActions>
+                            <Button onClick={deleteForm}>Yes</Button>
+                            <Button onClick={handleClose}>No</Button>
+                        </DialogActions>
+                    }
                 </Dialog>
             </Grid>
 
