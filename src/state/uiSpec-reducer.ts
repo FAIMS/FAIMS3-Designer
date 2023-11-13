@@ -243,33 +243,18 @@ export const uiSpecificationReducer = createSlice({
                         const fviewFields: string[] = state.fviews[view].fields
                         fviewFields.map((formField) => {
                             if (formField in state.fields) {
-                                // SANITY CHECK. Don't allow the user to delete the form if they've used it in a RelatedRecordSelector field
-                                if (state.fields[formField]["component-parameters"].related_type === viewSetId) {
-                                    throw new Error(`This form is being used in a Relation Field. Please fix this and try again.`)
-                                }
-                                else {
-                                    // remove the fields in 'fields' belonging to their respective sections in the form
-                                    delete state.fields[formField]
-                                }
-                            }
-                            else {
-                                throw new Error(`Cannot delete unknown field ${formField} via viewSetDeleted action`);
+                                // remove the fields in 'fields' belonging to their respective sections in the form
+                                delete state.fields[formField]
                             }
                         })
                         // remove the sections in 'fviews' belonging to the form 
                         delete state.fviews[view];
-                    }
-                    else {
-                        throw new Error(`Cannot delete unknown section ${view} via viewSetDeleted action`);
                     }
                 })
                 // remove the form from 'viewsets' and 'visible_types'
                 delete state.viewsets[viewSetId];
                 const newVisibleTypes = state.visible_types.filter((field) => field !== viewSetId);
                 state.visible_types = newVisibleTypes;
-            }
-            else {
-                throw new Error(`Cannot delete unknown form ${viewSetId} via viewSetDeleted action`);
             }
         },
         formSectionAdded: (state: NotebookUISpec,

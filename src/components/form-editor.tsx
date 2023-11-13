@@ -27,6 +27,7 @@ export const FormEditor = ({ viewSetId }: { viewSetId: string }) => {
             return shallowEqual(left, right);
         });
     const views = useAppSelector((state: Notebook) => state['ui-specification'].fviews);
+    const fields = useAppSelector((state: Notebook) => state['ui-specification'].fields);
     const dispatch = useAppDispatch();
 
     console.log('FormEditor', viewSetId);
@@ -54,38 +55,55 @@ export const FormEditor = ({ viewSetId }: { viewSetId: string }) => {
         }
     }
 
+    const preventFormDelete = () => {
+        // we dont need the field names, only their values
+        const fieldValues = Object.values(fields)
+        let flag: boolean = false;
+        // search through all the values for mention of the form to be deleted in the related_type param
+        fieldValues.map((fieldValue) => {
+            if (fieldValue["component-parameters"].related_type === viewSetId) {
+                flag = true;
+            }
+        })
+        return flag;
+    }
+
     const deleteForm = () => {
-        try {
-            dispatch({ type: 'ui-specification/viewSetDeleted', payload: { viewSetId: viewSetId } });
-        } catch (error: unknown) {
+        // SANITY CHECK. Don't allow the user to delete the form if they've used it in a RelatedRecordSelector field
+        if (preventFormDelete()) {
             setOpen(true);
-            error instanceof Error && setDeleteAlertMessage(error.message);
+            setDeleteAlertMessage("This form is being referred to in a RelatedRecordSelector field. Please fix this and try again.");
+        }
+        else {
+            dispatch({ type: 'ui-specification/viewSetDeleted', payload: { viewSetId: viewSetId } });
         }
     }
 
     return (
         <Grid container spacing={2}>
-            <Button variant="text" color="secondary" startIcon={<DeleteIcon />} onClick={deleteForm}>
-                Delete this form
-            </Button>
-            <Dialog
-                open={open}
-                onClose={handleClose}
-                aria-labelledby="alert-dialog-title"
-                aria-describedby="alert-dialog-description"
-            >
-                <DialogTitle id="alert-dialog-title">
-                    {"Form cannot be deleted."}
-                </DialogTitle>
-                <DialogContent>
-                    <DialogContentText id="alert-dialog-description">
-                        {deleteAlertMessage}
-                    </DialogContentText>
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={handleClose}>OK</Button>
-                </DialogActions>
-            </Dialog>
+            <Grid item xs={12}>
+                <Button variant="text" color="secondary" startIcon={<DeleteIcon />} onClick={deleteForm}>
+                    Delete this form
+                </Button>
+                <Dialog
+                    open={open}
+                    onClose={handleClose}
+                    aria-labelledby="alert-dialog-title"
+                    aria-describedby="alert-dialog-description"
+                >
+                    <DialogTitle id="alert-dialog-title">
+                        {"Form cannot be deleted."}
+                    </DialogTitle>
+                    <DialogContent>
+                        <DialogContentText id="alert-dialog-description">
+                            {deleteAlertMessage}
+                        </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={handleClose}>OK</Button>
+                    </DialogActions>
+                </Dialog>
+            </Grid>
 
             <Grid item xs={12}>
                 <Grid container spacing={2}>
