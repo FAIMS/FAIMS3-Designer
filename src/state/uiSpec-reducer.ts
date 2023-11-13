@@ -243,8 +243,9 @@ export const uiSpecificationReducer = createSlice({
                         const fviewFields: string[] = state.fviews[view].fields
                         fviewFields.map((formField) => {
                             if (formField in state.fields) {
+                                // SANITY CHECK. Don't allow the user to delete the form if they've used it in a RelatedRecordSelector field
                                 if (state.fields[formField]["component-parameters"].related_type === viewSetId) {
-                                    throw new Error(`This form is being used in a Relation Field. Therefore, you cannot delete it. Please fix this and try again.`)
+                                    throw new Error(`This form is being used in a Relation Field. Please fix this and try again.`)
                                 }
                                 else {
                                     // remove the fields in 'fields' belonging to their respective sections in the form

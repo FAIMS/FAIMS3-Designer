@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { Grid, Paper, Alert, Stepper, Typography, Step, Button, StepButton, TextField } from "@mui/material";
+import { Grid, Paper, Alert, Stepper, Typography, Step, Button, StepButton, TextField, Dialog, DialogTitle, DialogActions, DialogContent, DialogContentText } from "@mui/material";
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useAppDispatch, useAppSelector } from "../state/hooks";
 import { SectionEditor } from "./section-editor";
@@ -34,9 +34,15 @@ export const FormEditor = ({ viewSetId }: { viewSetId: string }) => {
     const [activeStep, setActiveStep] = useState(0);
     const [newSectionName, setNewSectionName] = useState('New Section');
     const [alertMessage, setAlertMessage] = useState('');
+    const [open, setOpen] = useState(false);
+    const [deleteAlertMessage, setDeleteAlertMessage] = useState('');
 
     const handleStep = (step: number) => () => {
         setActiveStep(step);
+    };
+
+    const handleClose = () => {
+        setOpen(false);
     };
 
     const addNewSection = () => {
@@ -49,11 +55,11 @@ export const FormEditor = ({ viewSetId }: { viewSetId: string }) => {
     }
 
     const deleteForm = () => {
-        console.log('viewsetviews', viewSet.views)
         try {
             dispatch({ type: 'ui-specification/viewSetDeleted', payload: { viewSetId: viewSetId } });
         } catch (error: unknown) {
-            error instanceof Error && setAlertMessage(error.message);
+            setOpen(true);
+            error instanceof Error && setDeleteAlertMessage(error.message);
         }
     }
 
@@ -62,7 +68,24 @@ export const FormEditor = ({ viewSetId }: { viewSetId: string }) => {
             <Button variant="text" color="secondary" startIcon={<DeleteIcon />} onClick={deleteForm}>
                 Delete this form
             </Button>
-            {alertMessage && <Alert severity="error">{alertMessage}</Alert>}
+            <Dialog
+                open={open}
+                onClose={handleClose}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+            >
+                <DialogTitle id="alert-dialog-title">
+                    {"Form cannot be deleted."}
+                </DialogTitle>
+                <DialogContent>
+                    <DialogContentText id="alert-dialog-description">
+                        {deleteAlertMessage}
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleClose}>OK</Button>
+                </DialogActions>
+            </Dialog>
 
             <Grid item xs={12}>
                 <Grid container spacing={2}>
