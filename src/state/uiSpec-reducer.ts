@@ -23,47 +23,47 @@ import { getFieldSpec } from "../fields";
  * @param str input string
  * @returns url safe version of the string
  * https://ourcodeworld.com/articles/read/255/creating-url-slugs-properly-in-javascript-including-transliteration-for-utf-8
- */
+*/
 export const slugify = (str: string) => {
     str = str.trim();
     //str = str.toLowerCase();
-  
+
     // remove accents, swap ñ for n, etc
     const from = 'ãàáäâáº½èéëêìíïîõòóöôùúüûñç·/_,:;';
     const to = 'aaaaaeeeeeiiiiooooouuuunc------';
     for (let i = 0, l = from.length; i < l; i++) {
-      str = str.replace(new RegExp(from.charAt(i), 'g'), to.charAt(i));
+        str = str.replace(new RegExp(from.charAt(i), 'g'), to.charAt(i));
     }
-  
+
     str = str
-      .replace(/[^A-Za-z0-9 -]/g, '') // remove invalid chars
-      .replace(/\s+/g, '-') // collapse whitespace and replace by -
-      .replace(/-+/g, '-'); // collapse dashes
-  
+        .replace(/[^A-Za-z0-9 -]/g, '') // remove invalid chars
+        .replace(/\s+/g, '-') // collapse whitespace and replace by -
+        .replace(/-+/g, '-'); // collapse dashes
+
     return str;
-  };
+};
 
 
 
 export const uiSpecificationReducer = createSlice({
     name: 'ui-specification',
-    initialState:  initialState["ui-specification"],
+    initialState: initialState["ui-specification"],
     reducers: {
         loaded: (_state: NotebookUISpec, action: PayloadAction<NotebookUISpec>) => {
             return action.payload;
         },
         sectionNameUpdated: (state: NotebookUISpec,
-            action : PayloadAction<{viewId: string, label: string}>) => {
-                const { viewId, label } = action.payload;
-                console.log('updating section name', viewId, 'with', label);
-                if (viewId in state.fviews) {
-                    state.fviews[viewId].label = label;
-                } else {
-                    throw new Error(`Can't update unknown section ${viewId} via sectionNameUpdated action`);
-                }
-            },
-        fieldUpdated: (state: NotebookUISpec, 
-                       action: PayloadAction<{fieldName: string, newField: FieldType}>) => {
+            action: PayloadAction<{ viewId: string, label: string }>) => {
+            const { viewId, label } = action.payload;
+            console.log('updating section name', viewId, 'with', label);
+            if (viewId in state.fviews) {
+                state.fviews[viewId].label = label;
+            } else {
+                throw new Error(`Can't update unknown section ${viewId} via sectionNameUpdated action`);
+            }
+        },
+        fieldUpdated: (state: NotebookUISpec,
+            action: PayloadAction<{ fieldName: string, newField: FieldType }>) => {
             const { fieldName, newField } = action.payload;
             console.log('updating field', fieldName, 'with', newField);
             if (fieldName in state.fields) {
@@ -73,7 +73,7 @@ export const uiSpecificationReducer = createSlice({
             }
         },
         fieldMoved: (state: NotebookUISpec,
-                     action: PayloadAction<{fieldName: string, viewId: string, direction: 'up' | 'down'}>) => {
+            action: PayloadAction<{ fieldName: string, viewId: string, direction: 'up' | 'down' }>) => {
 
             const { fieldName, viewId, direction } = action.payload;
             // this involves finding the field in the list of fields in the view
@@ -83,14 +83,14 @@ export const uiSpecificationReducer = createSlice({
                 if (fieldList[i] == fieldName) {
                     if (direction === 'up') {
                         if (i > 0) {
-                            const tmp = fieldList[i-1];
-                            fieldList[i-1] = fieldList[i];
+                            const tmp = fieldList[i - 1];
+                            fieldList[i - 1] = fieldList[i];
                             fieldList[i] = tmp;
                         }
                     } else {
                         if (i < fieldList.length - 1) {
-                            const tmp = fieldList[i+1];
-                            fieldList[i+1] = fieldList[i];
+                            const tmp = fieldList[i + 1];
+                            fieldList[i + 1] = fieldList[i];
                             fieldList[i] = tmp;
                         }
                     }
@@ -101,16 +101,16 @@ export const uiSpecificationReducer = createSlice({
             state.fviews[viewId].fields = fieldList;
         },
         fieldRenamed: (state: NotebookUISpec,
-            action: PayloadAction<{viewId: string, fieldName: string, newFieldName: string}>) => {
+            action: PayloadAction<{ viewId: string, fieldName: string, newFieldName: string }>) => {
 
-            const {viewId, fieldName, newFieldName} = action.payload;
+            const { viewId, fieldName, newFieldName } = action.payload;
             if (fieldName in state.fields) {
                 const field = state.fields[fieldName];
 
                 // ensure newFieldName is unique
                 let fieldLabel = slugify(newFieldName);
                 let N = 1;
-                while(fieldLabel in state.fields) { 
+                while (fieldLabel in state.fields) {
                     fieldLabel = slugify(fieldName + ' ' + N);
                     N += 1;
                 }
@@ -132,16 +132,16 @@ export const uiSpecificationReducer = createSlice({
                 throw new Error(`Cannot rename unknown field ${fieldName} via fieldRenamed action`);
             }
         },
-        fieldAdded: (state: NotebookUISpec, 
-                     action: PayloadAction<{
-                        fieldName: string, 
-                        fieldType: string, 
-                        viewId: string,
-                        viewSetId: string
-                    }>) => {
+        fieldAdded: (state: NotebookUISpec,
+            action: PayloadAction<{
+                fieldName: string,
+                fieldType: string,
+                viewId: string,
+                viewSetId: string
+            }>) => {
             const { fieldName, fieldType, viewId, viewSetId } = action.payload;
             console.log('adding field', fieldName, 'to', viewSetId, '-', viewId, 'type', fieldType);
-            
+
             const newField: FieldType = getFieldSpec(fieldType);
 
             let fieldLabel = slugify(fieldName);
@@ -184,15 +184,15 @@ export const uiSpecificationReducer = createSlice({
             // try to set the field label
             if (newField['component-parameters'] && 'label' in newField['component-parameters']) {
                 newField['component-parameters'].label = fieldName;
-            } else if ('InputLabelProps' in newField['component-parameters']  && 
-                        newField['component-parameters'].InputLabelProps &&
-                        'label' in newField['component-parameters'].InputLabelProps) {
+            } else if ('InputLabelProps' in newField['component-parameters'] &&
+                newField['component-parameters'].InputLabelProps &&
+                'label' in newField['component-parameters'].InputLabelProps) {
                 newField['component-parameters'].InputLabelProps.label = fieldName;
             }
 
             // ensure a unique field name
             let N = 1;
-            while(fieldLabel in state.fields) { 
+            while (fieldLabel in state.fields) {
                 fieldLabel = slugify(fieldName + ' ' + N);
                 N += 1;
             }
@@ -201,11 +201,11 @@ export const uiSpecificationReducer = createSlice({
             // add to fields and to the fview section
             state.fields[fieldLabel] = newField;
             state.fviews[viewId].fields.push(fieldLabel);
-        
+
         },
         fieldDeleted: (state: NotebookUISpec,
-                       action: PayloadAction<{fieldName: string, viewId: string}>) => {
-            const {fieldName, viewId} = action.payload;
+            action: PayloadAction<{ fieldName: string, viewId: string }>) => {
+            const { fieldName, viewId } = action.payload;
             // remove the field from fields and the viewSet
             if (fieldName in state.fields) {
                 delete state.fields[fieldName];
@@ -216,8 +216,8 @@ export const uiSpecificationReducer = createSlice({
             }
         },
         viewSetAdded: (state: NotebookUISpec,
-                       action: PayloadAction<{formName: string}>) => {
-            const {formName} = action.payload;
+            action: PayloadAction<{ formName: string }>) => {
+            const { formName } = action.payload;
             const newViewSet = {
                 label: formName,
                 views: []
@@ -231,9 +231,49 @@ export const uiSpecificationReducer = createSlice({
                 state.visible_types.push(formID);
             }
         },
+        viewSetDeleted: (state: NotebookUISpec, action: PayloadAction<{ viewSetId: string }>) => {
+            const { viewSetId } = action.payload;
+
+            if (viewSetId in state.viewsets) {
+                // working copy of the section names ('views') part of the form that is to be removed
+                const viewSetViews: string[] = state.viewsets[viewSetId].views
+                viewSetViews.map((view) => {
+                    if (view in state.fviews) {
+                        // working copy of the field names ('fields') part of the section that is part of the form that is to be removed
+                        const fviewFields: string[] = state.fviews[view].fields
+                        fviewFields.map((formField) => {
+                            if (formField in state.fields) {
+                                if (state.fields[formField]["component-parameters"].related_type === viewSetId) {
+                                    throw new Error(`This form is being used in a Relation Field. Therefore, you cannot delete it. Please fix this and try again.`)
+                                }
+                                else {
+                                    // remove the fields in 'fields' belonging to their respective sections in the form
+                                    delete state.fields[formField]
+                                }
+                            }
+                            else {
+                                throw new Error(`Cannot delete unknown field ${formField} via viewSetDeleted action`);
+                            }
+                        })
+                        // remove the sections in 'fviews' belonging to the form 
+                        delete state.fviews[view];
+                    }
+                    else {
+                        throw new Error(`Cannot delete unknown section ${view} via viewSetDeleted action`);
+                    }
+                })
+                // remove the form from 'viewsets' and 'visible_types'
+                delete state.viewsets[viewSetId];
+                const newVisibleTypes = state.visible_types.filter((field) => field !== viewSetId);
+                state.visible_types = newVisibleTypes;
+            }
+            else {
+                throw new Error(`Cannot delete unknown form ${viewSetId} via viewSetDeleted action`);
+            }
+        },
         formSectionAdded: (state: NotebookUISpec,
-            action: PayloadAction<{viewSetId: string, sectionLabel: string}>) => {
-            const {viewSetId, sectionLabel} = action.payload;
+            action: PayloadAction<{ viewSetId: string, sectionLabel: string }>) => {
+            const { viewSetId, sectionLabel } = action.payload;
             const sectionId = viewSetId + '-' + slugify(sectionLabel);
             const newSection = {
                 label: sectionLabel,

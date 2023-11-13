@@ -13,13 +13,14 @@
 // limitations under the License.
 
 import { Grid, Paper, Alert, Stepper, Typography, Step, Button, StepButton, TextField } from "@mui/material";
+import DeleteIcon from '@mui/icons-material/Delete';
 import { useAppDispatch, useAppSelector } from "../state/hooks";
 import { SectionEditor } from "./section-editor";
 import { useState } from "react";
 import { shallowEqual } from "react-redux";
 import { Notebook } from "../state/initial";
 
-export const FormEditor = ({ viewSetId }: {viewSetId: string}) => {
+export const FormEditor = ({ viewSetId }: { viewSetId: string }) => {
 
     const viewSet = useAppSelector((state: Notebook) => state['ui-specification'].viewsets[viewSetId],
         (left, right) => {
@@ -40,16 +41,29 @@ export const FormEditor = ({ viewSetId }: {viewSetId: string}) => {
 
     const addNewSection = () => {
         try {
-            dispatch({type: 'ui-specification/formSectionAdded', payload: {viewSetId: viewSetId, sectionLabel: newSectionName}});
+            dispatch({ type: 'ui-specification/formSectionAdded', payload: { viewSetId: viewSetId, sectionLabel: newSectionName } });
         } catch (error: unknown) {
             error instanceof Error &&
                 setAlertMessage(error.message);
         }
     }
 
+    const deleteForm = () => {
+        console.log('viewsetviews', viewSet.views)
+        try {
+            dispatch({ type: 'ui-specification/viewSetDeleted', payload: { viewSetId: viewSetId } });
+        } catch (error: unknown) {
+            error instanceof Error && setAlertMessage(error.message);
+        }
+    }
+
     return (
         <Grid container spacing={2}>
-  
+            <Button variant="text" color="secondary" startIcon={<DeleteIcon />} onClick={deleteForm}>
+                Delete this form
+            </Button>
+            {alertMessage && <Alert severity="error">{alertMessage}</Alert>}
+
             <Grid item xs={12}>
                 <Grid container spacing={2}>
                     <Grid item xs={12}>
@@ -66,7 +80,7 @@ export const FormEditor = ({ viewSetId }: {viewSetId: string}) => {
                     <Grid item xs={12}>
                         {activeStep === viewSet.views.length ? (
                             <Paper square elevation={0} sx={{ p: 3 }}>
-                                <Typography>Form has been created. No fields added yet.</Typography> 
+                                <Typography>Form has been created. No fields added yet.</Typography>
                             </Paper>
                         ) :
                             (
