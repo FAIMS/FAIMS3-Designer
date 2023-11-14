@@ -140,7 +140,7 @@ export const FormEditor = ({ viewSetId }: { viewSetId: string }) => {
                     <Grid item xs={12}>
                         {activeStep === viewSet.views.length ? (
                             <Paper square elevation={0} sx={{ p: 3 }}>
-                                <Typography>Form has been created. No fields added yet.</Typography>
+                                <Typography>Form has been created. No sections or fields added yet.</Typography>
                             </Paper>
                         ) :
                             (

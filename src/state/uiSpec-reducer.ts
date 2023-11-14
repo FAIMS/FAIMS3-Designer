@@ -271,6 +271,24 @@ export const uiSpecificationReducer = createSlice({
                 state.fviews[sectionId] = newSection;
                 state.viewsets[viewSetId].views.push(sectionId);
             }
+        },
+        formSectionDeleted: (state: NotebookUISpec, action: PayloadAction<{ viewSetId: string, viewId: string }>) => {
+            const { viewSetId, viewId } = action.payload;
+
+            if (viewId in state.fviews) {
+                // working copy of the field names ('fields') part of the section that is to be removed
+                const sectionFields: string[] = state.fviews[viewId].fields
+                sectionFields.map((field) => {
+                    if (field in state.fields) {
+                        // remove the fields in 'fields' belonging to the section 
+                        delete state.fields[field];
+                    }
+                })
+                // remove the section from 'fviews' & 'viewsets'
+                delete state.fviews[viewId];
+                const newViewSetViews = state.viewsets[viewSetId].views.filter((view) => view !== viewId);
+                state.viewsets[viewSetId].views = newViewSetViews;
+            }
         }
     }
 })
