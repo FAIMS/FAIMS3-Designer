@@ -22,10 +22,11 @@ import { useState } from "react";
 
 type Props = {
     viewSetId: string,
-    viewId: string
+    viewId: string,
+    deleteCallback: any,
 };
 
-export const SectionEditor = ({ viewSetId, viewId }: Props) => {
+export const SectionEditor = ({ viewSetId, viewId, deleteCallback }: Props) => {
 
     const fView = useAppSelector((state: Notebook) => state['ui-specification'].fviews[viewId]);
     const dispatch = useAppDispatch();
@@ -43,7 +44,7 @@ export const SectionEditor = ({ viewSetId, viewId }: Props) => {
     }
 
     const deleteSection = () => {
-        dispatch({ type: 'ui-specification/formSectionDeleted', payload: { viewSetId, viewId } });
+        deleteCallback(viewSetId, viewId)
         handleClose();
     }
 

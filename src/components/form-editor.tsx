@@ -91,6 +91,14 @@ export const FormEditor = ({ viewSetId }: { viewSetId: string }) => {
         }
     }
 
+    const deleteSection = (viewSetID: string, viewID: string) => {
+        dispatch({ type: 'ui-specification/formSectionDeleted', payload: { viewSetID, viewID } });
+
+        if (viewSet.views[viewSet.views.length-1] === viewID && viewSet.views.length > 1) {
+            setActiveStep(activeStep-1)
+        }
+    }
+
     return (
         <Grid container spacing={2}>
             <Grid item xs={12}>
@@ -144,7 +152,7 @@ export const FormEditor = ({ viewSetId }: { viewSetId: string }) => {
                             </Paper>
                         ) :
                             (
-                                <SectionEditor viewId={viewSet.views[activeStep]} viewSetId={viewSetId} />
+                                <SectionEditor viewSetId={viewSetId} viewId={viewSet.views[activeStep]} deleteCallback={deleteSection} />
                             )
                         }
                     </Grid>
