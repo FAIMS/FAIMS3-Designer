@@ -12,27 +12,41 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {Grid, TextField } from "@mui/material";
+import { Grid, TextField, Button, Dialog, DialogActions, DialogTitle } from "@mui/material";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 import { FieldList } from "./field-list";
-import { useAppSelector, useAppDispatch } from "../state/hooks"; 
+import { useAppSelector, useAppDispatch } from "../state/hooks";
 import { Notebook } from '../state/initial';
+import { useState } from "react";
 
 type Props = {
     viewSetId: string,
-    viewId: string
+    viewId: string,
+    deleteCallback: (viewSetID: string, viewID: string) => void,
 };
 
-export const SectionEditor = ({ viewSetId, viewId }: Props) => {
+export const SectionEditor = ({ viewSetId, viewId, deleteCallback }: Props) => {
 
     const fView = useAppSelector((state: Notebook) => state['ui-specification'].fviews[viewId]);
     const dispatch = useAppDispatch();
 
-    const updateSectionLabel = (label: string) => {
-        dispatch({type: 'ui-specification/sectionNameUpdated', payload: {viewId, label}});
-    }   
-
     console.log('SectionEditor', viewId);
+
+    const [open, setOpen] = useState(false);
+
+    const updateSectionLabel = (label: string) => {
+        dispatch({ type: 'ui-specification/sectionNameUpdated', payload: { viewId, label } });
+    }
+
+    const handleClose = () => {
+        setOpen(false);
+    }
+
+    const deleteSection = () => {
+        deleteCallback(viewSetId, viewId)
+        handleClose();
+    }
 
     return (
         <>
@@ -51,10 +65,29 @@ export const SectionEditor = ({ viewSetId, viewId }: Props) => {
                         }}
                     />
                 </Grid>
+                <Grid item sm={6}>
+                    <Button variant="text" color="error" size="small" startIcon={<DeleteIcon />} onClick={() => setOpen(true)}>
+                        Delete this section
+                    </Button>
+                    <Dialog
+                        open={open}
+                        onClose={handleClose}
+                        aria-labelledby="alert-dialog-title"
+                        aria-describedby="alert-dialog-description"
+                    >
+                        <DialogTitle id="alert-dialog-title">
+                            Are you sure you want to delete this section?
+                        </DialogTitle>
+                        <DialogActions>
+                            <Button onClick={deleteSection}>Yes</Button>
+                            <Button onClick={handleClose}>No</Button>
+                        </DialogActions>
+                    </Dialog>
+                </Grid>
             </Grid>
 
 
-            <FieldList viewId={viewId} viewSetId={viewSetId}/>
+            <FieldList viewId={viewId} viewSetId={viewSetId} />
         </>
     );
 }
