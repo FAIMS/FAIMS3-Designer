@@ -23,7 +23,7 @@ import { useState } from "react";
 type Props = {
     viewSetId: string,
     viewId: string,
-    deleteCallback: any,
+    deleteCallback: (viewSetID: string, viewID: string) => void,
 };
 
 export const SectionEditor = ({ viewSetId, viewId, deleteCallback }: Props) => {
@@ -66,7 +66,7 @@ export const SectionEditor = ({ viewSetId, viewId, deleteCallback }: Props) => {
                     />
                 </Grid>
                 <Grid item sm={6}>
-                    <Button variant="outlined" color="primary" size="small" startIcon={<DeleteIcon />} onClick={() => setOpen(true)}>
+                    <Button variant="text" color="error" size="small" startIcon={<DeleteIcon />} onClick={() => setOpen(true)}>
                         Delete this section
                     </Button>
                     <Dialog

@@ -31,7 +31,7 @@ export const FormEditor = ({ viewSetId }: { viewSetId: string }) => {
     const dispatch = useAppDispatch();
 
     console.log('FormEditor', viewSetId);
-
+    
     const [activeStep, setActiveStep] = useState(0);
     const [newSectionName, setNewSectionName] = useState('New Section');
     const [alertMessage, setAlertMessage] = useState('');
@@ -72,6 +72,23 @@ export const FormEditor = ({ viewSetId }: { viewSetId: string }) => {
         fieldValues.map((fieldValue) => {
             if (fieldValue["component-parameters"].related_type === viewSetId) {
                 flag = true;
+                
+                // extracting the name of the field to advise user
+                const relatedFieldName = fieldValue["component-parameters"].name;
+
+                // extracting where in the notebook the user has to look
+                const fviewsEntries = Object.entries(views)
+                fviewsEntries.map((fviewId, idx) => {
+                    // accessing the first element of the subarray only because it holds all the info
+                    fviewsEntries[idx][1].fields.map((field) => {
+                        // finding the form+section relatedFieldname belongs to
+                        if(field === relatedFieldName) {
+                            // setting the dialog text here
+                            setDeleteAlertTitle("Form cannot be deleted.");
+                            setDeleteAlertMessage("Please update the field, '"+relatedFieldName+"' found in "+fviewsEntries[idx][0]+", to remove the reference to allow this form to be deleted.");
+                        }
+                    })
+                })
             }
         })
         return flag;
@@ -82,8 +99,6 @@ export const FormEditor = ({ viewSetId }: { viewSetId: string }) => {
         if (preventFormDelete()) {
             setOpen(true);
             setPreventDeleteDialog(true);
-            setDeleteAlertTitle("Form cannot be deleted.");
-            setDeleteAlertMessage("This form is being referred to in a RelatedRecordSelector field. Please fix this and try again.");
         }
         else {
             dispatch({ type: 'ui-specification/viewSetDeleted', payload: { viewSetId: viewSetId } });
@@ -94,6 +109,7 @@ export const FormEditor = ({ viewSetId }: { viewSetId: string }) => {
     const deleteSection = (viewSetID: string, viewID: string) => {
         dispatch({ type: 'ui-specification/formSectionDeleted', payload: { viewSetID, viewID } });
 
+        // making sure the stepper jumps steps (forward or backward) intuitively 
         if (viewSet.views[viewSet.views.length-1] === viewID && viewSet.views.length > 1) {
             setActiveStep(activeStep-1)
         }
@@ -102,7 +118,7 @@ export const FormEditor = ({ viewSetId }: { viewSetId: string }) => {
     return (
         <Grid container spacing={2}>
             <Grid item xs={12}>
-                <Button variant="text" color="secondary" startIcon={<DeleteIcon />} onClick={deleteConfirmation}>
+                <Button variant="text" color="error" size="medium" startIcon={<DeleteIcon />} onClick={deleteConfirmation}>
                     Delete this form
                 </Button>
                 <Dialog
