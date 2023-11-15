@@ -61,11 +61,11 @@ export const FormEditor = ({ viewSetId }: { viewSetId: string }) => {
         setOpen(true);
         setPreventDeleteDialog(false);
         setDeleteAlertTitle("Are you sure you want to delete this form?");
-        setDeleteAlertMessage("You will lose all your progress.");
+        setDeleteAlertMessage("All fields in the form will also be deleted.");
     }
 
     const preventFormDelete = () => {
-        // we dont need the field names, only their values
+        // we don't need the field names, only their values
         const fieldValues = Object.values(fields)
         let flag: boolean = false;
         // search through all the values for mention of the form to be deleted in the related_type param
@@ -78,10 +78,10 @@ export const FormEditor = ({ viewSetId }: { viewSetId: string }) => {
 
                 // extracting where in the notebook the user has to look
                 const fviewsEntries = Object.entries(views)
-                fviewsEntries.map((fviewId, idx) => {
+                fviewsEntries.map((_viewId, idx) => {
                     // accessing the first element of the subarray only because it holds all the info
                     fviewsEntries[idx][1].fields.map((field) => {
-                        // finding the form+section relatedFieldname belongs to
+                        // finding the form+section relatedFieldName belongs to
                         if(field === relatedFieldName) {
                             // setting the dialog text here
                             setDeleteAlertTitle("Form cannot be deleted.");

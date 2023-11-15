@@ -240,8 +240,8 @@ export const uiSpecificationReducer = createSlice({
                 viewSetViews.map((view) => {
                     if (view in state.fviews) {
                         // working copy of the field names ('fields') part of the section that is part of the form that is to be removed
-                        const fviewFields: string[] = state.fviews[view].fields
-                        fviewFields.map((formField) => {
+                        const viewFields: string[] = state.fviews[view].fields
+                        viewFields.map((formField) => {
                             if (formField in state.fields) {
                                 // remove the fields in 'fields' belonging to their respective sections in the form
                                 delete state.fields[formField]
