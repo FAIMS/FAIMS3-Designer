@@ -257,6 +257,14 @@ export const uiSpecificationReducer = createSlice({
                 state.visible_types = newVisibleTypes;
             }
         },
+        formNameUpdated: (state: NotebookUISpec,
+            action: PayloadAction<{ viewSetId: string, label: string }>) => {
+            const { viewSetId, label } = action.payload;
+            console.log('updating form name', viewSetId, 'with', label);
+            if (viewSetId in state.viewsets) {
+                state.viewsets[viewSetId].label = label;
+            } 
+        },
         formSectionAdded: (state: NotebookUISpec,
             action: PayloadAction<{ viewSetId: string, sectionLabel: string }>) => {
             const { viewSetId, sectionLabel } = action.payload;

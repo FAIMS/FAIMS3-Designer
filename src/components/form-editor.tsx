@@ -12,8 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { Grid, Paper, Alert, Stepper, Typography, Step, Button, StepButton, TextField, Dialog, DialogTitle, DialogActions, DialogContent, DialogContentText } from "@mui/material";
-import DeleteIcon from '@mui/icons-material/Delete';
+import { Grid, Paper, Alert, Stepper, Typography, Step, Button, StepButton, TextField, Dialog, DialogTitle, DialogActions, DialogContent, DialogContentText, Card, InputAdornment, Tooltip, IconButton } from "@mui/material";
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from '@mui/icons-material/Edit';
+import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
+
 import { useAppDispatch, useAppSelector } from "../state/hooks";
 import { SectionEditor } from "./section-editor";
 import { useState } from "react";
@@ -26,12 +29,14 @@ export const FormEditor = ({ viewSetId }: { viewSetId: string }) => {
         (left, right) => {
             return shallowEqual(left, right);
         });
+
+    const viewsets = useAppSelector((state: Notebook) => state['ui-specification'].viewsets);
     const views = useAppSelector((state: Notebook) => state['ui-specification'].fviews);
     const fields = useAppSelector((state: Notebook) => state['ui-specification'].fields);
     const dispatch = useAppDispatch();
 
     console.log('FormEditor', viewSetId);
-    
+
     const [activeStep, setActiveStep] = useState(0);
     const [newSectionName, setNewSectionName] = useState('New Section');
     const [alertMessage, setAlertMessage] = useState('');
@@ -39,6 +44,7 @@ export const FormEditor = ({ viewSetId }: { viewSetId: string }) => {
     const [deleteAlertMessage, setDeleteAlertMessage] = useState('');
     const [deleteAlertTitle, setDeleteAlertTitle] = useState('');
     const [preventDeleteDialog, setPreventDeleteDialog] = useState(false);
+    const [editMode, setEditMode] = useState(false);
 
     const handleStep = (step: number) => () => {
         setActiveStep(step);
@@ -57,6 +63,19 @@ export const FormEditor = ({ viewSetId }: { viewSetId: string }) => {
         }
     }
 
+    const deleteSection = (viewSetID: string, viewID: string) => {
+        dispatch({ type: 'ui-specification/formSectionDeleted', payload: { viewSetID, viewID } });
+
+        // making sure the stepper jumps steps (forward or backward) intuitively 
+        if (viewSet.views[viewSet.views.length - 1] === viewID && viewSet.views.length > 1) {
+            setActiveStep(activeStep - 1)
+        }
+    }
+
+    const updateFormLabel = (label: string) => {
+        dispatch({ type: 'ui-specification/formNameUpdated', payload: { viewSetId, label } });
+    }
+
     const deleteConfirmation = () => {
         setOpen(true);
         setPreventDeleteDialog(false);
@@ -64,31 +83,48 @@ export const FormEditor = ({ viewSetId }: { viewSetId: string }) => {
         setDeleteAlertMessage("All fields in the form will also be deleted.");
     }
 
+    const findRelatedFieldLocation = (fieldName: string | undefined) => {
+        // making fviews iterable
+        const fviewsEntries = Object.entries(views)
+        fviewsEntries.map((_viewId, idx) => {
+            // iterating over every section's fields array to find fieldName
+            fviewsEntries[idx][1].fields.map((field) => {
+                if (field === fieldName) {
+                    // extracting which section fieldName belongs to
+                    const sectionToFind = fviewsEntries[idx][0];
+                    // making viewsets iterable
+                    const viewsetsEntries = Object.entries(viewsets);
+                    viewsetsEntries.map((_viewSetId, idx) => {
+                        // iterating over every form's views array to find the section
+                        viewsetsEntries[idx][1].views.map((view) => {
+                            if (view === sectionToFind) {
+                                // we made it! now extract the form and section labels
+                                const formLabel: string = viewsetsEntries[idx][1].label;
+                                const sectionLabel: string = fviewsEntries[idx][1].label;
+
+                                // setting the dialog text here
+                                setDeleteAlertTitle("Form cannot be deleted.");
+                                setDeleteAlertMessage("Please update the field '" + fieldName + "', found in form " + formLabel + " section " + sectionLabel + ", to remove the reference to allow this form to be deleted.");
+                            }
+                        })
+                    })
+                }
+            })
+        })
+    }
+
     const preventFormDelete = () => {
-        // we don't need the field names, only their values
+        // we don't need the field keys, only their values
         const fieldValues = Object.values(fields)
         let flag: boolean = false;
         // search through all the values for mention of the form to be deleted in the related_type param
         fieldValues.map((fieldValue) => {
             if (fieldValue["component-parameters"].related_type === viewSetId) {
                 flag = true;
-                
-                // extracting the name of the field to advise user
+                // extracting the name of the field to advise the user
                 const relatedFieldName = fieldValue["component-parameters"].name;
-
-                // extracting where in the notebook the user has to look
-                const fviewsEntries = Object.entries(views)
-                fviewsEntries.map((_viewId, idx) => {
-                    // accessing the first element of the subarray only because it holds all the info
-                    fviewsEntries[idx][1].fields.map((field) => {
-                        // finding the form+section relatedFieldName belongs to
-                        if(field === relatedFieldName) {
-                            // setting the dialog text here
-                            setDeleteAlertTitle("Form cannot be deleted.");
-                            setDeleteAlertMessage("Please update the field, '"+relatedFieldName+"' found in "+fviewsEntries[idx][0]+", to remove the reference to allow this form to be deleted.");
-                        }
-                    })
-                })
+                // finding the exact location of the field in the notebook to advise the user
+                findRelatedFieldLocation(relatedFieldName);
             }
         })
         return flag;
@@ -106,18 +142,36 @@ export const FormEditor = ({ viewSetId }: { viewSetId: string }) => {
         }
     }
 
-    const deleteSection = (viewSetID: string, viewID: string) => {
-        dispatch({ type: 'ui-specification/formSectionDeleted', payload: { viewSetID, viewID } });
-
-        // making sure the stepper jumps steps (forward or backward) intuitively 
-        if (viewSet.views[viewSet.views.length-1] === viewID && viewSet.views.length > 1) {
-            setActiveStep(activeStep-1)
-        }
-    }
-
     return (
         <Grid container spacing={2}>
             <Grid item xs={12}>
+                <Button variant="text" size="medium" startIcon={<EditIcon />} onClick={() => setEditMode(true)}>
+                    Edit the form name
+                </Button>
+                {editMode &&
+                    <TextField
+                        label="Form Name"
+                        name="label"
+                        data-testid="label"
+                        disabled={!editMode}
+                        InputProps={{
+                            endAdornment: (
+                                <InputAdornment position="end">
+                                    <Tooltip title="Close">
+                                        <IconButton onClick={() => setEditMode(false)}>
+                                            <CloseRoundedIcon />
+                                        </IconButton>
+                                    </Tooltip>
+                                </InputAdornment>
+                            ),
+                        }}
+                        value={viewSet.label}
+                        onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                            updateFormLabel(event.target.value);
+                        }}
+                    />
+                }
+
                 <Button variant="text" color="error" size="medium" startIcon={<DeleteIcon />} onClick={deleteConfirmation}>
                     Delete this form
                 </Button>
@@ -149,57 +203,56 @@ export const FormEditor = ({ viewSetId }: { viewSetId: string }) => {
             </Grid>
 
             <Grid item xs={12}>
-                <Grid container spacing={2}>
-                    <Grid item xs={12}>
-                        <Stepper nonLinear activeStep={activeStep} alternativeLabel sx={{ my: 3 }}>
-                            {viewSet.views.map((view: string, index: number) => (
-                                <Step key={view}>
-                                    <StepButton color="inherit" onClick={handleStep(index)}>
-                                        <Typography>{views[view].label}</Typography>
-                                    </StepButton>
-                                </Step>
-                            ))}
-                        </Stepper>
+                <Card variant="outlined">
+                    <Grid container spacing={2} p={3}>
+                        <Grid item xs={12}>
+                            <Stepper nonLinear activeStep={activeStep} alternativeLabel sx={{ my: 3 }}>
+                                {viewSet.views.map((view: string, index: number) => (
+                                    <Step key={view}>
+                                        <StepButton color="inherit" onClick={handleStep(index)}>
+                                            <Typography>{views[view].label}</Typography>
+                                        </StepButton>
+                                    </Step>
+                                ))}
+                            </Stepper>
+                        </Grid>
+                        <Grid item xs={12}>
+                            {activeStep === viewSet.views.length ? (
+                                <Paper square elevation={0} sx={{ p: 3 }}>
+                                    <Typography>Form has been created. No sections or fields added yet.</Typography>
+                                </Paper>
+                            ) :
+                                (
+                                    <SectionEditor viewSetId={viewSetId} viewId={viewSet.views[activeStep]} deleteCallback={deleteSection} />
+                                )
+                            }
+                        </Grid>
                     </Grid>
-                    <Grid item xs={12}>
-                        {activeStep === viewSet.views.length ? (
-                            <Paper square elevation={0} sx={{ p: 3 }}>
-                                <Typography>Form has been created. No sections or fields added yet.</Typography>
-                            </Paper>
-                        ) :
-                            (
-                                <SectionEditor viewSetId={viewSetId} viewId={viewSet.views[activeStep]} deleteCallback={deleteSection} />
-                            )
-                        }
+                    <Grid container spacing={2} p={3}>
+                        <Grid item xs={12} sm={6}>
+                            <TextField
+                                fullWidth
+                                required
+                                label="Section Name"
+                                helperText="Enter a name for the form section."
+                                name="sectionName"
+                                data-testid="sectionName"
+                                value={newSectionName}
+                                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                                    setNewSectionName(event.target.value);
+                                }}
+                            />
+                        </Grid>
+                        <Grid item xs={12} sm={6}>
+                            <Button variant="contained" color="primary" onClick={addNewSection}>
+                                Add New Section
+                            </Button>
+                        </Grid>
+                        <Grid item xs={12}>
+                            {alertMessage && <Alert severity="error">{alertMessage}</Alert>}
+                        </Grid>
                     </Grid>
-                </Grid>
-            </Grid>
-
-            <Grid item xs={12}>
-                <Grid container spacing={2} pt={3}>
-                    <Grid item xs={12} sm={6}>
-                        <TextField
-                            fullWidth
-                            required
-                            label="Section Name"
-                            helperText="Enter a name for the form section"
-                            name="sectionName"
-                            data-testid="sectionName"
-                            value={newSectionName}
-                            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                                setNewSectionName(event.target.value);
-                            }}
-                        />
-                    </Grid>
-                    <Grid item xs={12} sm={6}>
-                        <Button variant="contained" color="primary" onClick={addNewSection}>
-                            Add New Section
-                        </Button>
-                    </Grid>
-                    <Grid item xs={12}>
-                        {alertMessage && <Alert severity="error">{alertMessage}</Alert>}
-                    </Grid>
-                </Grid>
+                </Card>
             </Grid>
         </Grid>
     );

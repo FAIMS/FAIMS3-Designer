@@ -70,7 +70,7 @@ export const DesignPanel = () => {
             
             Object.keys(viewSets).map((key: string, index: number) => {
                 return (
-                    <TabPanel key={index} value={index.toString()}>
+                    <TabPanel key={index} value={index.toString()} sx={{ paddingX: 0 }}>
                         <FormEditor viewSetId={key} />
                     </TabPanel>
                 )
