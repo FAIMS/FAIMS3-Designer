@@ -86,17 +86,17 @@ export const FormEditor = ({ viewSetId }: { viewSetId: string }) => {
     const findRelatedFieldLocation = (fieldName: string | undefined) => {
         // making fviews iterable
         const fviewsEntries = Object.entries(views)
-        fviewsEntries.map((_viewId, idx) => {
+        fviewsEntries.forEach((_viewId, idx) => {
             // iterating over every section's fields array to find fieldName
-            fviewsEntries[idx][1].fields.map((field) => {
+            fviewsEntries[idx][1].fields.forEach((field) => {
                 if (field === fieldName) {
                     // extracting which section fieldName belongs to
                     const sectionToFind = fviewsEntries[idx][0];
                     // making viewsets iterable
                     const viewsetsEntries = Object.entries(viewsets);
-                    viewsetsEntries.map((_viewSetId, idx) => {
+                    viewsetsEntries.forEach((_viewSetId, idx) => {
                         // iterating over every form's views array to find the section
-                        viewsetsEntries[idx][1].views.map((view) => {
+                        viewsetsEntries[idx][1].views.forEach((view) => {
                             if (view === sectionToFind) {
                                 // we made it! now extract the form and section labels
                                 const formLabel: string = viewsetsEntries[idx][1].label;
@@ -118,7 +118,7 @@ export const FormEditor = ({ viewSetId }: { viewSetId: string }) => {
         const fieldValues = Object.values(fields)
         let flag: boolean = false;
         // search through all the values for mention of the form to be deleted in the related_type param
-        fieldValues.map((fieldValue) => {
+        fieldValues.forEach((fieldValue) => {
             if (fieldValue["component-parameters"].related_type === viewSetId) {
                 flag = true;
                 // extracting the name of the field to advise the user
@@ -144,62 +144,75 @@ export const FormEditor = ({ viewSetId }: { viewSetId: string }) => {
 
     return (
         <Grid container spacing={2}>
-            <Grid item xs={12}>
-                <Button variant="text" size="medium" startIcon={<EditIcon />} onClick={() => setEditMode(true)}>
-                    Edit the form name
-                </Button>
-                {editMode &&
-                    <TextField
-                        label="Form Name"
-                        name="label"
-                        data-testid="label"
-                        disabled={!editMode}
-                        InputProps={{
-                            endAdornment: (
-                                <InputAdornment position="end">
-                                    <Tooltip title="Close">
-                                        <IconButton onClick={() => setEditMode(false)}>
-                                            <CloseRoundedIcon />
-                                        </IconButton>
-                                    </Tooltip>
-                                </InputAdornment>
-                            ),
-                        }}
-                        value={viewSet.label}
-                        onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                            updateFormLabel(event.target.value);
-                        }}
-                    />
-                }
+            <Grid container item xs={12}>
+                <Grid item xs={3}>
+                    <Button variant="text" color="error" size="medium" startIcon={<DeleteIcon />} onClick={deleteConfirmation}>
+                        Delete this form
+                    </Button>
+                    <Dialog
+                        open={open}
+                        onClose={handleClose}
+                        aria-labelledby="alert-dialog-title"
+                        aria-describedby="alert-dialog-description"
+                    >
+                        <DialogTitle id="alert-dialog-title">
+                            {deleteAlertTitle}
+                        </DialogTitle>
+                        <DialogContent>
+                            <DialogContentText id="alert-dialog-description">
+                                {deleteAlertMessage}
+                            </DialogContentText>
+                        </DialogContent>
+                        {preventDeleteDialog ?
+                            <DialogActions>
+                                <Button onClick={handleClose}>OK</Button>
+                            </DialogActions>
+                            :
+                            <DialogActions>
+                                <Button onClick={deleteForm}>Yes</Button>
+                                <Button onClick={handleClose}>No</Button>
+                            </DialogActions>
+                        }
+                    </Dialog>
+                </Grid>
 
-                <Button variant="text" color="error" size="medium" startIcon={<DeleteIcon />} onClick={deleteConfirmation}>
-                    Delete this form
-                </Button>
-                <Dialog
-                    open={open}
-                    onClose={handleClose}
-                    aria-labelledby="alert-dialog-title"
-                    aria-describedby="alert-dialog-description"
-                >
-                    <DialogTitle id="alert-dialog-title">
-                        {deleteAlertTitle}
-                    </DialogTitle>
-                    <DialogContent>
-                        <DialogContentText id="alert-dialog-description">
-                            {deleteAlertMessage}
-                        </DialogContentText>
-                    </DialogContent>
-                    {preventDeleteDialog ?
-                        <DialogActions>
-                            <Button onClick={handleClose}>OK</Button>
-                        </DialogActions>
-                        :
-                        <DialogActions>
-                            <Button onClick={deleteForm}>Yes</Button>
-                            <Button onClick={handleClose}>No</Button>
-                        </DialogActions>
+                <Grid item xs={3}>
+                    <Button variant="text" size="medium" startIcon={<EditIcon />} onClick={() => setEditMode(true)}>
+                        Edit form name
+                    </Button>
+                    {editMode &&
+                        <TextField
+                            size="small"
+                            margin="dense"
+                            label="Form Name"
+                            name="label"
+                            data-testid="label"
+                            InputProps={{
+                                endAdornment: (
+                                    <InputAdornment position="end">
+                                        <Tooltip title="Done / Close">
+                                            <IconButton onClick={() => setEditMode(false)}>
+                                                <CloseRoundedIcon />
+                                            </IconButton>
+                                        </Tooltip>
+                                    </InputAdornment>
+                                ),
+                            }}
+                            value={viewSet.label}
+                            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                                updateFormLabel(event.target.value);
+                            }}
+                        />
                     }
-                </Dialog>
+                </Grid>
+
+                <Grid item xs={3}>
+
+                </Grid>
+
+                <Grid item xs={3}>
+
+                </Grid>
             </Grid>
 
             <Grid item xs={12}>
