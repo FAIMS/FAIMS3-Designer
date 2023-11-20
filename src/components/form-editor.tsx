@@ -12,10 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { Grid, Paper, Alert, Stepper, Typography, Step, Button, StepButton, TextField, Dialog, DialogTitle, DialogActions, DialogContent, DialogContentText, Card, InputAdornment, Tooltip, IconButton, Checkbox, FormControlLabel } from "@mui/material";
+import { Grid, Paper, Alert, Stepper, Typography, Step, Button, StepButton, TextField, Dialog, DialogTitle, DialogActions, DialogContent, DialogContentText, Card, InputAdornment, Tooltip, IconButton, Checkbox, FormControlLabel, FormHelperText } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from '@mui/icons-material/Edit';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
+import DoneRoundedIcon from '@mui/icons-material/DoneRounded';
 
 import { useAppDispatch, useAppSelector } from "../state/hooks";
 import { SectionEditor } from "./section-editor";
@@ -47,7 +48,8 @@ export const FormEditor = ({ viewSetId }: { viewSetId: string }) => {
     const [preventDeleteDialog, setPreventDeleteDialog] = useState(false);
     const [editMode, setEditMode] = useState(false);
     const [checked, setChecked] = useState(true);
-    const [initialIndex, setInitialIndex] = useState(visibleTypes.indexOf(viewSetId))
+    const [error, setError] = useState(false);
+    const [initialIndex, setInitialIndex] = useState(visibleTypes.indexOf(viewSetId));
 
     const handleStep = (step: number) => () => {
         setActiveStep(step);
@@ -57,9 +59,24 @@ export const FormEditor = ({ viewSetId }: { viewSetId: string }) => {
         setOpen(false);
     };
 
+    console.log('length ', Object.keys(viewsets).length)
     const handleChange = (ticked: boolean) => {
-        setChecked(ticked);
-        dispatch({ type: 'ui-specification/formVisibilityUpdated', payload: { viewSetId, ticked, initialIndex } });
+        // there must be >1 forms in the notebook, and, therefore, >1 visible forms, in order to be able to untick the checkbox
+        if ((Object.keys(viewsets).length > 1 && visibleTypes.length > 1) || ticked) {
+            setError(false);
+            dispatch({ type: 'ui-specification/formVisibilityUpdated', payload: { viewSetId, ticked, initialIndex } });
+        }
+        // in the case that there are multiple forms in the notebook, but none are visible, allow to re-tick the checkbox
+        else if (visibleTypes.length === 0) {
+            setError(false);
+            setChecked(ticked)
+            setInitialIndex(0)
+            dispatch({ type: 'ui-specification/formVisibilityUpdated', payload: { viewSetId, ticked: checked, initialIndex: initialIndex } });
+        }
+        else {
+            setError(true);
+        }
+
     }
 
     const addNewSection = () => {
@@ -185,16 +202,17 @@ export const FormEditor = ({ viewSetId }: { viewSetId: string }) => {
                 </Grid>
 
                 <Grid item xs={3}>
-                    <Tooltip arrow title="Tick to include 'Add New Record' button.">
-                        <FormControlLabel
-                            control={<Checkbox
-                                checked={checked}
-                                size="small"
-                                onChange={(e) => handleChange(e.target.checked)}
-                            />}
-                            label="Visible on Top"
-                        />
-                    </Tooltip>
+                    <FormControlLabel
+                        control={<Checkbox
+                            checked={visibleTypes.includes(viewSetId)}
+                            size="small"
+                            onChange={(e) => handleChange(e.target.checked)}
+                        />}
+                        label="Include 'Add New Record' button"
+                    />
+                    <FormHelperText error={error}>
+                        {error && "This can only be unticked when there is more than 1 (visible) form."}
+                    </FormHelperText>
                 </Grid>
 
                 <Grid item xs={3}>
@@ -211,7 +229,12 @@ export const FormEditor = ({ viewSetId }: { viewSetId: string }) => {
                             InputProps={{
                                 endAdornment: (
                                     <InputAdornment position="end">
-                                        <Tooltip title="Done / Close">
+                                        <Tooltip title="Done">
+                                            <IconButton onClick={() => setEditMode(false)}>
+                                                <DoneRoundedIcon />
+                                            </IconButton>
+                                        </Tooltip>
+                                        <Tooltip title="Close">
                                             <IconButton onClick={() => setEditMode(false)}>
                                                 <CloseRoundedIcon />
                                             </IconButton>
