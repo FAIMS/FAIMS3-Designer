@@ -12,8 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { Grid, TextField, Button, Dialog, DialogActions, DialogTitle } from "@mui/material";
+import { Grid, TextField, Button, Dialog, DialogActions, DialogTitle, InputAdornment, Tooltip, IconButton } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from '@mui/icons-material/Edit';
+import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
+import DoneRoundedIcon from '@mui/icons-material/DoneRounded';
 
 import { FieldList } from "./field-list";
 import { useAppSelector, useAppDispatch } from "../state/hooks";
@@ -34,6 +37,7 @@ export const SectionEditor = ({ viewSetId, viewId, deleteCallback }: Props) => {
     console.log('SectionEditor', viewId);
 
     const [open, setOpen] = useState(false);
+    const [editMode, setEditMode] = useState(false);
 
     const updateSectionLabel = (label: string) => {
         dispatch({ type: 'ui-specification/sectionNameUpdated', payload: { viewId, label } });
@@ -50,22 +54,8 @@ export const SectionEditor = ({ viewSetId, viewId, deleteCallback }: Props) => {
 
     return (
         <>
-            <Grid container spacing={2}>
-                <Grid item sm={6} p={2}>
-                    <TextField
-                        fullWidth
-                        required
-                        label="Section Name"
-                        helperText="Name for this section of the form."
-                        name="label"
-                        data-testid="label"
-                        value={fView.label}
-                        onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                            updateSectionLabel(event.target.value);
-                        }}
-                    />
-                </Grid>
-                <Grid item sm={6}>
+            <Grid container spacing={2} pb={2}>
+                <Grid item sm={4}>
                     <Button variant="text" color="error" size="small" startIcon={<DeleteIcon />} onClick={() => setOpen(true)}>
                         Delete this section
                     </Button>
@@ -83,6 +73,48 @@ export const SectionEditor = ({ viewSetId, viewId, deleteCallback }: Props) => {
                             <Button onClick={handleClose}>No</Button>
                         </DialogActions>
                     </Dialog>
+                </Grid>
+
+                <Grid item sm={4}>
+                    <Button variant="text" size="small" startIcon={<EditIcon />} onClick={() => setEditMode(true)}>
+                        Edit section name
+                    </Button>
+                    {editMode &&
+                        <TextField
+                            required
+                            size="small"
+                            margin="dense"
+                            label="Section Name"
+                            name="label"
+                            data-testid="label"
+                            InputProps={{
+                                endAdornment: (
+                                    <InputAdornment position="end">
+                                        <Tooltip title="Done">
+                                            <IconButton onClick={() => setEditMode(false)}>
+                                                <DoneRoundedIcon />
+                                            </IconButton>
+                                        </Tooltip>
+                                        <Tooltip title="Close">
+                                            <IconButton onClick={() => setEditMode(false)}>
+                                                <CloseRoundedIcon />
+                                            </IconButton>
+                                        </Tooltip>
+                                    </InputAdornment>
+                                ),
+                            }}
+                            value={fView.label}
+                            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                                updateSectionLabel(event.target.value);
+                            }}
+                            sx={{ '& .MuiInputBase-root': { paddingRight: 0 } }}
+                        />
+                    }
+                </Grid>
+
+
+                <Grid item sm={4}>
+                /* move left and right buttons will be here */
                 </Grid>
             </Grid>
 

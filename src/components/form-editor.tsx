@@ -202,20 +202,6 @@ export const FormEditor = ({ viewSetId }: { viewSetId: string }) => {
                 </Grid>
 
                 <Grid item xs={3}>
-                    <FormControlLabel
-                        control={<Checkbox
-                            checked={visibleTypes.includes(viewSetId)}
-                            size="small"
-                            onChange={(e) => handleChange(e.target.checked)}
-                        />}
-                        label="Include 'Add New Record' button"
-                    />
-                    <FormHelperText error={error}>
-                        {error && "This can only be unticked when there is more than 1 (visible) form."}
-                    </FormHelperText>
-                </Grid>
-
-                <Grid item xs={3}>
                     <Button variant="text" size="medium" startIcon={<EditIcon />} onClick={() => setEditMode(true)}>
                         Edit form name
                     </Button>
@@ -252,7 +238,21 @@ export const FormEditor = ({ viewSetId }: { viewSetId: string }) => {
                 </Grid>
 
                 <Grid item xs={3}>
+                    <FormControlLabel
+                        control={<Checkbox
+                            checked={visibleTypes.includes(viewSetId)}
+                            size="small"
+                            onChange={(e) => handleChange(e.target.checked)}
+                        />}
+                        label="Include 'Add New Record' button"
+                    />
+                    <FormHelperText error={error}>
+                        {error && "This can only be unticked when there is more than 1 (visible) form."}
+                    </FormHelperText>
+                </Grid>
 
+                <Grid item xs={3}>
+                /* move left and right buttons will be here */
                 </Grid>
             </Grid>
 
