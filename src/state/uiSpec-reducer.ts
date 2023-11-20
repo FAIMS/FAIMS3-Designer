@@ -263,7 +263,21 @@ export const uiSpecificationReducer = createSlice({
             console.log('updating form name', viewSetId, 'with', label);
             if (viewSetId in state.viewsets) {
                 state.viewsets[viewSetId].label = label;
-            } 
+            }
+        },
+        formVisibilityUpdated: (state: NotebookUISpec,
+            action: PayloadAction<{ viewSetId: string, ticked: boolean, initialIndex: number }>) => {
+            const { viewSetId, ticked, initialIndex } = action.payload;
+
+            if (!ticked) {
+                const newVisibleTypes = state.visible_types.filter((visibleType) => visibleType !== viewSetId);
+                state.visible_types = newVisibleTypes;
+
+                console.log('after removing', viewSetId, ', visible_types is now', state.visible_types)
+            }
+            else {
+                state.visible_types.splice(initialIndex, 0, viewSetId);
+            }
         },
         formSectionAdded: (state: NotebookUISpec,
             action: PayloadAction<{ viewSetId: string, sectionLabel: string }>) => {

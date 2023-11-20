@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { Grid, Paper, Alert, Stepper, Typography, Step, Button, StepButton, TextField, Dialog, DialogTitle, DialogActions, DialogContent, DialogContentText, Card, InputAdornment, Tooltip, IconButton } from "@mui/material";
+import { Grid, Paper, Alert, Stepper, Typography, Step, Button, StepButton, TextField, Dialog, DialogTitle, DialogActions, DialogContent, DialogContentText, Card, InputAdornment, Tooltip, IconButton, Checkbox, FormControlLabel } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from '@mui/icons-material/Edit';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
@@ -25,17 +25,18 @@ import { Notebook } from "../state/initial";
 
 export const FormEditor = ({ viewSetId }: { viewSetId: string }) => {
 
+    const visibleTypes = useAppSelector((state: Notebook) => state['ui-specification'].visible_types);
+    const viewsets = useAppSelector((state: Notebook) => state['ui-specification'].viewsets);
     const viewSet = useAppSelector((state: Notebook) => state['ui-specification'].viewsets[viewSetId],
         (left, right) => {
             return shallowEqual(left, right);
         });
-
-    const viewsets = useAppSelector((state: Notebook) => state['ui-specification'].viewsets);
     const views = useAppSelector((state: Notebook) => state['ui-specification'].fviews);
     const fields = useAppSelector((state: Notebook) => state['ui-specification'].fields);
     const dispatch = useAppDispatch();
 
     console.log('FormEditor', viewSetId);
+    console.log('FormEditor visible_types', visibleTypes);
 
     const [activeStep, setActiveStep] = useState(0);
     const [newSectionName, setNewSectionName] = useState('New Section');
@@ -45,6 +46,8 @@ export const FormEditor = ({ viewSetId }: { viewSetId: string }) => {
     const [deleteAlertTitle, setDeleteAlertTitle] = useState('');
     const [preventDeleteDialog, setPreventDeleteDialog] = useState(false);
     const [editMode, setEditMode] = useState(false);
+    const [checked, setChecked] = useState(true);
+    const [initialIndex, setInitialIndex] = useState(visibleTypes.indexOf(viewSetId))
 
     const handleStep = (step: number) => () => {
         setActiveStep(step);
@@ -53,6 +56,11 @@ export const FormEditor = ({ viewSetId }: { viewSetId: string }) => {
     const handleClose = () => {
         setOpen(false);
     };
+
+    const handleChange = (ticked: boolean) => {
+        setChecked(ticked);
+        dispatch({ type: 'ui-specification/formVisibilityUpdated', payload: { viewSetId, ticked, initialIndex } });
+    }
 
     const addNewSection = () => {
         try {
@@ -177,6 +185,19 @@ export const FormEditor = ({ viewSetId }: { viewSetId: string }) => {
                 </Grid>
 
                 <Grid item xs={3}>
+                    <Tooltip arrow title="Tick to include 'Add New Record' button.">
+                        <FormControlLabel
+                            control={<Checkbox
+                                checked={checked}
+                                size="small"
+                                onChange={(e) => handleChange(e.target.checked)}
+                            />}
+                            label="Visible on Top"
+                        />
+                    </Tooltip>
+                </Grid>
+
+                <Grid item xs={3}>
                     <Button variant="text" size="medium" startIcon={<EditIcon />} onClick={() => setEditMode(true)}>
                         Edit form name
                     </Button>
@@ -202,12 +223,9 @@ export const FormEditor = ({ viewSetId }: { viewSetId: string }) => {
                             onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                                 updateFormLabel(event.target.value);
                             }}
+                            sx={{ '& .MuiInputBase-root': { paddingRight: 0 } }}
                         />
                     }
-                </Grid>
-
-                <Grid item xs={3}>
-
                 </Grid>
 
                 <Grid item xs={3}>
