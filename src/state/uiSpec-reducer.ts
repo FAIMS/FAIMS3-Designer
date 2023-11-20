@@ -237,11 +237,11 @@ export const uiSpecificationReducer = createSlice({
             if (viewSetId in state.viewsets) {
                 // working copy of the section names ('views') part of the form that is to be removed
                 const viewSetViews: string[] = state.viewsets[viewSetId].views
-                viewSetViews.map((view) => {
+                viewSetViews.forEach((view) => {
                     if (view in state.fviews) {
                         // working copy of the field names ('fields') part of the section that is part of the form that is to be removed
                         const viewFields: string[] = state.fviews[view].fields
-                        viewFields.map((formField) => {
+                        viewFields.forEach((formField) => {
                             if (formField in state.fields) {
                                 // remove the fields in 'fields' belonging to their respective sections in the form
                                 delete state.fields[formField]
@@ -300,7 +300,7 @@ export const uiSpecificationReducer = createSlice({
             if (viewID in state.fviews) {
                 // working copy of the field names ('fields') part of the section that is to be removed
                 const sectionFields: string[] = state.fviews[viewID].fields
-                sectionFields.map((field) => {
+                sectionFields.forEach((field) => {
                     if (field in state.fields) {
                         // remove the fields in 'fields' belonging to the section 
                         delete state.fields[field];
