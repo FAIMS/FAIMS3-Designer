@@ -12,11 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { Grid, Paper, Alert, Stepper, Typography, Step, Button, StepButton, TextField, Dialog, DialogTitle, DialogActions, DialogContent, DialogContentText, Card, InputAdornment, Tooltip, IconButton, Checkbox, FormControlLabel } from "@mui/material";
+import { Grid, Alert, Stepper, Typography, Step, Button, StepButton, TextField, Dialog, DialogTitle, DialogActions, DialogContent, DialogContentText, Card, InputAdornment, Tooltip, IconButton, Checkbox, FormControlLabel } from "@mui/material";
 import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
 import EditRoundedIcon from '@mui/icons-material/EditRounded';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import DoneRoundedIcon from '@mui/icons-material/DoneRounded';
+import AddRoundedIcon from '@mui/icons-material/AddRounded';
 
 import { useAppDispatch, useAppSelector } from "../state/hooks";
 import { SectionEditor } from "./section-editor";
@@ -40,7 +41,9 @@ export const FormEditor = ({ viewSetId }: { viewSetId: string }) => {
     console.log('FormEditor visible_types', visibleTypes);
 
     const [activeStep, setActiveStep] = useState(0);
+    const [newSectionName, setNewSectionName] = useState('New Section');
     const [alertMessage, setAlertMessage] = useState('');
+    const [addAlertMessage, setAddAlertMessage] = useState('');
     const [open, setOpen] = useState(false);
     const [deleteAlertMessage, setDeleteAlertMessage] = useState('');
     const [deleteAlertTitle, setDeleteAlertTitle] = useState('');
@@ -76,7 +79,7 @@ export const FormEditor = ({ viewSetId }: { viewSetId: string }) => {
     }
 
     const deleteSection = (viewSetID: string, viewID: string) => {
-        dispatch({ type: 'ui-specification/formSectionDeleted', payload: { viewSetID, viewID } });
+        dispatch({ type: 'ui-specification/sectionDeleted', payload: { viewSetID, viewID } });
 
         // making sure the stepper jumps steps (forward or backward) intuitively 
         if (viewSet.views[viewSet.views.length - 1] === viewID && viewSet.views.length > 1) {
@@ -84,8 +87,33 @@ export const FormEditor = ({ viewSetId }: { viewSetId: string }) => {
         }
     }
 
+    const moveSection = (viewSetID: string, viewID: string, moveDirection: 'left' | 'right') => {
+        if (moveDirection === 'left') {
+            dispatch({ type: 'ui-specification/sectionMoved', payload: { viewSetId: viewSetID, viewId: viewID, direction: 'left' } });
+
+            // making sure the stepper jumps a step backward intuitively 
+            setActiveStep(activeStep - 1);
+        }
+        else {
+            dispatch({ type: 'ui-specification/sectionMoved', payload: { viewSetId: viewSetID, viewId: viewID, direction: 'right' } });
+
+            // making sure the stepper jumps a step forward intuitively 
+            setActiveStep(activeStep + 1);
+        }
+    }
+
+    const addNewSection = () => {
+        try {
+            dispatch({ type: 'ui-specification/sectionAdded', payload: { viewSetId: viewSetId, sectionLabel: newSectionName } });
+            setAddAlertMessage('');
+        } catch (error: unknown) {
+            error instanceof Error &&
+                setAddAlertMessage(error.message);
+        }
+    }
+
     const updateFormLabel = (label: string) => {
-        dispatch({ type: 'ui-specification/formNameUpdated', payload: { viewSetId, label } });
+        dispatch({ type: 'ui-specification/viewSetRenamed', payload: { viewSetId, label } });
     }
 
     const deleteConfirmation = () => {
@@ -255,17 +283,43 @@ export const FormEditor = ({ viewSetId }: { viewSetId: string }) => {
                                 ))}
                             </Stepper>
                         </Grid>
-                        <Grid item xs={12}>
-                            {activeStep === viewSet.views.length ? (
-                                <Paper square elevation={0} sx={{ p: 3 }}>
-                                    <Typography>Form has been created. No sections or fields added yet.</Typography>
-                                </Paper>
-                            ) :
-                                (
-                                    <SectionEditor viewSetId={viewSetId} viewId={viewSet.views[activeStep]} deleteCallback={deleteSection} />
-                                )
-                            }
-                        </Grid>
+
+                        {activeStep === viewSet.views.length ? (
+                            <Grid item xs={12}>
+                                <Grid container justifyContent="center"
+                                    alignItems="center" item xs={12} direction="column">
+                                    <Alert severity="success">Form has been created. Add a section to get started.</Alert>
+                                    <TextField
+                                        required
+                                        label="Section Name"
+                                        name="sectionName"
+                                        data-testid="sectionName"
+                                        value={newSectionName}
+                                        onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                                            setNewSectionName(event.target.value);
+                                        }}
+                                        sx={{ '& .MuiInputBase-root': { paddingRight: 1 }, mt: 3 }}
+                                        InputProps={{
+                                            endAdornment: (
+                                                <InputAdornment position="end">
+                                                    <Tooltip title="Add">
+                                                        <IconButton onClick={addNewSection}>
+                                                            <AddRoundedIcon />
+                                                        </IconButton>
+                                                    </Tooltip>
+                                                </InputAdornment>
+                                            ),
+                                        }}
+                                    />
+                                </Grid>
+                                {addAlertMessage && <Alert severity="error">{addAlertMessage}</Alert>}
+                            </Grid>
+                        ) :
+                            (
+                                <SectionEditor viewSetId={viewSetId} viewId={viewSet.views[activeStep]} viewSet={viewSet} deleteCallback={deleteSection} moveCallback={moveSection} />
+                            )
+
+                        }
                     </Grid>
                 </Card>
             </Grid>

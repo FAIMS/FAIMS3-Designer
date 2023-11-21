@@ -19,6 +19,8 @@ import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import DoneRoundedIcon from '@mui/icons-material/DoneRounded';
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
 import AddCircleOutlineRoundedIcon from '@mui/icons-material/AddCircleOutlineRounded';
+import ArrowForwardRoundedIcon from '@mui/icons-material/ArrowForwardRounded';
+import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
 
 import { FieldList } from "./field-list";
 import { useAppSelector, useAppDispatch } from "../state/hooks";
@@ -28,44 +30,54 @@ import { useState } from "react";
 type Props = {
     viewSetId: string,
     viewId: string,
+    viewSet: {
+        views: string[];
+        label: string;
+    }
     deleteCallback: (viewSetID: string, viewID: string) => void,
+    moveCallback: (viewSetID: string, viewID: string, moveDirection: 'left' | 'right') => void
 };
 
-export const SectionEditor = ({ viewSetId, viewId, deleteCallback }: Props) => {
+export const SectionEditor = ({ viewSetId, viewId, viewSet, deleteCallback, moveCallback }: Props) => {
 
     const fView = useAppSelector((state: Notebook) => state['ui-specification'].fviews[viewId]);
     const dispatch = useAppDispatch();
 
     console.log('SectionEditor', viewId);
+    console.log('SectionEditor', viewSet);
 
     const [open, setOpen] = useState(false);
     const [editMode, setEditMode] = useState(false);
     const [addMode, setAddMode] = useState(false);
     const [newSectionName, setNewSectionName] = useState('New Section');
-    const [alertMessage, setAlertMessage] = useState('');
+    const [addAlertMessage, setAddAlertMessage] = useState('');
 
     const handleClose = () => {
         setOpen(false);
     }
 
-    const addNewSection = () => {
-        try {
-            dispatch({ type: 'ui-specification/formSectionAdded', payload: { viewSetId: viewSetId, sectionLabel: newSectionName } });
-            setAddMode(false);
-            setAlertMessage('');
-        } catch (error: unknown) {
-            error instanceof Error &&
-                setAlertMessage(error.message);
-        }
+    const deleteSection = () => {
+        deleteCallback(viewSetId, viewId);
+        handleClose();
     }
 
     const updateSectionLabel = (label: string) => {
-        dispatch({ type: 'ui-specification/sectionNameUpdated', payload: { viewId, label } });
+        dispatch({ type: 'ui-specification/sectionRenamed', payload: { viewId, label } });
     }
 
-    const deleteSection = () => {
-        deleteCallback(viewSetId, viewId)
-        handleClose();
+    const addNewSection = () => {
+        try {
+            dispatch({ type: 'ui-specification/sectionAdded', payload: { viewSetId: viewSetId, sectionLabel: newSectionName } });
+            setAddMode(false);
+            setAddAlertMessage('');
+        } catch (error: unknown) {
+            error instanceof Error &&
+                setAddAlertMessage(error.message);
+        }
+    }
+
+    const moveSection = (moveDirection: 'left' | 'right') => {
+        moveCallback(viewSetId, viewId, moveDirection);
     }
 
     return (
@@ -128,7 +140,16 @@ export const SectionEditor = ({ viewSetId, viewId, deleteCallback }: Props) => {
                 </Grid>
 
                 <Grid item xs={3}>
-                /* move left and right buttons will be here */
+                    <Tooltip title='Move left'>
+                        <IconButton disabled={viewSet.views.indexOf(viewId) === 0 ? true : false} onClick={() => moveSection('left')} aria-label='left' size='small'>
+                            <ArrowBackRoundedIcon />
+                        </IconButton>
+                    </Tooltip>
+                    <Tooltip title='Move right'>
+                        <IconButton disabled={viewSet.views.indexOf(viewId) === (viewSet.views.length-1) ? true : false} onClick={() => moveSection('right')} aria-label='right' size='small'>
+                            <ArrowForwardRoundedIcon />
+                        </IconButton>
+                    </Tooltip>
                 </Grid>
 
                 <Grid item xs={3}>
@@ -155,7 +176,7 @@ export const SectionEditor = ({ viewSetId, viewId, deleteCallback }: Props) => {
                                         <Tooltip title="Close">
                                             <IconButton onClick={() => {
                                                 setAddMode(false);
-                                                setAlertMessage('');
+                                                setAddAlertMessage('');
                                             }}>
                                                 <CloseRoundedIcon />
                                             </IconButton>
@@ -170,7 +191,7 @@ export const SectionEditor = ({ viewSetId, viewId, deleteCallback }: Props) => {
                             sx={{ '& .MuiInputBase-root': { paddingRight: 0 } }}
                         />
                     }
-                    {alertMessage && <Alert severity="error">{alertMessage}</Alert>}
+                    {addAlertMessage && <Alert severity="error">{addAlertMessage}</Alert>}
                 </Grid>
             </Grid>
 
