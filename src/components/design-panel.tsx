@@ -59,7 +59,7 @@ export const DesignPanel = () => {
             {Object.keys(viewSets).map((key: string, index: number) => {
                 const viewSet = viewSets[key];
                 return (
-                    <Tab key={index} label={'Form:' + viewSet.label} value={index.toString()} />
+                    <Tab key={index} label={'Form: ' + viewSet.label} value={index.toString()} />
                 )})}
                 <Tab key={maxKeys} icon={<AddIcon />}
                      value={maxKeys.toString()} />

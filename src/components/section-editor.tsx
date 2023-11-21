@@ -12,11 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { Grid, TextField, Button, Dialog, DialogActions, DialogTitle, InputAdornment, Tooltip, IconButton } from "@mui/material";
-import DeleteIcon from "@mui/icons-material/Delete";
-import EditIcon from '@mui/icons-material/Edit';
+import { Grid, TextField, Button, Dialog, DialogActions, DialogTitle, InputAdornment, Tooltip, IconButton, Alert } from "@mui/material";
+import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
+import EditRoundedIcon from '@mui/icons-material/EditRounded';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import DoneRoundedIcon from '@mui/icons-material/DoneRounded';
+import AddRoundedIcon from '@mui/icons-material/AddRounded';
+import AddCircleOutlineRoundedIcon from '@mui/icons-material/AddCircleOutlineRounded';
 
 import { FieldList } from "./field-list";
 import { useAppSelector, useAppDispatch } from "../state/hooks";
@@ -38,13 +40,27 @@ export const SectionEditor = ({ viewSetId, viewId, deleteCallback }: Props) => {
 
     const [open, setOpen] = useState(false);
     const [editMode, setEditMode] = useState(false);
-
-    const updateSectionLabel = (label: string) => {
-        dispatch({ type: 'ui-specification/sectionNameUpdated', payload: { viewId, label } });
-    }
+    const [addMode, setAddMode] = useState(false);
+    const [newSectionName, setNewSectionName] = useState('New Section');
+    const [alertMessage, setAlertMessage] = useState('');
 
     const handleClose = () => {
         setOpen(false);
+    }
+
+    const addNewSection = () => {
+        try {
+            dispatch({ type: 'ui-specification/formSectionAdded', payload: { viewSetId: viewSetId, sectionLabel: newSectionName } });
+            setAddMode(false);
+            setAlertMessage('');
+        } catch (error: unknown) {
+            error instanceof Error &&
+                setAlertMessage(error.message);
+        }
+    }
+
+    const updateSectionLabel = (label: string) => {
+        dispatch({ type: 'ui-specification/sectionNameUpdated', payload: { viewId, label } });
     }
 
     const deleteSection = () => {
@@ -55,8 +71,8 @@ export const SectionEditor = ({ viewSetId, viewId, deleteCallback }: Props) => {
     return (
         <>
             <Grid container spacing={2} pb={2}>
-                <Grid item sm={4}>
-                    <Button variant="text" color="error" size="small" startIcon={<DeleteIcon />} onClick={() => setOpen(true)}>
+                <Grid item xs={3}>
+                    <Button variant="text" color="error" size="small" startIcon={<DeleteRoundedIcon />} onClick={() => setOpen(true)}>
                         Delete this section
                     </Button>
                     <Dialog
@@ -75,13 +91,12 @@ export const SectionEditor = ({ viewSetId, viewId, deleteCallback }: Props) => {
                     </Dialog>
                 </Grid>
 
-                <Grid item sm={4}>
-                    <Button variant="text" size="small" startIcon={<EditIcon />} onClick={() => setEditMode(true)}>
+                <Grid item xs={3}>
+                    <Button variant="text" size="small" startIcon={<EditRoundedIcon />} onClick={() => setEditMode(true)}>
                         Edit section name
                     </Button>
                     {editMode &&
                         <TextField
-                            required
                             size="small"
                             margin="dense"
                             label="Section Name"
@@ -112,9 +127,50 @@ export const SectionEditor = ({ viewSetId, viewId, deleteCallback }: Props) => {
                     }
                 </Grid>
 
-
-                <Grid item sm={4}>
+                <Grid item xs={3}>
                 /* move left and right buttons will be here */
+                </Grid>
+
+                <Grid item xs={3}>
+                    <Button variant="text" size="small" startIcon={<AddCircleOutlineRoundedIcon />} onClick={() => setAddMode(true)}>
+                        Add new section
+                    </Button>
+                    {addMode &&
+                        <TextField
+                            required
+                            fullWidth
+                            size="small"
+                            margin="dense"
+                            label="New Section Name"
+                            name="sectionName"
+                            data-testid="sectionName"
+                            InputProps={{
+                                endAdornment: (
+                                    <InputAdornment position="end">
+                                        <Tooltip title="Add">
+                                            <IconButton onClick={addNewSection}>
+                                                <AddRoundedIcon />
+                                            </IconButton>
+                                        </Tooltip>
+                                        <Tooltip title="Close">
+                                            <IconButton onClick={() => {
+                                                setAddMode(false);
+                                                setAlertMessage('');
+                                            }}>
+                                                <CloseRoundedIcon />
+                                            </IconButton>
+                                        </Tooltip>
+                                    </InputAdornment>
+                                ),
+                            }}
+                            value={newSectionName}
+                            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                                setNewSectionName(event.target.value);
+                            }}
+                            sx={{ '& .MuiInputBase-root': { paddingRight: 0 } }}
+                        />
+                    }
+                    {alertMessage && <Alert severity="error">{alertMessage}</Alert>}
                 </Grid>
             </Grid>
 

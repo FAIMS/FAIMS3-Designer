@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { Grid, Paper, Alert, Stepper, Typography, Step, Button, StepButton, TextField, Dialog, DialogTitle, DialogActions, DialogContent, DialogContentText, Card, InputAdornment, Tooltip, IconButton, Checkbox, FormControlLabel, FormHelperText } from "@mui/material";
-import DeleteIcon from "@mui/icons-material/Delete";
-import EditIcon from '@mui/icons-material/Edit';
+import { Grid, Paper, Alert, Stepper, Typography, Step, Button, StepButton, TextField, Dialog, DialogTitle, DialogActions, DialogContent, DialogContentText, Card, InputAdornment, Tooltip, IconButton, Checkbox, FormControlLabel } from "@mui/material";
+import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
+import EditRoundedIcon from '@mui/icons-material/EditRounded';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import DoneRoundedIcon from '@mui/icons-material/DoneRounded';
 
@@ -40,7 +40,6 @@ export const FormEditor = ({ viewSetId }: { viewSetId: string }) => {
     console.log('FormEditor visible_types', visibleTypes);
 
     const [activeStep, setActiveStep] = useState(0);
-    const [newSectionName, setNewSectionName] = useState('New Section');
     const [alertMessage, setAlertMessage] = useState('');
     const [open, setOpen] = useState(false);
     const [deleteAlertMessage, setDeleteAlertMessage] = useState('');
@@ -48,7 +47,6 @@ export const FormEditor = ({ viewSetId }: { viewSetId: string }) => {
     const [preventDeleteDialog, setPreventDeleteDialog] = useState(false);
     const [editMode, setEditMode] = useState(false);
     const [checked, setChecked] = useState(true);
-    const [error, setError] = useState(false);
     const [initialIndex, setInitialIndex] = useState(visibleTypes.indexOf(viewSetId));
 
     const handleStep = (step: number) => () => {
@@ -59,32 +57,21 @@ export const FormEditor = ({ viewSetId }: { viewSetId: string }) => {
         setOpen(false);
     };
 
-    console.log('length ', Object.keys(viewsets).length)
     const handleChange = (ticked: boolean) => {
         // there must be >1 forms in the notebook, and, therefore, >1 visible forms, in order to be able to untick the checkbox
         if ((Object.keys(viewsets).length > 1 && visibleTypes.length > 1) || ticked) {
-            setError(false);
+            setAlertMessage('');
             dispatch({ type: 'ui-specification/formVisibilityUpdated', payload: { viewSetId, ticked, initialIndex } });
         }
         // in the case that there are multiple forms in the notebook, but none are visible, allow to re-tick the checkbox
         else if (visibleTypes.length === 0) {
-            setError(false);
+            setAlertMessage('');
             setChecked(ticked)
             setInitialIndex(0)
             dispatch({ type: 'ui-specification/formVisibilityUpdated', payload: { viewSetId, ticked: checked, initialIndex: initialIndex } });
         }
         else {
-            setError(true);
-        }
-
-    }
-
-    const addNewSection = () => {
-        try {
-            dispatch({ type: 'ui-specification/formSectionAdded', payload: { viewSetId: viewSetId, sectionLabel: newSectionName } });
-        } catch (error: unknown) {
-            error instanceof Error &&
-                setAlertMessage(error.message);
+            setAlertMessage('This must remain ticked in at least one (1) form.');
         }
     }
 
@@ -169,9 +156,9 @@ export const FormEditor = ({ viewSetId }: { viewSetId: string }) => {
 
     return (
         <Grid container spacing={2}>
-            <Grid container item xs={12}>
+            <Grid container item xs={12} spacing={1}>
                 <Grid item xs={3}>
-                    <Button variant="text" color="error" size="medium" startIcon={<DeleteIcon />} onClick={deleteConfirmation}>
+                    <Button variant="text" color="error" size="medium" startIcon={<DeleteRoundedIcon />} onClick={deleteConfirmation}>
                         Delete this form
                     </Button>
                     <Dialog
@@ -202,7 +189,7 @@ export const FormEditor = ({ viewSetId }: { viewSetId: string }) => {
                 </Grid>
 
                 <Grid item xs={3}>
-                    <Button variant="text" size="medium" startIcon={<EditIcon />} onClick={() => setEditMode(true)}>
+                    <Button variant="text" size="medium" startIcon={<EditRoundedIcon />} onClick={() => setEditMode(true)}>
                         Edit form name
                     </Button>
                     {editMode &&
@@ -238,6 +225,10 @@ export const FormEditor = ({ viewSetId }: { viewSetId: string }) => {
                 </Grid>
 
                 <Grid item xs={3}>
+                /* move left and right buttons will be here */
+                </Grid>
+
+                <Grid item xs={3}>
                     <FormControlLabel
                         control={<Checkbox
                             checked={visibleTypes.includes(viewSetId)}
@@ -246,13 +237,7 @@ export const FormEditor = ({ viewSetId }: { viewSetId: string }) => {
                         />}
                         label="Include 'Add New Record' button"
                     />
-                    <FormHelperText error={error}>
-                        {error && "This can only be unticked when there is more than 1 (visible) form."}
-                    </FormHelperText>
-                </Grid>
-
-                <Grid item xs={3}>
-                /* move left and right buttons will be here */
+                    {alertMessage && <Alert severity="error">{alertMessage}</Alert>}
                 </Grid>
             </Grid>
 
@@ -280,30 +265,6 @@ export const FormEditor = ({ viewSetId }: { viewSetId: string }) => {
                                     <SectionEditor viewSetId={viewSetId} viewId={viewSet.views[activeStep]} deleteCallback={deleteSection} />
                                 )
                             }
-                        </Grid>
-                    </Grid>
-                    <Grid container spacing={2} p={3}>
-                        <Grid item xs={12} sm={6}>
-                            <TextField
-                                fullWidth
-                                required
-                                label="Section Name"
-                                helperText="Enter a name for the form section."
-                                name="sectionName"
-                                data-testid="sectionName"
-                                value={newSectionName}
-                                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                                    setNewSectionName(event.target.value);
-                                }}
-                            />
-                        </Grid>
-                        <Grid item xs={12} sm={6}>
-                            <Button variant="contained" color="primary" onClick={addNewSection}>
-                                Add New Section
-                            </Button>
-                        </Grid>
-                        <Grid item xs={12}>
-                            {alertMessage && <Alert severity="error">{alertMessage}</Alert>}
                         </Grid>
                     </Grid>
                 </Card>
