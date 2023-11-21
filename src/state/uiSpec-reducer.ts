@@ -52,16 +52,6 @@ export const uiSpecificationReducer = createSlice({
         loaded: (_state: NotebookUISpec, action: PayloadAction<NotebookUISpec>) => {
             return action.payload;
         },
-        sectionNameUpdated: (state: NotebookUISpec,
-            action: PayloadAction<{ viewId: string, label: string }>) => {
-            const { viewId, label } = action.payload;
-            console.log('updating section name', viewId, 'with', label);
-            if (viewId in state.fviews) {
-                state.fviews[viewId].label = label;
-            } else {
-                throw new Error(`Can't update unknown section ${viewId} via sectionNameUpdated action`);
-            }
-        },
         fieldUpdated: (state: NotebookUISpec,
             action: PayloadAction<{ fieldName: string, newField: FieldType }>) => {
             const { fieldName, newField } = action.payload;
@@ -215,6 +205,77 @@ export const uiSpecificationReducer = createSlice({
                 throw new Error(`Cannot delete unknown field ${fieldName} via fieldDeleted action`);
             }
         },
+        sectionRenamed: (state: NotebookUISpec,
+            action: PayloadAction<{ viewId: string, label: string }>) => {
+            const { viewId, label } = action.payload;
+            console.log('updating section name', viewId, 'with', label);
+            if (viewId in state.fviews) {
+                state.fviews[viewId].label = label;
+            } else {
+                throw new Error(`Can't update unknown section ${viewId} via sectionNameUpdated action`);
+            }
+        },
+        sectionAdded: (state: NotebookUISpec,
+            action: PayloadAction<{ viewSetId: string, sectionLabel: string }>) => {
+            const { viewSetId, sectionLabel } = action.payload;
+            const sectionId = viewSetId + '-' + slugify(sectionLabel);
+            const newSection = {
+                label: sectionLabel,
+                fields: []
+            };
+            if (sectionId in state.fviews) {
+                throw new Error(`Section ${sectionLabel} already exists in this form.`);
+            } else {
+                state.fviews[sectionId] = newSection;
+                state.viewsets[viewSetId].views.push(sectionId);
+            }
+        },
+        sectionDeleted: (state: NotebookUISpec, action: PayloadAction<{ viewSetID: string, viewID: string }>) => {
+            const { viewSetID, viewID } = action.payload;
+
+            if (viewID in state.fviews) {
+                // working copy of the field names ('fields') part of the section that is to be removed
+                const sectionFields: string[] = state.fviews[viewID].fields
+                sectionFields.forEach((field) => {
+                    if (field in state.fields) {
+                        // remove the fields in 'fields' belonging to the section 
+                        delete state.fields[field];
+                    }
+                })
+                // remove the section from 'fviews' & 'viewsets'
+                delete state.fviews[viewID];
+                const newViewSetViews = state.viewsets[viewSetID].views.filter((view) => view !== viewID);
+                state.viewsets[viewSetID].views = newViewSetViews;
+            }
+        },
+        sectionMoved: (state: NotebookUISpec,
+            action: PayloadAction<{ viewSetId: string, viewId: string, direction: 'left' | 'right' }>) => {
+
+            const { viewSetId, viewId, direction } = action.payload;
+            // this involves finding the section in the list of views in the viewset
+            // and moving it left or right one
+            const viewList = state.viewsets[viewSetId].views;
+            for (let i = 0; i < viewList.length; i++) {
+                if (viewList[i] == viewId) {
+                    if (direction === 'left') {
+                        if (i > 0) {
+                            const tmp = viewList[i - 1];
+                            viewList[i - 1] = viewList[i];
+                            viewList[i] = tmp;
+                        }
+                    } else {
+                        if (i < viewList.length - 1) {
+                            const tmp = viewList[i + 1];
+                            viewList[i + 1] = viewList[i];
+                            viewList[i] = tmp;
+                        }
+                    }
+                    // we're done
+                    break;
+                }
+            }
+            state.viewsets[viewSetId].views = viewList;
+        },
         viewSetAdded: (state: NotebookUISpec,
             action: PayloadAction<{ formName: string }>) => {
             const { formName } = action.payload;
@@ -257,7 +318,7 @@ export const uiSpecificationReducer = createSlice({
                 state.visible_types = newVisibleTypes;
             }
         },
-        formNameUpdated: (state: NotebookUISpec,
+        viewSetRenamed: (state: NotebookUISpec,
             action: PayloadAction<{ viewSetId: string, label: string }>) => {
             const { viewSetId, label } = action.payload;
             console.log('updating form name', viewSetId, 'with', label);
@@ -279,43 +340,9 @@ export const uiSpecificationReducer = createSlice({
                 state.visible_types.splice(initialIndex, 0, viewSetId);
             }
         },
-        formSectionAdded: (state: NotebookUISpec,
-            action: PayloadAction<{ viewSetId: string, sectionLabel: string }>) => {
-            const { viewSetId, sectionLabel } = action.payload;
-            const sectionId = viewSetId + '-' + slugify(sectionLabel);
-            const newSection = {
-                label: sectionLabel,
-                fields: []
-            };
-            if (sectionId in state.fviews) {
-                throw new Error(`Section ${sectionLabel} already exists in this form.`);
-            } else {
-                state.fviews[sectionId] = newSection;
-                state.viewsets[viewSetId].views.push(sectionId);
-            }
-        },
-        formSectionDeleted: (state: NotebookUISpec, action: PayloadAction<{ viewSetID: string, viewID: string }>) => {
-            const { viewSetID, viewID } = action.payload;
-
-            if (viewID in state.fviews) {
-                // working copy of the field names ('fields') part of the section that is to be removed
-                const sectionFields: string[] = state.fviews[viewID].fields
-                sectionFields.forEach((field) => {
-                    if (field in state.fields) {
-                        // remove the fields in 'fields' belonging to the section 
-                        delete state.fields[field];
-                    }
-                })
-                // remove the section from 'fviews' & 'viewsets'
-                delete state.fviews[viewID];
-                const newViewSetViews = state.viewsets[viewSetID].views.filter((view) => view !== viewID);
-                state.viewsets[viewSetID].views = newViewSetViews;
-            }
-        }
     }
 })
 
 export const { loaded, fieldUpdated } = uiSpecificationReducer.actions;
 
 export default uiSpecificationReducer.reducer;
-
