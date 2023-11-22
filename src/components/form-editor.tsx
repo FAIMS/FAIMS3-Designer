@@ -81,7 +81,7 @@ export const FormEditor = ({ viewSetId, moveCallback }: Props) => {
             dispatch({ type: 'ui-specification/formVisibilityUpdated', payload: { viewSetId, ticked: checked, initialIndex: initialIndex } });
         }
         else {
-            setAlertMessage('This must remain ticked in at least one (1) form.');
+            setAlertMessage(`This must remain ticked in at least one (1) form.`);
         }
     }
 
@@ -134,8 +134,8 @@ export const FormEditor = ({ viewSetId, moveCallback }: Props) => {
     const deleteConfirmation = () => {
         setOpen(true);
         setPreventDeleteDialog(false);
-        setDeleteAlertTitle("Are you sure you want to delete this form?");
-        setDeleteAlertMessage("All fields in the form will also be deleted.");
+        setDeleteAlertTitle(`Are you sure you want to delete this form?`);
+        setDeleteAlertMessage(`All fields in the form will also be deleted.`);
     }
 
     const findRelatedFieldLocation = (fieldName: string | undefined) => {
@@ -158,8 +158,8 @@ export const FormEditor = ({ viewSetId, moveCallback }: Props) => {
                                 const sectionLabel: string = fviewsEntries[idx][1].label;
 
                                 // setting the dialog text here
-                                setDeleteAlertTitle("Form cannot be deleted.");
-                                setDeleteAlertMessage("Please update the field '" + fieldName + "', found in form " + formLabel + " section " + sectionLabel + ", to remove the reference to allow this form to be deleted.");
+                                setDeleteAlertTitle(`Form cannot be deleted.`);
+                                setDeleteAlertMessage(`Please update the field '${fieldName}', found in form ${formLabel} section ${sectionLabel}, to remove the reference to allow this form to be deleted.`);
                             }
                         })
                     })
@@ -273,20 +273,24 @@ export const FormEditor = ({ viewSetId, moveCallback }: Props) => {
 
                 <Grid item xs={2}>
                     <Tooltip title='Move left'>
-                        <IconButton
-                            disabled={Object.keys(viewsets).indexOf(viewSetId) === 0 ? true : false}
-                            onClick={() => moveForm(viewSetId, 'left')}
-                            aria-label='left' size='medium'>
-                            <ArrowBackRoundedIcon />
-                        </IconButton>
+                        <span>
+                            <IconButton
+                                disabled={Object.keys(viewsets).indexOf(viewSetId) === 0 ? true : false}
+                                onClick={() => moveForm(viewSetId, 'left')}
+                                aria-label='left' size='medium'>
+                                <ArrowBackRoundedIcon />
+                            </IconButton>
+                        </span>
                     </Tooltip>
                     <Tooltip title='Move right'>
-                        <IconButton
-                            disabled={Object.keys(viewsets).indexOf(viewSetId) === (Object.keys(viewsets).length - 1) ? true : false}
-                            onClick={() => moveForm(viewSetId, 'right')}
-                            aria-label='right' size='medium'>
-                            <ArrowForwardRoundedIcon />
-                        </IconButton>
+                        <span>
+                            <IconButton
+                                disabled={Object.keys(viewsets).indexOf(viewSetId) === (Object.keys(viewsets).length - 1) ? true : false}
+                                onClick={() => moveForm(viewSetId, 'right')}
+                                aria-label='right' size='medium'>
+                                <ArrowForwardRoundedIcon />
+                            </IconButton>
+                        </span>
                     </Tooltip>
                 </Grid>
 

@@ -77,7 +77,7 @@ export const SectionEditor = ({ viewSetId, viewId, viewSet, deleteCallback, addC
         }
         else {
             // manually setting the error message
-            setAddAlertMessage('Section '+newSectionName+' already exists in this form.')
+            setAddAlertMessage(`Section ${newSectionName} already exists in this form.`)
         }
     }
 
@@ -146,14 +146,18 @@ export const SectionEditor = ({ viewSetId, viewId, viewSet, deleteCallback, addC
 
                 <Grid item xs={2}>
                     <Tooltip title='Move left'>
-                        <IconButton disabled={viewSet.views.indexOf(viewId) === 0 ? true : false} onClick={() => moveSection('left')} aria-label='left' size='small'>
-                            <ArrowBackRoundedIcon />
-                        </IconButton>
+                        <span>
+                            <IconButton disabled={viewSet.views.indexOf(viewId) === 0 ? true : false} onClick={() => moveSection('left')} aria-label='left' size='small'>
+                                <ArrowBackRoundedIcon />
+                            </IconButton>
+                        </span>
                     </Tooltip>
                     <Tooltip title='Move right'>
-                        <IconButton disabled={viewSet.views.indexOf(viewId) === (viewSet.views.length-1) ? true : false} onClick={() => moveSection('right')} aria-label='right' size='small'>
-                            <ArrowForwardRoundedIcon />
-                        </IconButton>
+                        <span>
+                            <IconButton disabled={viewSet.views.indexOf(viewId) === (viewSet.views.length - 1) ? true : false} onClick={() => moveSection('right')} aria-label='right' size='small'>
+                                <ArrowForwardRoundedIcon />
+                            </IconButton>
+                        </span>
                     </Tooltip>
                 </Grid>
 
