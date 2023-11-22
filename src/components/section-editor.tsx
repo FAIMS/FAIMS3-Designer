@@ -67,10 +67,7 @@ export const SectionEditor = ({ viewSetId, viewId, viewSet, deleteCallback, addC
     }
 
     const addNewSection = () => {
-        // run the function to add a new section
-        addCallback(viewSetId, newSectionName);
-
-        // save the returned success status to a variable
+        // run the function to add a new section AND save the returned success status to a variable
         const addSuccess: boolean = addCallback(viewSetId, newSectionName);
 
         // depending on addSuccess, set relevant state variables
