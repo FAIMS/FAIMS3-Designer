@@ -318,6 +318,46 @@ export const uiSpecificationReducer = createSlice({
                 state.visible_types = newVisibleTypes;
             }
         },
+        viewSetMoved: (state: NotebookUISpec,
+            action: PayloadAction<{ viewSetId: string, direction: 'left' | 'right' }>) => {
+
+            const { viewSetId, direction } = action.payload;
+
+            // get viewsets obj in array format [[key, value]]
+            const viewSetsList = Object.entries(state.viewsets);
+
+            // re-order the array
+            for (let i = 0; i < viewSetsList.length; i++) {
+                if (viewSetsList[i][0] == viewSetId) {
+                    if (direction === 'left') {
+                        if (i > 0) {
+                            const tmp = viewSetsList[i - 1];
+                            viewSetsList[i - 1] = viewSetsList[i];
+                            viewSetsList[i] = tmp;
+                        }
+                    } else {
+                        if (i < viewSetsList.length - 1) {
+                            const tmp = viewSetsList[i + 1];
+                            viewSetsList[i + 1] = viewSetsList[i];
+                            viewSetsList[i] = tmp;
+                        }
+                    }
+                    // we're done
+                    break;
+                }
+            }
+
+            // transform array of entries back into object & update state
+            // doesn't work
+            const newViewsets = Object.fromEntries(viewSetsList);
+            state.viewsets = newViewsets
+
+            // doesn't work
+            // state = { ...state, viewsets: newViewsets }
+
+            // doesn't work
+            // return {...state, viewsets: Object.fromEntries(viewSetsList)}
+        },
         viewSetRenamed: (state: NotebookUISpec,
             action: PayloadAction<{ viewSetId: string, label: string }>) => {
             const { viewSetId, label } = action.payload;
