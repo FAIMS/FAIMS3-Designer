@@ -35,10 +35,11 @@ type Props = {
         label: string;
     }
     deleteCallback: (viewSetID: string, viewID: string) => void,
+    addCallback: (viewSetID: string, label: string) => boolean,
     moveCallback: (viewSetID: string, viewID: string, moveDirection: 'left' | 'right') => void
 };
 
-export const SectionEditor = ({ viewSetId, viewId, viewSet, deleteCallback, moveCallback }: Props) => {
+export const SectionEditor = ({ viewSetId, viewId, viewSet, deleteCallback, addCallback, moveCallback }: Props) => {
 
     const fView = useAppSelector((state: Notebook) => state['ui-specification'].fviews[viewId]);
     const dispatch = useAppDispatch();
@@ -66,13 +67,20 @@ export const SectionEditor = ({ viewSetId, viewId, viewSet, deleteCallback, move
     }
 
     const addNewSection = () => {
-        try {
-            dispatch({ type: 'ui-specification/sectionAdded', payload: { viewSetId: viewSetId, sectionLabel: newSectionName } });
+        // run the function to add a new section
+        addCallback(viewSetId, newSectionName);
+
+        // save the returned success status to a variable
+        const addSuccess: boolean = addCallback(viewSetId, newSectionName);
+
+        // depending on addSuccess, set relevant state variables
+        if (addSuccess) {
             setAddMode(false);
             setAddAlertMessage('');
-        } catch (error: unknown) {
-            error instanceof Error &&
-                setAddAlertMessage(error.message);
+        }
+        else {
+            // manually setting the error message
+            setAddAlertMessage('Section '+newSectionName+' already exists in this form.')
         }
     }
 
@@ -139,7 +147,7 @@ export const SectionEditor = ({ viewSetId, viewId, viewSet, deleteCallback, move
                     }
                 </Grid>
 
-                <Grid item xs={3}>
+                <Grid item xs={2}>
                     <Tooltip title='Move left'>
                         <IconButton disabled={viewSet.views.indexOf(viewId) === 0 ? true : false} onClick={() => moveSection('left')} aria-label='left' size='small'>
                             <ArrowBackRoundedIcon />
@@ -152,7 +160,7 @@ export const SectionEditor = ({ viewSetId, viewId, viewSet, deleteCallback, move
                     </Tooltip>
                 </Grid>
 
-                <Grid item xs={3}>
+                <Grid item xs={4}>
                     <Button variant="text" size="small" startIcon={<AddCircleOutlineRoundedIcon />} onClick={() => setAddMode(true)}>
                         Add new section
                     </Button>

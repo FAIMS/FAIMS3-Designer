@@ -18,6 +18,8 @@ import EditRoundedIcon from '@mui/icons-material/EditRounded';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import DoneRoundedIcon from '@mui/icons-material/DoneRounded';
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
+import ArrowForwardRoundedIcon from '@mui/icons-material/ArrowForwardRounded';
+import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
 
 import { useAppDispatch, useAppSelector } from "../state/hooks";
 import { SectionEditor } from "./section-editor";
@@ -25,7 +27,12 @@ import { useState } from "react";
 import { shallowEqual } from "react-redux";
 import { Notebook } from "../state/initial";
 
-export const FormEditor = ({ viewSetId }: { viewSetId: string }) => {
+type Props = {
+    viewSetId: string,
+    moveCallback: (viewSetID: string, moveDirection: 'left' | 'right') => void,
+}
+
+export const FormEditor = ({ viewSetId, moveCallback }: Props) => {
 
     const visibleTypes = useAppSelector((state: Notebook) => state['ui-specification'].visible_types);
     const viewsets = useAppSelector((state: Notebook) => state['ui-specification'].viewsets);
@@ -102,14 +109,22 @@ export const FormEditor = ({ viewSetId }: { viewSetId: string }) => {
         }
     }
 
-    const addNewSection = () => {
+    const addNewSection = (viewSetID: string, label: string) => {
+        let success: boolean = false;
         try {
-            dispatch({ type: 'ui-specification/sectionAdded', payload: { viewSetId: viewSetId, sectionLabel: newSectionName } });
+            dispatch({ type: 'ui-specification/sectionAdded', payload: { viewSetId: viewSetID, sectionLabel: label } });
+
+            // jump to the newly created section (i.e., to the end of the stepper)
+            setActiveStep(viewSet.views.length);
             setAddAlertMessage('');
-        } catch (error: unknown) {
-            error instanceof Error &&
-                setAddAlertMessage(error.message);
+
+            // let sectionEditor component know a section was addedd successfully
+            return success = true;
         }
+        catch (error: unknown) {
+            error instanceof Error && setAddAlertMessage(error.message);
+        }
+        return success;
     }
 
     const updateFormLabel = (label: string) => {
@@ -182,6 +197,10 @@ export const FormEditor = ({ viewSetId }: { viewSetId: string }) => {
         }
     }
 
+    const moveForm = (viewSetID: string, moveDirection: 'left' | 'right') => {
+        moveCallback(viewSetID, moveDirection)
+    }
+
     return (
         <Grid container spacing={2}>
             <Grid container item xs={12} spacing={1}>
@@ -252,11 +271,26 @@ export const FormEditor = ({ viewSetId }: { viewSetId: string }) => {
                     }
                 </Grid>
 
-                <Grid item xs={3}>
-                /* move left and right buttons will be here */
+                <Grid item xs={2}>
+                    <Tooltip title='Move left'>
+                        <IconButton
+                            disabled={Object.keys(viewsets).indexOf(viewSetId) === 0 ? true : false}
+                            onClick={() => moveForm(viewSetId, 'left')}
+                            aria-label='left' size='medium'>
+                            <ArrowBackRoundedIcon />
+                        </IconButton>
+                    </Tooltip>
+                    <Tooltip title='Move right'>
+                        <IconButton
+                            disabled={Object.keys(viewsets).indexOf(viewSetId) === (Object.keys(viewsets).length - 1) ? true : false}
+                            onClick={() => moveForm(viewSetId, 'right')}
+                            aria-label='right' size='medium'>
+                            <ArrowForwardRoundedIcon />
+                        </IconButton>
+                    </Tooltip>
                 </Grid>
 
-                <Grid item xs={3}>
+                <Grid item xs={4}>
                     <FormControlLabel
                         control={<Checkbox
                             checked={visibleTypes.includes(viewSetId)}
@@ -303,7 +337,7 @@ export const FormEditor = ({ viewSetId }: { viewSetId: string }) => {
                                             endAdornment: (
                                                 <InputAdornment position="end">
                                                     <Tooltip title="Add">
-                                                        <IconButton onClick={addNewSection}>
+                                                        <IconButton onClick={() => addNewSection(viewSetId, newSectionName)}>
                                                             <AddRoundedIcon />
                                                         </IconButton>
                                                     </Tooltip>
@@ -316,7 +350,9 @@ export const FormEditor = ({ viewSetId }: { viewSetId: string }) => {
                             </Grid>
                         ) :
                             (
-                                <SectionEditor viewSetId={viewSetId} viewId={viewSet.views[activeStep]} viewSet={viewSet} deleteCallback={deleteSection} moveCallback={moveSection} />
+                                <Grid item xs={12}>
+                                    <SectionEditor viewSetId={viewSetId} viewId={viewSet.views[activeStep]} viewSet={viewSet} deleteCallback={deleteSection} addCallback={addNewSection} moveCallback={moveSection} />
+                                </Grid>
                             )
 
                         }
