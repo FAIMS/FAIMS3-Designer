@@ -286,7 +286,7 @@ export const uiSpecificationReducer = createSlice({
             const formID = slugify(formName);
             // add this to the viewsets
             if (formID in state.viewsets) {
-                throw new Error(`Form ${formID} already exists in notebook`);
+                throw new Error(`Form ${formID} already exists in notebook.`);
             } else {
                 state.viewsets[formID] = newViewSet;
                 state.visible_types.push(formID);
@@ -323,40 +323,29 @@ export const uiSpecificationReducer = createSlice({
 
             const { viewSetId, direction } = action.payload;
 
-            // get viewsets obj in array format [[key, value]]
-            const viewSetsList = Object.entries(state.viewsets);
-
+            const formsList = state.visible_types;
             // re-order the array
-            for (let i = 0; i < viewSetsList.length; i++) {
-                if (viewSetsList[i][0] == viewSetId) {
+            for (let i = 0; i < formsList.length; i++) {
+                if (formsList[i] == viewSetId) {
                     if (direction === 'left') {
                         if (i > 0) {
-                            const tmp = viewSetsList[i - 1];
-                            viewSetsList[i - 1] = viewSetsList[i];
-                            viewSetsList[i] = tmp;
+                            const tmp = formsList[i - 1];
+                            formsList[i - 1] = formsList[i];
+                            formsList[i] = tmp;
                         }
                     } else {
-                        if (i < viewSetsList.length - 1) {
-                            const tmp = viewSetsList[i + 1];
-                            viewSetsList[i + 1] = viewSetsList[i];
-                            viewSetsList[i] = tmp;
+                        if (i < formsList.length - 1) {
+                            const tmp = formsList[i + 1];
+                            formsList[i + 1] = formsList[i];
+                            formsList[i] = tmp;
                         }
                     }
                     // we're done
                     break;
                 }
             }
-
-            // transform array of entries back into object & update state
-            // doesn't work
-            const newViewsets = Object.fromEntries(viewSetsList);
-            state.viewsets = newViewsets
-
-            // doesn't work
-            // state = { ...state, viewsets: newViewsets }
-
-            // doesn't work
-            // return {...state, viewsets: Object.fromEntries(viewSetsList)}
+            // update state 
+            state.visible_types = formsList;
         },
         viewSetRenamed: (state: NotebookUISpec,
             action: PayloadAction<{ viewSetId: string, label: string }>) => {
@@ -370,6 +359,8 @@ export const uiSpecificationReducer = createSlice({
             action: PayloadAction<{ viewSetId: string, ticked: boolean, initialIndex: number }>) => {
             const { viewSetId, ticked, initialIndex } = action.payload;
 
+            console.log('initial index in reducer ', initialIndex)
+
             if (!ticked) {
                 const newVisibleTypes = state.visible_types.filter((visibleType) => visibleType !== viewSetId);
                 state.visible_types = newVisibleTypes;
@@ -377,7 +368,11 @@ export const uiSpecificationReducer = createSlice({
                 console.log('after removing', viewSetId, ', visible_types is now', state.visible_types)
             }
             else {
-                state.visible_types.splice(initialIndex, 0, viewSetId);
+                // currently re-adding the form back at the end of the visible_types array because 
+                // I can't figure out how to store the initial index correctly (keeps being -1, which obviously won't work)
+                state.visible_types.splice(state.visible_types.length, 0, viewSetId);
+
+                console.log('after re-adding', viewSetId, 'visible_types is now', state.visible_types)
             }
         },
     }
