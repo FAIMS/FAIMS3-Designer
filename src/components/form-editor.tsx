@@ -12,7 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { Grid, Alert, Stepper, Typography, Step, Button, StepButton, TextField, Dialog, DialogTitle, DialogActions, DialogContent, DialogContentText, Card, InputAdornment, Tooltip, IconButton, Checkbox, FormControlLabel } from "@mui/material";
+import { Grid, Alert, Stepper, Typography, Step, Button, StepButton, TextField, Dialog, DialogTitle, DialogActions, DialogContent, DialogContentText, Card, InputAdornment, Tooltip, IconButton, Checkbox, FormControlLabel, Collapse } from "@mui/material";
+
 import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
 import EditRoundedIcon from '@mui/icons-material/EditRounded';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
@@ -30,9 +31,11 @@ import { Notebook } from "../state/initial";
 type Props = {
     viewSetId: string,
     moveCallback: (viewSetID: string, moveDirection: 'left' | 'right') => void,
+    moveButtonsDisabled: boolean,
+    handleChangeCallback: (viewSetID: string, ticked: boolean) => void,
 }
 
-export const FormEditor = ({ viewSetId, moveCallback }: Props) => {
+export const FormEditor = ({ viewSetId, moveCallback, moveButtonsDisabled, handleChangeCallback }: Props) => {
 
     const visibleTypes = useAppSelector((state: Notebook) => state['ui-specification'].visible_types);
     const viewsets = useAppSelector((state: Notebook) => state['ui-specification'].viewsets);
@@ -52,6 +55,7 @@ export const FormEditor = ({ viewSetId, moveCallback }: Props) => {
     const [alertMessage, setAlertMessage] = useState('');
     const [addAlertMessage, setAddAlertMessage] = useState('');
     const [open, setOpen] = useState(false);
+    const [openWarning, setOpenWarning] = useState(true);
     const [deleteAlertMessage, setDeleteAlertMessage] = useState('');
     const [deleteAlertTitle, setDeleteAlertTitle] = useState('');
     const [preventDeleteDialog, setPreventDeleteDialog] = useState(false);
@@ -61,24 +65,30 @@ export const FormEditor = ({ viewSetId, moveCallback }: Props) => {
 
     const handleStep = (step: number) => () => {
         setActiveStep(step);
-    };
+    }
 
     const handleClose = () => {
         setOpen(false);
-    };
+    }
 
     const handleChange = (ticked: boolean) => {
         // there must be >1 forms in the notebook, and, therefore, >1 visible forms, in order to be able to untick the checkbox
         if ((Object.keys(viewsets).length > 1 && visibleTypes.length > 1) || ticked) {
             setAlertMessage('');
+
             dispatch({ type: 'ui-specification/formVisibilityUpdated', payload: { viewSetId, ticked, initialIndex } });
+
+            handleChangeCallback(viewSetId, ticked);
         }
         // in the case that there are multiple forms in the notebook, but none are visible, allow to re-tick the checkbox
         else if (visibleTypes.length === 0) {
             setAlertMessage('');
             setChecked(ticked)
             setInitialIndex(0)
+
             dispatch({ type: 'ui-specification/formVisibilityUpdated', payload: { viewSetId, ticked: checked, initialIndex: initialIndex } });
+
+            handleChangeCallback(viewSetId, checked);
         }
         else {
             setAlertMessage(`This must remain ticked in at least one (1) form.`);
@@ -201,12 +211,13 @@ export const FormEditor = ({ viewSetId, moveCallback }: Props) => {
         moveCallback(viewSetID, moveDirection)
     }
 
+
     return (
         <Grid container spacing={2}>
-            <Grid container item xs={12} spacing={1}>
-                <Grid item xs={3}>
+            <Grid container item xs={12} spacing={1.75}>
+                <Grid item xs={2}>
                     <Button variant="text" color="error" size="medium" startIcon={<DeleteRoundedIcon />} onClick={deleteConfirmation}>
-                        Delete this form
+                        Delete form
                     </Button>
                     <Dialog
                         open={open}
@@ -250,12 +261,12 @@ export const FormEditor = ({ viewSetId, moveCallback }: Props) => {
                                 endAdornment: (
                                     <InputAdornment position="end">
                                         <Tooltip title="Done">
-                                            <IconButton onClick={() => setEditMode(false)}>
+                                            <IconButton size="small" onClick={() => setEditMode(false)}>
                                                 <DoneRoundedIcon />
                                             </IconButton>
                                         </Tooltip>
                                         <Tooltip title="Close">
-                                            <IconButton onClick={() => setEditMode(false)}>
+                                            <IconButton size="small" onClick={() => setEditMode(false)}>
                                                 <CloseRoundedIcon />
                                             </IconButton>
                                         </Tooltip>
@@ -271,27 +282,49 @@ export const FormEditor = ({ viewSetId, moveCallback }: Props) => {
                     }
                 </Grid>
 
-                <Grid item xs={2}>
-                    <Tooltip title='Move left'>
+                <Grid item xs={3}>
+                    <Tooltip title='Move form left'>
                         <span>
                             <IconButton
-                                disabled={Object.keys(viewsets).indexOf(viewSetId) === 0 ? true : false}
+                                disabled={visibleTypes.indexOf(viewSetId) === 0 ? true : false || moveButtonsDisabled}
                                 onClick={() => moveForm(viewSetId, 'left')}
                                 aria-label='left' size='medium'>
                                 <ArrowBackRoundedIcon />
                             </IconButton>
                         </span>
                     </Tooltip>
-                    <Tooltip title='Move right'>
+                    <Tooltip title='Move form right'>
                         <span>
                             <IconButton
-                                disabled={Object.keys(viewsets).indexOf(viewSetId) === (Object.keys(viewsets).length - 1) ? true : false}
+                                disabled={visibleTypes.indexOf(viewSetId) === (visibleTypes.length - 1) ? true : false || moveButtonsDisabled}
                                 onClick={() => moveForm(viewSetId, 'right')}
                                 aria-label='right' size='medium'>
                                 <ArrowForwardRoundedIcon />
                             </IconButton>
                         </span>
                     </Tooltip>
+
+                    {moveButtonsDisabled &&
+                        <Collapse in={openWarning}>
+                            <Alert
+                                severity="info"
+                                action={
+                                    <IconButton
+                                        aria-label="close"
+                                        color="inherit"
+                                        size="small"
+                                        onClick={() => {
+                                            setOpenWarning(false);
+                                        }}
+                                    >
+                                        <CloseRoundedIcon fontSize="inherit" />
+                                    </IconButton>
+                                }
+                            >
+                                Only forms with an "Add New Record" button can be re-ordered.
+                            </Alert>
+                        </Collapse>
+                    }
                 </Grid>
 
                 <Grid item xs={4}>
@@ -301,7 +334,7 @@ export const FormEditor = ({ viewSetId, moveCallback }: Props) => {
                             size="small"
                             onChange={(e) => handleChange(e.target.checked)}
                         />}
-                        label="Include 'Add New Record' button"
+                        label={`Include "Add New Record" button`}
                     />
                     {alertMessage && <Alert severity="error">{alertMessage}</Alert>}
                 </Grid>

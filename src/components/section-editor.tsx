@@ -87,10 +87,10 @@ export const SectionEditor = ({ viewSetId, viewId, viewSet, deleteCallback, addC
 
     return (
         <>
-            <Grid container spacing={2} pb={2}>
-                <Grid item xs={3}>
+            <Grid container spacing={1.75} mb={2}>
+                <Grid item xs={2}>
                     <Button variant="text" color="error" size="small" startIcon={<DeleteRoundedIcon />} onClick={() => setOpen(true)}>
-                        Delete this section
+                        Delete section
                     </Button>
                     <Dialog
                         open={open}
@@ -123,12 +123,12 @@ export const SectionEditor = ({ viewSetId, viewId, viewSet, deleteCallback, addC
                                 endAdornment: (
                                     <InputAdornment position="end">
                                         <Tooltip title="Done">
-                                            <IconButton onClick={() => setEditMode(false)}>
+                                            <IconButton size="small" onClick={() => setEditMode(false)}>
                                                 <DoneRoundedIcon />
                                             </IconButton>
                                         </Tooltip>
                                         <Tooltip title="Close">
-                                            <IconButton onClick={() => setEditMode(false)}>
+                                            <IconButton size="small" onClick={() => setEditMode(false)}>
                                                 <CloseRoundedIcon />
                                             </IconButton>
                                         </Tooltip>
@@ -145,14 +145,14 @@ export const SectionEditor = ({ viewSetId, viewId, viewSet, deleteCallback, addC
                 </Grid>
 
                 <Grid item xs={2}>
-                    <Tooltip title='Move left'>
+                    <Tooltip title='Move section left'>
                         <span>
                             <IconButton disabled={viewSet.views.indexOf(viewId) === 0 ? true : false} onClick={() => moveSection('left')} aria-label='left' size='small'>
                                 <ArrowBackRoundedIcon />
                             </IconButton>
                         </span>
                     </Tooltip>
-                    <Tooltip title='Move right'>
+                    <Tooltip title='Move section right'>
                         <span>
                             <IconButton disabled={viewSet.views.indexOf(viewId) === (viewSet.views.length - 1) ? true : false} onClick={() => moveSection('right')} aria-label='right' size='small'>
                                 <ArrowForwardRoundedIcon />
@@ -161,7 +161,7 @@ export const SectionEditor = ({ viewSetId, viewId, viewSet, deleteCallback, addC
                     </Tooltip>
                 </Grid>
 
-                <Grid item xs={4}>
+                <Grid item xs={3}>
                     <Button variant="text" size="small" startIcon={<AddCircleOutlineRoundedIcon />} onClick={() => setAddMode(true)}>
                         Add new section
                     </Button>
@@ -178,12 +178,12 @@ export const SectionEditor = ({ viewSetId, viewId, viewSet, deleteCallback, addC
                                 endAdornment: (
                                     <InputAdornment position="end">
                                         <Tooltip title="Add">
-                                            <IconButton onClick={addNewSection}>
+                                            <IconButton size="small" onClick={addNewSection}>
                                                 <AddRoundedIcon />
                                             </IconButton>
                                         </Tooltip>
                                         <Tooltip title="Close">
-                                            <IconButton onClick={() => {
+                                            <IconButton size="small" onClick={() => {
                                                 setAddMode(false);
                                                 setAddAlertMessage('');
                                             }}>
