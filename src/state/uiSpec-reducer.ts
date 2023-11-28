@@ -55,7 +55,6 @@ export const uiSpecificationReducer = createSlice({
         fieldUpdated: (state: NotebookUISpec,
             action: PayloadAction<{ fieldName: string, newField: FieldType }>) => {
             const { fieldName, newField } = action.payload;
-            console.log('updating field', fieldName, 'with', newField);
             if (fieldName in state.fields) {
                 state.fields[fieldName] = newField;
             } else {
@@ -116,8 +115,6 @@ export const uiSpecificationReducer = createSlice({
                         break;
                     }
                 }
-                console.log('renamed field', fieldName, 'to', newFieldName, 'in view', viewId);
-                console.log(viewFields);
             } else {
                 throw new Error(`Cannot rename unknown field ${fieldName} via fieldRenamed action`);
             }
@@ -130,7 +127,6 @@ export const uiSpecificationReducer = createSlice({
                 viewSetId: string
             }>) => {
             const { fieldName, fieldType, viewId, viewSetId } = action.payload;
-            console.log('adding field', fieldName, 'to', viewSetId, '-', viewId, 'type', fieldType);
 
             const newField: FieldType = getFieldSpec(fieldType);
 
@@ -186,7 +182,6 @@ export const uiSpecificationReducer = createSlice({
                 fieldLabel = slugify(fieldName + ' ' + N);
                 N += 1;
             }
-            console.log('adding field', fieldLabel, 'to', viewId, 'as', newField);
             newField['component-parameters'].name = fieldLabel;
             // add to fields and to the fview section
             state.fields[fieldLabel] = newField;
@@ -208,7 +203,6 @@ export const uiSpecificationReducer = createSlice({
         sectionRenamed: (state: NotebookUISpec,
             action: PayloadAction<{ viewId: string, label: string }>) => {
             const { viewId, label } = action.payload;
-            console.log('updating section name', viewId, 'with', label);
             if (viewId in state.fviews) {
                 state.fviews[viewId].label = label;
             } else {
@@ -350,29 +344,22 @@ export const uiSpecificationReducer = createSlice({
         viewSetRenamed: (state: NotebookUISpec,
             action: PayloadAction<{ viewSetId: string, label: string }>) => {
             const { viewSetId, label } = action.payload;
-            console.log('updating form name', viewSetId, 'with', label);
             if (viewSetId in state.viewsets) {
                 state.viewsets[viewSetId].label = label;
             }
         },
         formVisibilityUpdated: (state: NotebookUISpec,
             action: PayloadAction<{ viewSetId: string, ticked: boolean, initialIndex: number }>) => {
-            const { viewSetId, ticked, initialIndex } = action.payload;
-
-            console.log('initial index in reducer ', initialIndex)
+            const { viewSetId, ticked } = action.payload;
 
             if (!ticked) {
                 const newVisibleTypes = state.visible_types.filter((visibleType) => visibleType !== viewSetId);
                 state.visible_types = newVisibleTypes;
-
-                console.log('after removing', viewSetId, ', visible_types is now', state.visible_types)
             }
             else {
                 // currently re-adding the form back at the end of the visible_types array because 
                 // I can't figure out how to store the initial index correctly (keeps being -1, which obviously won't work)
                 state.visible_types.splice(state.visible_types.length, 0, viewSetId);
-
-                console.log('after re-adding', viewSetId, 'visible_types is now', state.visible_types)
             }
         },
     }
