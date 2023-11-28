@@ -113,34 +113,39 @@ export const SectionEditor = ({ viewSetId, viewId, viewSet, deleteCallback, addC
                         Edit section name
                     </Button>
                     {editMode &&
-                        <TextField
-                            size="small"
-                            margin="dense"
-                            label="Section Name"
-                            name="label"
-                            data-testid="label"
-                            InputProps={{
-                                endAdornment: (
-                                    <InputAdornment position="end">
-                                        <Tooltip title="Done">
-                                            <IconButton size="small" onClick={() => setEditMode(false)}>
-                                                <DoneRoundedIcon />
-                                            </IconButton>
-                                        </Tooltip>
-                                        <Tooltip title="Close">
-                                            <IconButton size="small" onClick={() => setEditMode(false)}>
-                                                <CloseRoundedIcon />
-                                            </IconButton>
-                                        </Tooltip>
-                                    </InputAdornment>
-                                ),
-                            }}
-                            value={fView.label}
-                            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                                updateSectionLabel(event.target.value);
-                            }}
-                            sx={{ '& .MuiInputBase-root': { paddingRight: 0 } }}
-                        />
+                        <form onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
+                            e.preventDefault();
+                            setEditMode(false);
+                        }}>
+                            <TextField
+                                size="small"
+                                margin="dense"
+                                label="Section Name"
+                                name="label"
+                                data-testid="label"
+                                InputProps={{
+                                    endAdornment: (
+                                        <InputAdornment position="end">
+                                            <Tooltip title="Done">
+                                                <IconButton size="small" type="submit">
+                                                    <DoneRoundedIcon />
+                                                </IconButton>
+                                            </Tooltip>
+                                            <Tooltip title="Close">
+                                                <IconButton size="small" onClick={() => setEditMode(false)}>
+                                                    <CloseRoundedIcon />
+                                                </IconButton>
+                                            </Tooltip>
+                                        </InputAdornment>
+                                    ),
+                                }}
+                                value={fView.label}
+                                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                                    updateSectionLabel(event.target.value);
+                                }}
+                                sx={{ '& .MuiInputBase-root': { paddingRight: 0 } }}
+                            />
+                        </form>
                     }
                 </Grid>
 
@@ -166,39 +171,44 @@ export const SectionEditor = ({ viewSetId, viewId, viewSet, deleteCallback, addC
                         Add new section
                     </Button>
                     {addMode &&
-                        <TextField
-                            required
-                            fullWidth
-                            size="small"
-                            margin="dense"
-                            label="New Section Name"
-                            name="sectionName"
-                            data-testid="sectionName"
-                            InputProps={{
-                                endAdornment: (
-                                    <InputAdornment position="end">
-                                        <Tooltip title="Add">
-                                            <IconButton size="small" onClick={addNewSection}>
-                                                <AddRoundedIcon />
-                                            </IconButton>
-                                        </Tooltip>
-                                        <Tooltip title="Close">
-                                            <IconButton size="small" onClick={() => {
-                                                setAddMode(false);
-                                                setAddAlertMessage('');
-                                            }}>
-                                                <CloseRoundedIcon />
-                                            </IconButton>
-                                        </Tooltip>
-                                    </InputAdornment>
-                                ),
-                            }}
-                            value={newSectionName}
-                            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                                setNewSectionName(event.target.value);
-                            }}
-                            sx={{ '& .MuiInputBase-root': { paddingRight: 0 } }}
-                        />
+                        <form onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
+                            e.preventDefault();
+                            addNewSection();
+                        }}>
+                            <TextField
+                                required
+                                fullWidth
+                                size="small"
+                                margin="dense"
+                                label="New Section Name"
+                                name="sectionName"
+                                data-testid="sectionName"
+                                InputProps={{
+                                    endAdornment: (
+                                        <InputAdornment position="end">
+                                            <Tooltip title="Add">
+                                                <IconButton size="small" type="submit">
+                                                    <AddRoundedIcon />
+                                                </IconButton>
+                                            </Tooltip>
+                                            <Tooltip title="Close">
+                                                <IconButton size="small" onClick={() => {
+                                                    setAddMode(false);
+                                                    setAddAlertMessage('');
+                                                }}>
+                                                    <CloseRoundedIcon />
+                                                </IconButton>
+                                            </Tooltip>
+                                        </InputAdornment>
+                                    ),
+                                }}
+                                value={newSectionName}
+                                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                                    setNewSectionName(event.target.value);
+                                }}
+                                sx={{ '& .MuiInputBase-root': { paddingRight: 0 } }}
+                            />
+                        </form>
                     }
                     {addAlertMessage && <Alert severity="error">{addAlertMessage}</Alert>}
                 </Grid>

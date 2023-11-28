@@ -47,22 +47,24 @@ export const DesignPanel = () => {
     const handleCheckboxTabChange = (viewSetID: string, ticked: boolean) => {
         if (!ticked) {
             // add form to the array of unticked forms (the form has already been removed from visible_types at this point)
-            setUntickedForms([...untickedForms, viewSetID])
+            setUntickedForms([...untickedForms, viewSetID]);
             // ensure the tab index jumps to the end of all the tabs
             setTabIndex(`${maxKeys - 1}`);
         }
         else {
             // filter the form out of the array of unticked forms (the form has already been re-added to visible_types at this point)
-            setUntickedForms(untickedForms.filter((untickedForm) => untickedForm !== viewSetID))
+            setUntickedForms(untickedForms.filter((untickedForm) => untickedForm !== viewSetID));
             // ensure the tab index jumps somewhat intuitively
             setTabIndex(`${visibleTypes.length}`);
         }
     }
 
     const addNewForm = () => {
+        setAlertMessage('');
         try {
-            dispatch({ type: 'ui-specification/viewSetAdded', payload: { formName: newFormName } })
-            setTabIndex(`${visibleTypes.length}`)
+            dispatch({ type: 'ui-specification/viewSetAdded', payload: { formName: newFormName } });
+            setTabIndex(`${visibleTypes.length}`);
+            setAlertMessage('');
         }
         catch (error: unknown) {
             error instanceof Error &&
@@ -96,6 +98,8 @@ export const DesignPanel = () => {
                     value={tabIndex}
                     onChange={handleTabChange}
                     aria-label='form tabs'
+                    variant='scrollable'
+                    scrollButtons={false}
                     indicatorColor={(tabIndex >= `${visibleTypes.length}` && tabIndex < `${maxKeys}`) ? 'secondary' : 'primary'}
                 >
                     {visibleTypes.map((form: string, index: number) => {
@@ -179,18 +183,23 @@ export const DesignPanel = () => {
             <TabPanel key={maxKeys} value={maxKeys.toString()}>
                 <Grid container spacing={2} pt={3}>
                     <Grid item xs={12} sm={6}>
-                        <TextField
-                            fullWidth
-                            required
-                            label="Form Name"
-                            helperText="Enter a name for the form"
-                            name="formName"
-                            data-testid="formName"
-                            value={newFormName}
-                            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                                setNewFormName(event.target.value);
-                            }}
-                        />
+                        <form onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
+                            e.preventDefault();
+                            addNewForm();
+                        }}>
+                            <TextField
+                                fullWidth
+                                required
+                                label="Form Name"
+                                helperText="Enter a name for the form."
+                                name="formName"
+                                data-testid="formName"
+                                value={newFormName}
+                                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                                    setNewFormName(event.target.value);
+                                }}
+                            />
+                        </form>
                     </Grid>
                     <Grid item xs={12} sm={6}>
                         <Button variant="contained" color="primary" onClick={addNewForm}>

@@ -251,34 +251,39 @@ export const FormEditor = ({ viewSetId, moveCallback, moveButtonsDisabled, handl
                         Edit form name
                     </Button>
                     {editMode &&
-                        <TextField
-                            size="small"
-                            margin="dense"
-                            label="Form Name"
-                            name="label"
-                            data-testid="label"
-                            InputProps={{
-                                endAdornment: (
-                                    <InputAdornment position="end">
-                                        <Tooltip title="Done">
-                                            <IconButton size="small" onClick={() => setEditMode(false)}>
-                                                <DoneRoundedIcon />
-                                            </IconButton>
-                                        </Tooltip>
-                                        <Tooltip title="Close">
-                                            <IconButton size="small" onClick={() => setEditMode(false)}>
-                                                <CloseRoundedIcon />
-                                            </IconButton>
-                                        </Tooltip>
-                                    </InputAdornment>
-                                ),
-                            }}
-                            value={viewSet.label}
-                            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                                updateFormLabel(event.target.value);
-                            }}
-                            sx={{ '& .MuiInputBase-root': { paddingRight: 0 } }}
-                        />
+                        <form onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
+                            e.preventDefault();
+                            setEditMode(false);
+                        }}>
+                            <TextField
+                                size="small"
+                                margin="dense"
+                                label="Form Name"
+                                name="label"
+                                data-testid="label"
+                                InputProps={{
+                                    endAdornment: (
+                                        <InputAdornment position="end">
+                                            <Tooltip title="Done">
+                                                <IconButton size="small" type="submit">
+                                                    <DoneRoundedIcon />
+                                                </IconButton>
+                                            </Tooltip>
+                                            <Tooltip title="Close">
+                                                <IconButton size="small" onClick={() => setEditMode(false)}>
+                                                    <CloseRoundedIcon />
+                                                </IconButton>
+                                            </Tooltip>
+                                        </InputAdornment>
+                                    ),
+                                }}
+                                value={viewSet.label}
+                                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                                    updateFormLabel(event.target.value);
+                                }}
+                                sx={{ '& .MuiInputBase-root': { paddingRight: 0 } }}
+                            />
+                        </form>
                     }
                 </Grid>
 
@@ -360,28 +365,33 @@ export const FormEditor = ({ viewSetId, moveCallback, moveButtonsDisabled, handl
                                 <Grid container justifyContent="center"
                                     alignItems="center" item xs={12} direction="column">
                                     <Alert severity="success">Form has been created. Add a section to get started.</Alert>
-                                    <TextField
-                                        required
-                                        label="Section Name"
-                                        name="sectionName"
-                                        data-testid="sectionName"
-                                        value={newSectionName}
-                                        onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                                            setNewSectionName(event.target.value);
-                                        }}
-                                        sx={{ '& .MuiInputBase-root': { paddingRight: 1 }, mt: 3 }}
-                                        InputProps={{
-                                            endAdornment: (
-                                                <InputAdornment position="end">
-                                                    <Tooltip title="Add">
-                                                        <IconButton onClick={() => addNewSection(viewSetId, newSectionName)}>
-                                                            <AddRoundedIcon />
-                                                        </IconButton>
-                                                    </Tooltip>
-                                                </InputAdornment>
-                                            ),
-                                        }}
-                                    />
+                                    <form onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
+                                        e.preventDefault();
+                                        addNewSection(viewSetId, newSectionName);
+                                    }}>
+                                        <TextField
+                                            required
+                                            label="Section Name"
+                                            name="sectionName"
+                                            data-testid="sectionName"
+                                            value={newSectionName}
+                                            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                                                setNewSectionName(event.target.value);
+                                            }}
+                                            sx={{ '& .MuiInputBase-root': { paddingRight: 1 }, mt: 3 }}
+                                            InputProps={{
+                                                endAdornment: (
+                                                    <InputAdornment position="end">
+                                                        <Tooltip title="Add">
+                                                            <IconButton type="submit">
+                                                                <AddRoundedIcon />
+                                                            </IconButton>
+                                                        </Tooltip>
+                                                    </InputAdornment>
+                                                ),
+                                            }}
+                                        />
+                                    </form>
                                 </Grid>
                                 {addAlertMessage && <Alert severity="error">{addAlertMessage}</Alert>}
                             </Grid>
@@ -391,7 +401,6 @@ export const FormEditor = ({ viewSetId, moveCallback, moveButtonsDisabled, handl
                                     <SectionEditor viewSetId={viewSetId} viewId={viewSet.views[activeStep]} viewSet={viewSet} deleteCallback={deleteSection} addCallback={addNewSection} moveCallback={moveSection} />
                                 </Grid>
                             )
-
                         }
                     </Grid>
                 </Card>
