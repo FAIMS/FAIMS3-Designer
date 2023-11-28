@@ -55,7 +55,6 @@ export const FormEditor = ({ viewSetId, moveCallback, moveButtonsDisabled, handl
     const [alertMessage, setAlertMessage] = useState('');
     const [addAlertMessage, setAddAlertMessage] = useState('');
     const [open, setOpen] = useState(false);
-    const [openWarning, setOpenWarning] = useState(true);
     const [deleteAlertMessage, setDeleteAlertMessage] = useState('');
     const [deleteAlertTitle, setDeleteAlertTitle] = useState('');
     const [preventDeleteDialog, setPreventDeleteDialog] = useState(false);
@@ -287,50 +286,52 @@ export const FormEditor = ({ viewSetId, moveCallback, moveButtonsDisabled, handl
                     }
                 </Grid>
 
-                <Grid item xs={3}>
-                    <Tooltip title='Move form left'>
-                        <span>
-                            <IconButton
-                                disabled={visibleTypes.indexOf(viewSetId) === 0 ? true : false || moveButtonsDisabled}
-                                onClick={() => moveForm(viewSetId, 'left')}
-                                aria-label='left' size='medium'>
-                                <ArrowBackRoundedIcon />
-                            </IconButton>
-                        </span>
-                    </Tooltip>
-                    <Tooltip title='Move form right'>
-                        <span>
-                            <IconButton
-                                disabled={visibleTypes.indexOf(viewSetId) === (visibleTypes.length - 1) ? true : false || moveButtonsDisabled}
-                                onClick={() => moveForm(viewSetId, 'right')}
-                                aria-label='right' size='medium'>
-                                <ArrowForwardRoundedIcon />
-                            </IconButton>
-                        </span>
-                    </Tooltip>
-
-                    {moveButtonsDisabled &&
-                        <Collapse in={openWarning}>
-                            <Alert
-                                severity="info"
-                                action={
+                {moveButtonsDisabled ?
+                    (
+                        <Grid item xs={3}>
+                            <Tooltip title='Only forms with an "Add New Record" button can be re-ordered.'>
+                                <span>
                                     <IconButton
-                                        aria-label="close"
-                                        color="inherit"
-                                        size="small"
-                                        onClick={() => {
-                                            setOpenWarning(false);
-                                        }}
-                                    >
-                                        <CloseRoundedIcon fontSize="inherit" />
+                                        disabled={visibleTypes.indexOf(viewSetId) === 0 ? true : false || moveButtonsDisabled}
+                                        onClick={() => moveForm(viewSetId, 'left')}
+                                        aria-label='left' size='medium'>
+                                        <ArrowBackRoundedIcon />
                                     </IconButton>
-                                }
-                            >
-                                Only forms with an "Add New Record" button can be re-ordered.
-                            </Alert>
-                        </Collapse>
-                    }
-                </Grid>
+                                    <IconButton
+                                        disabled={visibleTypes.indexOf(viewSetId) === (visibleTypes.length - 1) ? true : false || moveButtonsDisabled}
+                                        onClick={() => moveForm(viewSetId, 'right')}
+                                        aria-label='right' size='medium'>
+                                        <ArrowForwardRoundedIcon />
+                                    </IconButton>
+                                </span>
+                            </Tooltip>
+                        </Grid>
+                    ) :
+                    (
+                        <Grid item xs={3}>
+                            <Tooltip title='Move form left'>
+                                <span>
+                                    <IconButton
+                                        disabled={visibleTypes.indexOf(viewSetId) === 0 ? true : false || moveButtonsDisabled}
+                                        onClick={() => moveForm(viewSetId, 'left')}
+                                        aria-label='left' size='medium'>
+                                        <ArrowBackRoundedIcon />
+                                    </IconButton>
+                                </span>
+                            </Tooltip>
+                            <Tooltip title='Move form right'>
+                                <span>
+                                    <IconButton
+                                        disabled={visibleTypes.indexOf(viewSetId) === (visibleTypes.length - 1) ? true : false || moveButtonsDisabled}
+                                        onClick={() => moveForm(viewSetId, 'right')}
+                                        aria-label='right' size='medium'>
+                                        <ArrowForwardRoundedIcon />
+                                    </IconButton>
+                                </span>
+                            </Tooltip>
+                        </Grid>
+                    )
+                }
 
                 <Grid item xs={4}>
                     <FormControlLabel
