@@ -12,7 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { Grid, Alert, Stepper, Typography, Step, Button, StepButton, TextField, Dialog, DialogTitle, DialogActions, DialogContent, DialogContentText, Card, InputAdornment, Tooltip, IconButton, Checkbox, FormControlLabel, Collapse } from "@mui/material";
+import { Grid, Alert, Stepper, Typography, Step, Button, StepButton, 
+         TextField, Dialog, DialogTitle, DialogActions, DialogContent, 
+         DialogContentText, Card, InputAdornment, Tooltip, IconButton, 
+         Checkbox, FormControlLabel } from "@mui/material";
 
 import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
 import EditRoundedIcon from '@mui/icons-material/EditRounded';
