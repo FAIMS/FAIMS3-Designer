@@ -47,7 +47,6 @@ export const FieldList = ({viewSetId, viewId}: Props) => {
     }
 
     const addField = () => {
-        console.log('addField', dialogState);
         dispatch({
             type: 'ui-specification/fieldAdded',
             payload: {

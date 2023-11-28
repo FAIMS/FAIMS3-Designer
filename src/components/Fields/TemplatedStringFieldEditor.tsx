@@ -67,7 +67,6 @@ export const TemplatedStringFieldEditor = ({ fieldName, viewId }: PropType) => {
         // insert {{fieldId}} at the cursor in the text area
         if (textAreaRef.current) {
             const el = textAreaRef.current as HTMLTextAreaElement;
-            console.log('tar', el);
             el.focus();
             const [start, end] = [el.selectionStart, el.selectionEnd];
             el.setRangeText(`{{${fieldId}}}`, start, end, 'select'); 
