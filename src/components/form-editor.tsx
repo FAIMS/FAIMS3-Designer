@@ -122,7 +122,6 @@ export const FormEditor = ({ viewSetId, moveCallback, moveButtonsDisabled, handl
     }
 
     const addNewSection = (viewSetID: string, label: string) => {
-        let success: boolean = false;
         try {
             dispatch({ type: 'ui-specification/sectionAdded', payload: { viewSetId: viewSetID, sectionLabel: label } });
 
@@ -131,12 +130,12 @@ export const FormEditor = ({ viewSetId, moveCallback, moveButtonsDisabled, handl
             setAddAlertMessage('');
 
             // let sectionEditor component know a section was addedd successfully
-            return success = true;
+            return true;
         }
         catch (error: unknown) {
             error instanceof Error && setAddAlertMessage(error.message);
         }
-        return success;
+        return false;
     }
 
     const updateFormLabel = (label: string) => {
@@ -295,14 +294,12 @@ export const FormEditor = ({ viewSetId, moveCallback, moveButtonsDisabled, handl
                             <Tooltip title='Only forms with an "Add New Record" button can be re-ordered.'>
                                 <span>
                                     <IconButton
-                                        disabled={visibleTypes.indexOf(viewSetId) === 0 ? true : false || moveButtonsDisabled}
-                                        onClick={() => moveForm(viewSetId, 'left')}
+                                        disabled={true}
                                         aria-label='left' size='medium'>
                                         <ArrowBackRoundedIcon />
                                     </IconButton>
                                     <IconButton
-                                        disabled={visibleTypes.indexOf(viewSetId) === (visibleTypes.length - 1) ? true : false || moveButtonsDisabled}
-                                        onClick={() => moveForm(viewSetId, 'right')}
+                                        disabled={true}
                                         aria-label='right' size='medium'>
                                         <ArrowForwardRoundedIcon />
                                     </IconButton>
@@ -315,7 +312,7 @@ export const FormEditor = ({ viewSetId, moveCallback, moveButtonsDisabled, handl
                             <Tooltip title='Move form left'>
                                 <span>
                                     <IconButton
-                                        disabled={visibleTypes.indexOf(viewSetId) === 0 ? true : false || moveButtonsDisabled}
+                                        disabled={visibleTypes.indexOf(viewSetId) === 0}
                                         onClick={() => moveForm(viewSetId, 'left')}
                                         aria-label='left' size='medium'>
                                         <ArrowBackRoundedIcon />
@@ -325,7 +322,7 @@ export const FormEditor = ({ viewSetId, moveCallback, moveButtonsDisabled, handl
                             <Tooltip title='Move form right'>
                                 <span>
                                     <IconButton
-                                        disabled={visibleTypes.indexOf(viewSetId) === (visibleTypes.length - 1) ? true : false || moveButtonsDisabled}
+                                        disabled={visibleTypes.indexOf(viewSetId) === (visibleTypes.length - 1)}
                                         onClick={() => moveForm(viewSetId, 'right')}
                                         aria-label='right' size='medium'>
                                         <ArrowForwardRoundedIcon />
