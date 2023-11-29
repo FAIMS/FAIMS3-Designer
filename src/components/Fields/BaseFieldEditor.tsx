@@ -50,9 +50,9 @@ export const BaseFieldEditor = ({ fieldName, children }: Props) => {
         if (newField['component-parameters'] && 'label' in newField['component-parameters'])
             newField['component-parameters'].label = label;
         else if (newField['component-parameters'] &&
-                'InputLabelProps' in newField['component-parameters'] &&
-                 newField['component-parameters'].InputLabelProps &&
-                 newField['component-parameters'].InputLabelProps.label)
+            'InputLabelProps' in newField['component-parameters'] &&
+            newField['component-parameters'].InputLabelProps &&
+            newField['component-parameters'].InputLabelProps.label)
             newField['component-parameters'].InputLabelProps.label = label;
     }
 
@@ -74,20 +74,16 @@ export const BaseFieldEditor = ({ fieldName, children }: Props) => {
 
     const updateFieldFromState = (newState: StateType) => {
         const newField = JSON.parse(JSON.stringify(field)) as FieldType; // deep copy
-        if (newState.label) 
+        if (newState.label)
             setFieldLabel(newField, newState.label);
         newField['component-parameters'].helperText = newState.helperText;
         newField['component-parameters'].required = newState.required;
         if (newField.meta) {
-            if (newState.annotation) {
-                newField.meta.annotation = newState.annotation;
-                newField.meta.annotation_label = newState.annotationLabel || '';
-            }
-            if (newState.uncertainty) {
-                newField.meta.uncertainty = {
-                    include: newState.uncertainty,
-                    label: newState.uncertaintyLabel || ''
-                }
+            newField.meta.annotation = newState.annotation;
+            newField.meta.annotation_label = newState.annotationLabel || '';
+            newField.meta.uncertainty = {
+                include: newState.uncertainty,
+                label: newState.uncertaintyLabel || ''
             }
         }
         updateField(fieldName, newField);
