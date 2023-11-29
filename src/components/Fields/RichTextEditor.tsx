@@ -14,13 +14,14 @@
 
 import { Grid, Alert } from "@mui/material";
 import { useAppSelector, useAppDispatch } from "../../state/hooks";
-import { useRef } from "react";
+import { useRef, Suspense } from "react";
 
 import '@mdxeditor/editor/style.css'
 
 // importing the editor and the plugin from their full paths
 import { MDXEditor } from '@mdxeditor/editor/MDXEditor';
-import { MDXEditorMethods } from '@mdxeditor/editor';
+import { MDXEditorMethods, Separator } from '@mdxeditor/editor';
+import { toolbarPlugin } from '@mdxeditor/editor/plugins/toolbar';
 import { headingsPlugin } from '@mdxeditor/editor/plugins/headings';
 import { listsPlugin } from '@mdxeditor/editor/plugins/lists';
 import { quotePlugin } from '@mdxeditor/editor/plugins/quote';
@@ -28,18 +29,17 @@ import { thematicBreakPlugin } from '@mdxeditor/editor/plugins/thematic-break';
 import { markdownShortcutPlugin } from '@mdxeditor/editor/plugins/markdown-shortcut';
 import { tablePlugin } from '@mdxeditor/editor/plugins/table';
 
-// importing the toolbar and desired toggle components
+// importing the desired toolbar toggle components
 import { UndoRedo } from '@mdxeditor/editor/plugins/toolbar/components/UndoRedo';
 import { BoldItalicUnderlineToggles } from '@mdxeditor/editor/plugins/toolbar/components/BoldItalicUnderlineToggles';
 import { BlockTypeSelect } from '@mdxeditor/editor/plugins/toolbar/components/BlockTypeSelect';
 import { ListsToggle } from '@mdxeditor/editor/plugins/toolbar/components/ListsToggle';
 import { InsertTable } from '@mdxeditor/editor/plugins/toolbar/components/InsertTable';
-import { Separator } from '@mdxeditor/editor';
-import { toolbarPlugin } from '@mdxeditor/editor/plugins/toolbar';
+
 import { FieldType, Notebook } from "../../state/initial";
 
 
-export const RichTextEditor = ({ fieldName }: {fieldName: string}) => {
+export const RichTextEditor = ({ fieldName }: { fieldName: string }) => {
 
     const field = useAppSelector((state: Notebook) => state['ui-specification'].fields[fieldName]);
     const dispatch = useAppDispatch();
@@ -74,36 +74,38 @@ export const RichTextEditor = ({ fieldName }: {fieldName: string}) => {
         <Grid container sx={{ width: '45em', m: 'auto' }}>
             <Grid item sm={12} xs={12} sx={{ m: 2 }}>
                 <Alert severity="info" sx={{ mb: 1 }}>Use this editor for rich text.</Alert>
-                <MDXEditor
-                    markdown={initContent}
-                    plugins={[
-                        headingsPlugin(),
-                        listsPlugin(),
-                        quotePlugin(),
-                        thematicBreakPlugin(),
-                        markdownShortcutPlugin(),
-                        tablePlugin(),
-                        toolbarPlugin({
-                            toolbarContents: () => (
-                                <>
-                                    <UndoRedo />
-                                    <Separator />
-                                    <BoldItalicUnderlineToggles />
-                                    <Separator />
-                                    <BlockTypeSelect />
-                                    <Separator />
-                                    <ListsToggle />
-                                    <Separator />
-                                    <InsertTable />
-                                </>
-                            )
-                        }),
+                <Suspense fallback={<div>Loading...</div>}>
+                    <MDXEditor
+                        markdown={initContent}
+                        plugins={[
+                            headingsPlugin(),
+                            listsPlugin(),
+                            quotePlugin(),
+                            thematicBreakPlugin(),
+                            markdownShortcutPlugin(),
+                            tablePlugin(),
+                            toolbarPlugin({
+                                toolbarContents: () => (
+                                    <>
+                                        <UndoRedo />
+                                        <Separator />
+                                        <BoldItalicUnderlineToggles />
+                                        <Separator />
+                                        <BlockTypeSelect />
+                                        <Separator />
+                                        <ListsToggle />
+                                        <Separator />
+                                        <InsertTable />
+                                    </>
+                                )
+                            }),
 
-                    ]}
-                    ref={ref}
-                    onChange={() => updateProperty('content', ref.current?.getMarkdown())}
-                    contentEditableClassName="mdxEditor"
-                />
+                        ]}
+                        ref={ref}
+                        onChange={() => updateProperty('content', ref.current?.getMarkdown())}
+                        contentEditableClassName="mdxEditor"
+                    />
+                </Suspense>
             </Grid>
         </Grid>
     )

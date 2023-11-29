@@ -13,14 +13,15 @@
 // limitations under the License.
 
 import { Alert, Button, Checkbox, FormControlLabel, Grid, TextField, Typography } from "@mui/material";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, Suspense } from "react";
 import { useAppSelector, useAppDispatch } from "../state/hooks";
 
-import '@mdxeditor/editor/style.css'
+import '@mdxeditor/editor/style.css';
 
-// importing the editor and the plugin from their full paths
+// importing the editor and the plugins from their full paths
 import { MDXEditor } from '@mdxeditor/editor/MDXEditor';
-import { MDXEditorMethods } from '@mdxeditor/editor';
+import { MDXEditorMethods, Separator } from '@mdxeditor/editor';
+import { toolbarPlugin } from '@mdxeditor/editor/plugins/toolbar';
 import { headingsPlugin } from '@mdxeditor/editor/plugins/headings';
 import { listsPlugin } from '@mdxeditor/editor/plugins/lists';
 import { quotePlugin } from '@mdxeditor/editor/plugins/quote';
@@ -28,14 +29,13 @@ import { thematicBreakPlugin } from '@mdxeditor/editor/plugins/thematic-break';
 import { markdownShortcutPlugin } from '@mdxeditor/editor/plugins/markdown-shortcut';
 import { tablePlugin } from '@mdxeditor/editor/plugins/table';
 
-// importing the toolbar and desired toggle components
+// importing the desired toolbar toggle components
 import { UndoRedo } from '@mdxeditor/editor/plugins/toolbar/components/UndoRedo';
 import { BoldItalicUnderlineToggles } from '@mdxeditor/editor/plugins/toolbar/components/BoldItalicUnderlineToggles';
 import { BlockTypeSelect } from '@mdxeditor/editor/plugins/toolbar/components/BlockTypeSelect';
 import { ListsToggle } from '@mdxeditor/editor/plugins/toolbar/components/ListsToggle';
 import { InsertTable } from '@mdxeditor/editor/plugins/toolbar/components/InsertTable';
-import { Separator } from '@mdxeditor/editor';
-import { toolbarPlugin } from '@mdxeditor/editor/plugins/toolbar';
+
 import { Notebook, PropertyMap } from "../state/initial";
 
 export const InfoPanel = () => {
@@ -97,7 +97,7 @@ export const InfoPanel = () => {
                         fullWidth
                         required
                         label="Project Name"
-                        helperText="Enter a string between 2 and 100 characters long"
+                        helperText="Enter a string between 2 and 100 characters long."
                         name="name"
                         data-testid="name"
                         value={metadata.name}
@@ -119,36 +119,38 @@ export const InfoPanel = () => {
                 </Grid>
                 <Grid item xs={12}>
                     <Alert severity="info">Use the editor below for the project description.</Alert>
-                    <MDXEditor
-                        markdown={metadata.pre_description as string}
-                        plugins={[
-                            headingsPlugin(),
-                            listsPlugin(),
-                            quotePlugin(),
-                            thematicBreakPlugin(),
-                            markdownShortcutPlugin(),
-                            tablePlugin(),
-                            toolbarPlugin({
-                                toolbarContents: () => (
-                                    <>
-                                        <UndoRedo />
-                                        <Separator />
-                                        <BoldItalicUnderlineToggles />
-                                        <Separator />
-                                        <BlockTypeSelect />
-                                        <Separator />
-                                        <ListsToggle />
-                                        <Separator />
-                                        <InsertTable />
-                                    </>
-                                )
-                            }),
+                    <Suspense fallback={<div>Loading...</div>}>
+                        <MDXEditor
+                            markdown={metadata.pre_description as string}
+                            plugins={[
+                                headingsPlugin(),
+                                listsPlugin(),
+                                quotePlugin(),
+                                thematicBreakPlugin(),
+                                markdownShortcutPlugin(),
+                                tablePlugin(),
+                                toolbarPlugin({
+                                    toolbarContents: () => (
+                                        <>
+                                            <UndoRedo />
+                                            <Separator />
+                                            <BoldItalicUnderlineToggles />
+                                            <Separator />
+                                            <BlockTypeSelect />
+                                            <Separator />
+                                            <ListsToggle />
+                                            <Separator />
+                                            <InsertTable />
+                                        </>
+                                    )
+                                }),
 
-                        ]}
-                        ref={ref}
-                        onChange={() => setProp('pre_description', ref.current?.getMarkdown())}
-                        contentEditableClassName="mdxEditor"
-                    />
+                            ]}
+                            ref={ref}
+                            onChange={() => setProp('pre_description', ref.current?.getMarkdown())}
+                            contentEditableClassName="mdxEditor"
+                        />
+                    </Suspense>
                 </Grid>
                 <Grid item xs={12} sm={6}>
                     <TextField
@@ -163,11 +165,11 @@ export const InfoPanel = () => {
                 </Grid>
                 <Grid item xs={12} sm={6}>
                     <FormControlLabel
-                            control={<Checkbox
+                        control={<Checkbox
                             checked={metadata.showQRCodeButton === "true" ? true : false}
                             onChange={(e) => setProp('showQRCodeButton', e.target.checked ? "true" : "false")}
-                    />} label="Enable QR Code Search of records" />
-                    <br/>
+                        />} label="Enable QR Code Search of records" />
+                    <br />
                     <Typography variant='caption'>Useful if your form includes a QR code field.</Typography>
                 </Grid>
 
