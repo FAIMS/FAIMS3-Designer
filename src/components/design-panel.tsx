@@ -93,7 +93,7 @@ export const DesignPanel = () => {
                 Each section has one or more form fields.
             </Alert>
 
-            <Box sx={{ borderBottom: 2, borderColor: 'divider' }}>
+            <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                 <Tabs
                     value={tabIndex}
                     onChange={handleTabChange}
@@ -107,17 +107,21 @@ export const DesignPanel = () => {
                             <Tab key={index} value={`${index}`} label={`Form: ${viewSets[form].label}`}
                                 sx={{
                                     '&.MuiTab-root': {
-                                        backgroundColor: '#F5FCE8',
+                                        backgroundColor: '#F9FAFB',
+                                        border: '0.75px solid #669911',
+                                        borderBottom: 'none',
                                         borderTopLeftRadius: '10px',
                                         borderTopRightRadius: '10px',
                                         marginRight: '0.5em'
                                     },
                                     '&.Mui-selected': {
-                                        border: '0.5px solid #669911',
+                                        border: '1px solid #669911',
+                                        backgroundColor: '#F5FCE8',
                                     },
                                     '&:hover': {
                                         color: '#669911',
                                         opacity: 1,
+                                        backgroundColor: '#F5FCE8',
                                     },
                                 }}
                             />
@@ -129,18 +133,22 @@ export const DesignPanel = () => {
                             <Tab key={startIndex} value={`${startIndex}`} label={`Form: ${viewSets[form].label}`}
                                 sx={{
                                     '&.MuiTab-root': {
-                                        backgroundColor: '#FFF4E5',
+                                        backgroundColor: '#F9FAFB',
+                                        border: '0.75px solid #E18200',
+                                        borderBottom: 'none',
                                         borderTopLeftRadius: '10px',
                                         borderTopRightRadius: '10px',
                                         marginX: '0.25em'
                                     },
                                     '&.Mui-selected': {
                                         color: '#E18200',
-                                        border: '0.5px solid #E18200',
+                                        border: '1px solid #E18200',
+                                        backgroundColor: '#FFF4E5',
                                     },
                                     '&:hover': {
                                         color: '#E18200',
                                         opacity: 1,
+                                        backgroundColor: '#FFF4E5',
                                     },
                                 }}
                             />
@@ -149,16 +157,22 @@ export const DesignPanel = () => {
                     <Tab key={maxKeys} value={maxKeys.toString()} icon={<AddIcon />}
                         sx={{
                             '&.MuiTab-root': {
+                                backgroundColor: '#F9FAFB',
+                                border: '0.75px solid #669911',
+                                borderBottom: 'none',
                                 borderTopLeftRadius: '10px',
                                 borderTopRightRadius: '10px',
                                 marginLeft: '0.5em'
                             },
                             '&.Mui-selected': {
                                 color: '#669911',
+                                border: '1px solid #669911',
+                                backgroundColor: '#F5FCE8',
                             },
                             '&:hover': {
                                 color: '#669911',
                                 opacity: 1,
+                                backgroundColor: '#F5FCE8',
                             },
                         }}
                     />
