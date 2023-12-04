@@ -15,12 +15,13 @@
 import { Alert, Button, Checkbox, FormControlLabel, Grid, TextField, Typography, Card } from "@mui/material";
 import { useEffect, useState, useRef, Suspense } from "react";
 import { useAppSelector, useAppDispatch } from "../state/hooks";
+import { Notebook, PropertyMap } from "../state/initial";
 
 import '@mdxeditor/editor/style.css';
 
 // importing the editor and the plugins from their full paths
 import { MDXEditor } from '@mdxeditor/editor/MDXEditor';
-import { MDXEditorMethods, Separator } from '@mdxeditor/editor';
+import { MDXEditorMethods, MdastImportVisitor, Separator, realmPlugin, system } from '@mdxeditor/editor';
 import { toolbarPlugin } from '@mdxeditor/editor/plugins/toolbar';
 import { headingsPlugin } from '@mdxeditor/editor/plugins/headings';
 import { listsPlugin } from '@mdxeditor/editor/plugins/lists';
@@ -29,6 +30,7 @@ import { thematicBreakPlugin } from '@mdxeditor/editor/plugins/thematic-break';
 import { markdownShortcutPlugin } from '@mdxeditor/editor/plugins/markdown-shortcut';
 import { tablePlugin } from '@mdxeditor/editor/plugins/table';
 import { diffSourcePlugin } from '@mdxeditor/editor/plugins/diff-source';
+import { linkPlugin } from '@mdxeditor/editor/plugins/link';
 
 // importing the desired toolbar toggle components
 import { UndoRedo } from '@mdxeditor/editor/plugins/toolbar/components/UndoRedo';
@@ -38,7 +40,6 @@ import { ListsToggle } from '@mdxeditor/editor/plugins/toolbar/components/ListsT
 import { InsertTable } from '@mdxeditor/editor/plugins/toolbar/components/InsertTable';
 import { DiffSourceToggleWrapper } from '@mdxeditor/editor/plugins/toolbar/components/DiffSourceToggleWrapper';
 
-import { Notebook, PropertyMap } from "../state/initial";
 
 export const InfoPanel = () => {
 
@@ -51,10 +52,9 @@ export const InfoPanel = () => {
     const [metadataFieldValue, setMetadataFieldValue] = useState('');
     const [extraFields, setExtraFields] = useState<PropertyMap>({});
     const [alert, setAlert] = useState('');
-    const [showMDXEditor, setShowMDXEditor] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
 
     useEffect(() => {
-        console.log('here')
         const knownFields = ['name', 'pre_description', 'behaviours', 'meta',
             'project_lead', 'lead_institution', 'showQRCodeButton',
             'access', 'accesses', 'forms', 'filenames',
@@ -69,6 +69,7 @@ export const InfoPanel = () => {
     }, [metadata]);
 
     const setProp = (property: string, value: string) => {
+        setErrorMessage('');
         dispatch({ type: 'metadata/propertyUpdated', payload: { property, value } });
     };
 
@@ -90,6 +91,29 @@ export const InfoPanel = () => {
             setProp(metadataFieldName, metadataFieldValue);
         }
     };
+
+    /*
+        The following is taken from and inspired by: 
+        https://github.com/mdx-editor/editor/issues/202#issuecomment-1827182167 & 
+        https://github.com/mdx-editor/editor/issues/95#issuecomment-1755320066 
+    */
+    const catchAllVisitor: MdastImportVisitor<any> = {
+        testNode: () => true,
+        visitNode: ({ mdastNode, actions }) => {
+            // deviating from the example shown in the second link,
+            // for now, I'm simply showing an error message
+            setErrorMessage(`Sorry, we currently do not support the markdown ${mdastNode?.type} option. 
+            What you have just written was automatically removed. Please continue carefully.`);
+        }
+    };
+
+    const [catchAllPlugin] = realmPlugin({
+        id: "catchAll",
+        systemSpec: system(() => ({})),
+        init: (realm) => {
+            realm.pubKey("addImportVisitor", catchAllVisitor);
+        }
+    });
 
     return (
         <div>
@@ -136,6 +160,7 @@ export const InfoPanel = () => {
                                         markdownShortcutPlugin(),
                                         tablePlugin(),
                                         diffSourcePlugin({ diffMarkdown: metadata.pre_description as string }),
+                                        linkPlugin(),
                                         toolbarPlugin({
                                             toolbarContents: () => (
                                                 <DiffSourceToggleWrapper>
@@ -151,12 +176,13 @@ export const InfoPanel = () => {
                                                 </DiffSourceToggleWrapper>
                                             )
                                         }),
+                                        catchAllPlugin(),
                                     ]}
                                     ref={ref}
-                                    //onChange={() => setProp('pre_description', ref.current?.getMarkdown() as string)}
                                     contentEditableClassName="mdxEditor"
                                 />
                             </Card>
+                            {errorMessage && <Alert severity="error">{errorMessage}</Alert>}
                         </Suspense>
                     </Grid>
 
