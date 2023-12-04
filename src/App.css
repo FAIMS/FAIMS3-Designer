@@ -9,8 +9,9 @@
 }
 
 .mdxEditor {
-  border: 1px solid #c4c4c4;
+  /* border: 1px solid #c4c4c4;
   border-radius: 3px;
-  min-height: 12.5em;
+  min-height: 12.5em; */
+  /* border-bottom: 1px solid #c4c4c4; */
   font-family: 'Open Sans', sans-serif;
 }
