@@ -124,54 +124,40 @@ export const InfoPanel = () => {
                     </Grid>
 
                     <Grid item xs={12}>
-                        {showMDXEditor ? (
-                            <Card variant="outlined">
-                                {/* <Alert severity="info">Use the editor below for the project description.</Alert> */}
-                                <Suspense fallback={<div>Loading...</div>}>
-                                    <MDXEditor
-                                        markdown={metadata.pre_description as string}
-                                        plugins={[
-                                            headingsPlugin(),
-                                            listsPlugin(),
-                                            quotePlugin(),
-                                            thematicBreakPlugin(),
-                                            markdownShortcutPlugin(),
-                                            tablePlugin(),
-                                            diffSourcePlugin({ diffMarkdown: metadata.pre_description as string }),
-                                            toolbarPlugin({
-                                                toolbarContents: () => (
-                                                    <DiffSourceToggleWrapper>
-                                                        <UndoRedo />
-                                                        <Separator />
-                                                        <BoldItalicUnderlineToggles />
-                                                        <Separator />
-                                                        <BlockTypeSelect />
-                                                        <Separator />
-                                                        <ListsToggle />
-                                                        <Separator />
-                                                        <InsertTable />
-                                                    </DiffSourceToggleWrapper>
-                                                )
-                                            }),
-                                        ]}
-                                        ref={ref}
-                                        //onChange={() => setProp('pre_description', ref.current?.getMarkdown() as string)}
-                                        contentEditableClassName="mdxEditor"
-                                    />
-                                    <Button onClick={() => {
-                                        setProp('pre_description', ref.current?.getMarkdown() as string)
-                                        setShowMDXEditor(false)
-                                    }}>
-                                        Done?
-                                    </Button>
-                                </Suspense>
+                        <Suspense fallback={<div>Loading...</div>}>
+                            <Card variant="outlined" onBlur={() => setProp('pre_description', ref.current?.getMarkdown() as string)}>
+                                <MDXEditor
+                                    markdown={metadata.pre_description as string}
+                                    plugins={[
+                                        headingsPlugin(),
+                                        listsPlugin(),
+                                        quotePlugin(),
+                                        thematicBreakPlugin(),
+                                        markdownShortcutPlugin(),
+                                        tablePlugin(),
+                                        diffSourcePlugin({ diffMarkdown: metadata.pre_description as string }),
+                                        toolbarPlugin({
+                                            toolbarContents: () => (
+                                                <DiffSourceToggleWrapper>
+                                                    <UndoRedo />
+                                                    <Separator />
+                                                    <BoldItalicUnderlineToggles />
+                                                    <Separator />
+                                                    <BlockTypeSelect />
+                                                    <Separator />
+                                                    <ListsToggle />
+                                                    <Separator />
+                                                    <InsertTable />
+                                                </DiffSourceToggleWrapper>
+                                            )
+                                        }),
+                                    ]}
+                                    ref={ref}
+                                    //onChange={() => setProp('pre_description', ref.current?.getMarkdown() as string)}
+                                    contentEditableClassName="mdxEditor"
+                                />
                             </Card>
-                        ) : (
-                            <Card variant="outlined">
-                                <Button onClick={() => setShowMDXEditor(true)}>Click to edit the project description</Button>
-                            </Card>
-                        )
-                        }
+                        </Suspense>
                     </Grid>
 
                     <Grid item xs={12} sm={6}>
