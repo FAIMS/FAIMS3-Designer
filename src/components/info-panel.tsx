@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { Alert, Button, Checkbox, FormControlLabel, Grid, TextField, Typography, Card } from "@mui/material";
+import { Alert, Button, Checkbox, FormControlLabel, FormHelperText, Grid, TextField, Typography, Card } from "@mui/material";
 import { useEffect, useState, useRef, Suspense } from "react";
 import { useAppSelector, useAppDispatch } from "../state/hooks";
 import { Notebook, PropertyMap } from "../state/initial";
@@ -120,99 +120,106 @@ export const InfoPanel = () => {
             <Typography variant="h2">General Information</Typography>
             <Card variant="outlined" sx={{ mt: 2 }}>
                 <Grid container spacing={3} p={3}>
-                    <Grid item xs={12} sm={6}>
-                        <TextField
-                            fullWidth
-                            required
-                            label="Project Name"
-                            helperText="Enter a string between 2 and 100 characters long."
-                            name="name"
-                            data-testid="name"
-                            value={metadata.name}
-                            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                                setProp('name', event.target.value);
-                            }}
-                        />
-                    </Grid>
+                    <Grid container item xs={12} spacing={2}>
+                        <Grid item xs={12} sm={4}>
+                            <TextField
+                                fullWidth
+                                required
+                                label="Project Name"
+                                helperText="Enter a string between 2 and 100 characters long."
+                                name="name"
+                                data-testid="name"
+                                value={metadata.name}
+                                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                                    setProp('name', event.target.value);
+                                }}
+                            />
+                        </Grid>
 
-                    <Grid item xs={12} sm={6}>
-                        <TextField
-                            fullWidth
-                            label="Project Lead"
-                            name="project_lead"
-                            value={metadata.project_lead}
-                            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                                setProp('project_lead', event.target.value);
-                            }}
-                        />
-                    </Grid>
+                        <Grid item xs={12} sm={4}>
+                            <TextField
+                                fullWidth
+                                label="Project Lead"
+                                name="project_lead"
+                                value={metadata.project_lead}
+                                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                                    setProp('project_lead', event.target.value);
+                                }}
+                            />
+                        </Grid>
 
-                    <Grid item xs={12}>
-                        <Suspense fallback={<div>Loading...</div>}>
-                            <Card variant="outlined" onBlur={() => setProp('pre_description', ref.current?.getMarkdown() as string)}>
-                                <MDXEditor
-                                    markdown={metadata.pre_description as string}
-                                    plugins={[
-                                        headingsPlugin(),
-                                        listsPlugin(),
-                                        quotePlugin(),
-                                        thematicBreakPlugin(),
-                                        markdownShortcutPlugin(),
-                                        tablePlugin(),
-                                        diffSourcePlugin({ diffMarkdown: metadata.pre_description as string }),
-                                        linkPlugin(),
-                                        toolbarPlugin({
-                                            toolbarContents: () => (
-                                                <DiffSourceToggleWrapper>
-                                                    <UndoRedo />
-                                                    <Separator />
-                                                    <BoldItalicUnderlineToggles />
-                                                    <Separator />
-                                                    <BlockTypeSelect />
-                                                    <Separator />
-                                                    <ListsToggle />
-                                                    <Separator />
-                                                    <InsertTable />
-                                                </DiffSourceToggleWrapper>
-                                            )
-                                        }),
-                                        catchAllPlugin(),
-                                    ]}
-                                    ref={ref}
-                                    contentEditableClassName="mdxEditor"
-                                />
-                            </Card>
-                            {errorMessage && <Alert severity="error">{errorMessage}</Alert>}
-                        </Suspense>
-                    </Grid>
-
-                    <Grid item xs={12} sm={6}>
-                        <TextField
-                            fullWidth
-                            label="Lead Institution"
-                            name="lead_institution"
-                            value={metadata.lead_institution}
-                            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                                setProp('lead_institution', event.target.value);
-                            }}
-                        />
-                    </Grid>
-
-                    <Grid item xs={12} sm={6}>
-                        <FormControlLabel
-                            control={<Checkbox
-                                checked={metadata.showQRCodeButton === "true" ? true : false}
-                                onChange={(e) => setProp('showQRCodeButton', e.target.checked ? "true" : "false")}
-                            />} label="Enable QR Code Search of records" />
-                        <br />
-                        <Typography variant='caption'>Useful if your form includes a QR code field.</Typography>
+                        <Grid item xs={12} sm={4}>
+                            <TextField
+                                fullWidth
+                                label="Lead Institution"
+                                name="lead_institution"
+                                value={metadata.lead_institution}
+                                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                                    setProp('lead_institution', event.target.value);
+                                }}
+                            />
+                        </Grid>
                     </Grid>
 
                     <Grid container item xs={12} spacing={2}>
+                        <Grid item xs={12} sm={8}>
+                            <Suspense fallback={<div>Loading...</div>}>
+                                <Card variant="outlined" onBlur={() => setProp('pre_description', ref.current?.getMarkdown() as string)}>
+                                    <MDXEditor
+                                        placeholder="Start typing a project description..."
+                                        markdown={metadata.pre_description as string}
+                                        plugins={[
+                                            headingsPlugin(),
+                                            listsPlugin(),
+                                            quotePlugin(),
+                                            thematicBreakPlugin(),
+                                            markdownShortcutPlugin(),
+                                            tablePlugin(),
+                                            diffSourcePlugin({ diffMarkdown: metadata.pre_description as string }),
+                                            linkPlugin(),
+                                            toolbarPlugin({
+                                                toolbarContents: () => (
+                                                    <DiffSourceToggleWrapper>
+                                                        <UndoRedo />
+                                                        <Separator />
+                                                        <BoldItalicUnderlineToggles />
+                                                        <Separator />
+                                                        <BlockTypeSelect />
+                                                        <Separator />
+                                                        <ListsToggle />
+                                                        <Separator />
+                                                        <InsertTable />
+                                                    </DiffSourceToggleWrapper>
+                                                )
+                                            }),
+                                            catchAllPlugin(),
+                                        ]}
+                                        ref={ref}
+                                        contentEditableClassName="mdxEditor"
+                                    />
+                                </Card>
+                                {errorMessage && <Alert severity="error">{errorMessage}</Alert>}
+                            </Suspense>
+                            <FormHelperText>
+                                Use the editor above for the project description.
+                                If you use source mode, make sure you put blank lines before and after any markdown syntax for compatibility.
+                            </FormHelperText>
+                        </Grid>
 
+                        <Grid item xs={12} sm={4}>
+                            <FormControlLabel
+                                control={<Checkbox
+                                    checked={metadata.showQRCodeButton === "true" ? true : false}
+                                    onChange={(e) => setProp('showQRCodeButton', e.target.checked ? "true" : "false")}
+                                />} label="Enable QR Code Search of records" />
+                            <FormHelperText>Useful if your form includes a QR code field.</FormHelperText>
+                        </Grid>
+                    </Grid>
+
+                    <Grid container item xs={12} spacing={2}>
                         {Object.keys(extraFields).map((key) => {
                             return (
-                                <Grid item xs={12} key={key}>
+                                <Grid item xs={12} sm={4} key={key}>
                                     <TextField
                                         fullWidth
                                         label={key}
@@ -229,8 +236,11 @@ export const InfoPanel = () => {
                         {alert &&
                             <Grid item xs={12}>
                                 <Alert onClose={() => { setAlert('') }} severity="error">{alert}</Alert>
-                            </Grid>}
+                            </Grid>
+                        }
+                    </Grid>
 
+                    <Grid container item xs={12} spacing={2}>
                         <Grid item xs={5}>
                             <TextField
                                 fullWidth
@@ -253,7 +263,10 @@ export const InfoPanel = () => {
                             <Button
                                 variant="contained"
                                 color="primary"
-                                onClick={addNewMetadataField}>+</Button>
+                                onClick={addNewMetadataField}
+                            >
+                                +
+                            </Button>
                         </Grid>
                     </Grid>
                 </Grid>
