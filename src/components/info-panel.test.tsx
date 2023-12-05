@@ -17,6 +17,10 @@ import { render, screen } from '@testing-library/react';
 import { InfoPanel } from './info-panel';
 import userEvent from '@testing-library/user-event'
 
+import { store } from '../state/store';
+import { Provider } from 'react-redux';
+import { ThemeProvider } from "@mui/material/styles";
+import globalTheme from "../theme/index";
 
 // const initial = {
 //     "name": "Blue Mountains Survey",
@@ -70,7 +74,12 @@ describe('Info Panel',  () => {
 
         const updateHandler = vi.fn();
 
-        render(<InfoPanel/>);
+        render(    
+         <ThemeProvider theme={globalTheme}>
+            <Provider store={store}>
+                <InfoPanel/>
+            </Provider>
+          </ThemeProvider>);
 
         expect(screen.getByText('General Information')).toBeDefined();
         expect(updateHandler).toHaveBeenCalledTimes(0);
