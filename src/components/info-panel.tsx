@@ -59,7 +59,7 @@ export const InfoPanel = () => {
             'project_lead', 'lead_institution', 'showQRCodeButton',
             'access', 'accesses', 'forms', 'filenames',
             'ispublic', 'isrequest', 'sections',
-            'project_status', 'schema_version'];
+            'project_status', 'schema_version', 'notebook_version'];
         const unknownFields = Object.keys(metadata).filter((key) => !knownFields.includes(key));
         const newExtraFields: PropertyMap = {};
         unknownFields.forEach((key) => {
@@ -119,8 +119,8 @@ export const InfoPanel = () => {
         <div>
             <Typography variant="h2">General Information</Typography>
             <Card variant="outlined" sx={{ mt: 2 }}>
-                <Grid container spacing={4} p={3}>
-                    <Grid container item xs={12} spacing={2}>
+                <Grid container spacing={5} p={3}>
+                    <Grid container item xs={12} spacing={2.5}>
                         <Grid item xs={12} sm={4}>
                             <TextField
                                 fullWidth
@@ -206,14 +206,30 @@ export const InfoPanel = () => {
                         </FormHelperText>
                     </Grid>
 
-                    <Grid container item xs={12} spacing={2} justifyContent="space-between">
-                        <Grid item xs={12} sm={4}>
-                            <FormControlLabel
-                                control={<Checkbox
-                                    checked={metadata.showQRCodeButton === "true"}
-                                    onChange={(e) => setProp('showQRCodeButton', e.target.checked ? "true" : "false")}
-                                />} label="Enable QR Code Search of records" />
-                            <FormHelperText>Useful if your form includes a QR code field.</FormHelperText>
+                    <Grid container item xs={12} spacing={2.5} justifyContent="space-between">
+                        <Grid container item xs={12} sm={4} spacing={5}>
+                            <Grid item xs={12}>
+                                <FormControlLabel
+                                    control={<Checkbox
+                                        checked={metadata.showQRCodeButton === "true"}
+                                        onChange={(e) => setProp('showQRCodeButton', e.target.checked ? "true" : "false")}
+                                    />} label="Enable QR Code Search of Records" />
+                                <FormHelperText>Useful if your form includes a QR code field.</FormHelperText>
+                            </Grid>
+                            <Grid item xs={12}>
+                                <Grid item xs={12} sm={10}>
+                                    <TextField
+                                        fullWidth
+                                        label="Notebook Version"
+                                        name="notebook_version"
+                                        value={metadata.notebook_version}
+                                        onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                                            setProp('notebook_version', event.target.value);
+                                        }}
+                                    />
+                                    <FormHelperText>Use this field to differentiate between versions of this notebook; e.g. 1.0, 1.1 and so on.</FormHelperText>
+                                </Grid>
+                            </Grid>
                         </Grid>
 
                         <Grid item xs={12} sm={8}>
