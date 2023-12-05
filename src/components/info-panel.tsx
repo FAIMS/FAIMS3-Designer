@@ -247,7 +247,7 @@ export const InfoPanel = () => {
                                                 onChange={updateMetadataFieldValue}
                                             />
                                             <Button
-                                                sx={{ my: 2.5 }}
+                                                sx={{ mt: 2.5 }}
                                                 variant="contained"
                                                 color="primary"
                                                 type="submit"
@@ -255,7 +255,7 @@ export const InfoPanel = () => {
                                                 Create New Field
                                             </Button>
                                             {alert &&
-                                                <Alert onClose={() => { setAlert('') }} severity="error">{alert}</Alert>
+                                                <Alert onClose={() => { setAlert('') }} severity="error" sx={{ mt: 2.5 }}>{alert}</Alert>
                                             }
                                         </form>
                                     </Grid>
