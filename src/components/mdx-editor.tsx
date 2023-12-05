@@ -56,7 +56,7 @@ export const MdxEditor = ({ initialMarkdown, editorRef, handleChange }: Props) =
     */
     const catchAllVisitor: MdastImportVisitor<any> = {
         testNode: () => true,
-        visitNode: ({ mdastNode, actions }) => {
+        visitNode: ({ mdastNode }) => {
             // deviating from the example shown in the second link,
             // for now, I'm simply showing an error message
             setErrorMessage(`Sorry, we currently do not support the markdown ${mdastNode?.type} option. 
