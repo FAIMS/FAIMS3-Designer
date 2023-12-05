@@ -12,31 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { Grid, Alert } from "@mui/material";
+import { Grid } from "@mui/material";
 import { useAppSelector, useAppDispatch } from "../../state/hooks";
-import { useRef, Suspense } from "react";
-
-import '@mdxeditor/editor/style.css'
-
-// importing the editor and the plugin from their full paths
-import { MDXEditor } from '@mdxeditor/editor/MDXEditor';
-import { MDXEditorMethods, Separator } from '@mdxeditor/editor';
-import { toolbarPlugin } from '@mdxeditor/editor/plugins/toolbar';
-import { headingsPlugin } from '@mdxeditor/editor/plugins/headings';
-import { listsPlugin } from '@mdxeditor/editor/plugins/lists';
-import { quotePlugin } from '@mdxeditor/editor/plugins/quote';
-import { thematicBreakPlugin } from '@mdxeditor/editor/plugins/thematic-break';
-import { markdownShortcutPlugin } from '@mdxeditor/editor/plugins/markdown-shortcut';
-import { tablePlugin } from '@mdxeditor/editor/plugins/table';
-
-// importing the desired toolbar toggle components
-import { UndoRedo } from '@mdxeditor/editor/plugins/toolbar/components/UndoRedo';
-import { BoldItalicUnderlineToggles } from '@mdxeditor/editor/plugins/toolbar/components/BoldItalicUnderlineToggles';
-import { BlockTypeSelect } from '@mdxeditor/editor/plugins/toolbar/components/BlockTypeSelect';
-import { ListsToggle } from '@mdxeditor/editor/plugins/toolbar/components/ListsToggle';
-import { InsertTable } from '@mdxeditor/editor/plugins/toolbar/components/InsertTable';
-
+import { useRef } from "react";
+import { MDXEditorMethods } from '@mdxeditor/editor';
 import { FieldType, Notebook } from "../../state/initial";
+import { MdxEditor } from "../mdx-editor";
 
 
 export const RichTextEditor = ({ fieldName }: { fieldName: string }) => {
@@ -70,44 +51,13 @@ export const RichTextEditor = ({ fieldName }: { fieldName: string }) => {
         updateFieldFromState(newState);
     };
 
-    return (
-        <Grid container sx={{ width: '45em', m: 'auto' }}>
-            <Grid item sm={12} xs={12} sx={{ m: 2 }}>
-                <Alert severity="info" sx={{ mb: 1 }}>Use this editor for rich text.</Alert>
-                <Suspense fallback={<div>Loading...</div>}>
-                    <MDXEditor
-                        markdown={initContent}
-                        plugins={[
-                            headingsPlugin(),
-                            listsPlugin(),
-                            quotePlugin(),
-                            thematicBreakPlugin(),
-                            markdownShortcutPlugin(),
-                            tablePlugin(),
-                            toolbarPlugin({
-                                toolbarContents: () => (
-                                    <>
-                                        <UndoRedo />
-                                        <Separator />
-                                        <BoldItalicUnderlineToggles />
-                                        <Separator />
-                                        <BlockTypeSelect />
-                                        <Separator />
-                                        <ListsToggle />
-                                        <Separator />
-                                        <InsertTable />
-                                    </>
-                                )
-                            }),
 
-                        ]}
-                        ref={ref}
-                        onChange={() => updateProperty('content', ref.current?.getMarkdown())}
-                        contentEditableClassName="mdxEditor"
-                    />
-                </Suspense>
-            </Grid>
+    return (
+        <Grid container item xs={12} sm={8} sx={{ m: 'auto' }}>
+            <MdxEditor
+                initialMarkdown={initContent}
+                editorRef={ref}
+                handleChange={() => updateProperty('content', ref.current?.getMarkdown())} />
         </Grid>
     )
-
 };

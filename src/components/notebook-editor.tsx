@@ -82,7 +82,7 @@ export const NotebookEditor = () => {
                         </Box>
                         
                         <TabPanel value="0"><NotebookLoader loadFn={loadNotebook} afterLoad={goToFirstTab} /></TabPanel>
-                        <TabPanel value="1"><InfoPanel /></TabPanel>
+                        <TabPanel value="1" sx={{ paddingX: 0 }}><InfoPanel /></TabPanel>
                         <TabPanel value="3"><DesignPanel /></TabPanel>
                         <TabPanel value="4"><ReviewPanel /></TabPanel>
 
