@@ -35,7 +35,6 @@ export const DesignPanel = () => {
     const [untickedForms, setUntickedForms] = useState<string[]>(Object.keys(viewSets).filter((form) => !visibleTypes.includes(form)));
 
     console.log('DesignPanel');
-    console.log('tabIndex is', tabIndex);
     console.log('visible forms ', visibleTypes, '& unticked forms ', untickedForms);
 
     const maxKeys = Object.keys(viewSets).length;

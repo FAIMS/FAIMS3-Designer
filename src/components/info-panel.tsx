@@ -84,7 +84,7 @@ export const InfoPanel = () => {
     const addNewMetadataField = () => {
         setAlert('');
         if (metadataFieldName in metadata) {
-            setAlert(`Field '${metadataFieldName}' already exists`);
+            setAlert(`Field '${metadataFieldName}' already exists.`);
         } else {
             setMetadataFieldName('');
             setMetadataFieldValue('');
@@ -119,14 +119,13 @@ export const InfoPanel = () => {
         <div>
             <Typography variant="h2">General Information</Typography>
             <Card variant="outlined" sx={{ mt: 2 }}>
-                <Grid container spacing={3} p={3}>
+                <Grid container spacing={4} p={3}>
                     <Grid container item xs={12} spacing={2}>
                         <Grid item xs={12} sm={4}>
                             <TextField
                                 fullWidth
                                 required
                                 label="Project Name"
-                                helperText="Enter a string between 2 and 100 characters long."
                                 name="name"
                                 data-testid="name"
                                 value={metadata.name}
@@ -134,6 +133,7 @@ export const InfoPanel = () => {
                                     setProp('name', event.target.value);
                                 }}
                             />
+                            <FormHelperText>Enter a string between 2 and 100 characters long.</FormHelperText>
                         </Grid>
 
                         <Grid item xs={12} sm={4}>
@@ -161,112 +161,125 @@ export const InfoPanel = () => {
                         </Grid>
                     </Grid>
 
-                    <Grid container item xs={12} spacing={2}>
-                        <Grid item xs={12} sm={8}>
-                            <Suspense fallback={<div>Loading...</div>}>
-                                <Card variant="outlined" onBlur={() => setProp('pre_description', ref.current?.getMarkdown() as string)}>
-                                    <MDXEditor
-                                        placeholder="Start typing a project description..."
-                                        markdown={metadata.pre_description as string}
-                                        plugins={[
-                                            headingsPlugin(),
-                                            listsPlugin(),
-                                            quotePlugin(),
-                                            thematicBreakPlugin(),
-                                            markdownShortcutPlugin(),
-                                            tablePlugin(),
-                                            diffSourcePlugin({ diffMarkdown: metadata.pre_description as string }),
-                                            linkPlugin(),
-                                            toolbarPlugin({
-                                                toolbarContents: () => (
-                                                    <DiffSourceToggleWrapper>
-                                                        <UndoRedo />
-                                                        <Separator />
-                                                        <BoldItalicUnderlineToggles />
-                                                        <Separator />
-                                                        <BlockTypeSelect />
-                                                        <Separator />
-                                                        <ListsToggle />
-                                                        <Separator />
-                                                        <InsertTable />
-                                                    </DiffSourceToggleWrapper>
-                                                )
-                                            }),
-                                            catchAllPlugin(),
-                                        ]}
-                                        ref={ref}
-                                        contentEditableClassName="mdxEditor"
-                                    />
-                                </Card>
-                                {errorMessage && <Alert severity="error">{errorMessage}</Alert>}
-                            </Suspense>
-                            <FormHelperText>
-                                Use the editor above for the project description.
-                                If you use source mode, make sure you put blank lines before and after any markdown syntax for compatibility.
-                            </FormHelperText>
-                        </Grid>
+                    <Grid item xs={12}>
+                        <Suspense fallback={<div>Loading...</div>}>
+                            {errorMessage && <Alert severity="error">{errorMessage}</Alert>}
+                            <Card variant="outlined">
+                                <MDXEditor
+                                    placeholder="Start typing a project description..."
+                                    markdown={metadata.pre_description as string}
+                                    plugins={[
+                                        headingsPlugin(),
+                                        listsPlugin(),
+                                        quotePlugin(),
+                                        thematicBreakPlugin(),
+                                        markdownShortcutPlugin(),
+                                        tablePlugin(),
+                                        diffSourcePlugin({ diffMarkdown: metadata.pre_description as string }),
+                                        linkPlugin(),
+                                        toolbarPlugin({
+                                            toolbarContents: () => (
+                                                <DiffSourceToggleWrapper>
+                                                    <UndoRedo />
+                                                    <Separator />
+                                                    <BoldItalicUnderlineToggles />
+                                                    <Separator />
+                                                    <BlockTypeSelect />
+                                                    <Separator />
+                                                    <ListsToggle />
+                                                    <Separator />
+                                                    <InsertTable />
+                                                </DiffSourceToggleWrapper>
+                                            )
+                                        }),
+                                        catchAllPlugin(),
+                                    ]}
+                                    ref={ref}
+                                    contentEditableClassName="mdxEditor"
+                                    onChange={() => setProp('pre_description', ref.current?.getMarkdown() as string)}
+                                />
+                            </Card>
+                        </Suspense>
+                        <FormHelperText>
+                            Use the editor above for the project description.
+                            If you use source mode, make sure you put blank lines before and after any markdown syntax for compatibility.
+                        </FormHelperText>
+                    </Grid>
 
+                    <Grid container item xs={12} spacing={2} justifyContent="space-between">
                         <Grid item xs={12} sm={4}>
                             <FormControlLabel
                                 control={<Checkbox
-                                    checked={metadata.showQRCodeButton === "true" ? true : false}
+                                    checked={metadata.showQRCodeButton === "true"}
                                     onChange={(e) => setProp('showQRCodeButton', e.target.checked ? "true" : "false")}
                                 />} label="Enable QR Code Search of records" />
                             <FormHelperText>Useful if your form includes a QR code field.</FormHelperText>
                         </Grid>
-                    </Grid>
 
-                    <Grid container item xs={12} spacing={2}>
-                        {Object.keys(extraFields).map((key) => {
-                            return (
-                                <Grid item xs={12} sm={4} key={key}>
-                                    <TextField
-                                        fullWidth
-                                        label={key}
-                                        name={key}
-                                        value={extraFields[key]}
-                                        onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                                            setProp(key, event.target.value);
-                                        }}
-                                    />
+                        <Grid item xs={12} sm={8}>
+                            <Card variant="outlined">
+                                <Grid container p={2.5} spacing={3}>
+                                    <Grid
+                                        container item xs={12} sm={5}
+                                        direction="column"
+                                        justifyContent="flex-start"
+                                        alignItems="flex-start"
+                                    >
+                                        <form onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
+                                            e.preventDefault();
+                                            addNewMetadataField();
+                                        }}>
+                                            <TextField
+                                                fullWidth
+                                                label="Metadata Field Name"
+                                                name="metadata_field_name"
+                                                size="small"
+                                                value={metadataFieldName}
+                                                onChange={updateMetadataFieldName}
+                                            />
+                                            <TextField
+                                                fullWidth
+                                                sx={{ mt: 1.5 }}
+                                                label="Metadata Field Value"
+                                                name="metadata_field_value"
+                                                size="small"
+                                                value={metadataFieldValue}
+                                                onChange={updateMetadataFieldValue}
+                                            />
+                                            <Button
+                                                sx={{ my: 2.5 }}
+                                                variant="contained"
+                                                color="primary"
+                                                type="submit"
+                                            >
+                                                Create New Field
+                                            </Button>
+                                            {alert &&
+                                                <Alert onClose={() => { setAlert('') }} severity="error">{alert}</Alert>
+                                            }
+                                        </form>
+                                    </Grid>
+
+                                    <Grid container item xs={12} sm={7} rowGap={1}>
+                                        {Object.keys(extraFields).map((key) => {
+                                            return (
+                                                <Grid item xs={12} key={key}>
+                                                    <TextField
+                                                        fullWidth
+                                                        label={key}
+                                                        name={key}
+                                                        value={extraFields[key]}
+                                                        onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                                                            setProp(key, event.target.value);
+                                                        }}
+                                                    />
+                                                </Grid>
+                                            );
+                                        })}
+                                    </Grid>
                                 </Grid>
-                            );
-                        })}
-
-                        {alert &&
-                            <Grid item xs={12}>
-                                <Alert onClose={() => { setAlert('') }} severity="error">{alert}</Alert>
-                            </Grid>
-                        }
-                    </Grid>
-
-                    <Grid container item xs={12} spacing={2}>
-                        <Grid item xs={5}>
-                            <TextField
-                                fullWidth
-                                label="Metadata Field Name"
-                                name="metadata_field_name"
-                                value={metadataFieldName}
-                                onChange={updateMetadataFieldName}
-                            />
-                        </Grid>
-                        <Grid item xs={5}>
-                            <TextField
-                                fullWidth
-                                label="Metadata Field Value"
-                                name="metadata_field_value"
-                                value={metadataFieldValue}
-                                onChange={updateMetadataFieldValue}
-                            />
-                        </Grid>
-                        <Grid item xs={2}>
-                            <Button
-                                variant="contained"
-                                color="primary"
-                                onClick={addNewMetadataField}
-                            >
-                                +
-                            </Button>
+                            </Card>
+                            <FormHelperText>Use the form above to create new metadata fields, if needed.</FormHelperText>
                         </Grid>
                     </Grid>
                 </Grid>
