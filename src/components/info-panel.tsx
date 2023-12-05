@@ -13,32 +13,11 @@
 // limitations under the License.
 
 import { Alert, Button, Checkbox, FormControlLabel, FormHelperText, Grid, TextField, Typography, Card } from "@mui/material";
-import { useEffect, useState, useRef, Suspense } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useAppSelector, useAppDispatch } from "../state/hooks";
 import { Notebook, PropertyMap } from "../state/initial";
-
-import '@mdxeditor/editor/style.css';
-
-// importing the editor and the plugins from their full paths
-import { MDXEditor } from '@mdxeditor/editor/MDXEditor';
-import { MDXEditorMethods, MdastImportVisitor, Separator, realmPlugin, system } from '@mdxeditor/editor';
-import { toolbarPlugin } from '@mdxeditor/editor/plugins/toolbar';
-import { headingsPlugin } from '@mdxeditor/editor/plugins/headings';
-import { listsPlugin } from '@mdxeditor/editor/plugins/lists';
-import { quotePlugin } from '@mdxeditor/editor/plugins/quote';
-import { thematicBreakPlugin } from '@mdxeditor/editor/plugins/thematic-break';
-import { markdownShortcutPlugin } from '@mdxeditor/editor/plugins/markdown-shortcut';
-import { tablePlugin } from '@mdxeditor/editor/plugins/table';
-import { diffSourcePlugin } from '@mdxeditor/editor/plugins/diff-source';
-import { linkPlugin } from '@mdxeditor/editor/plugins/link';
-
-// importing the desired toolbar toggle components
-import { UndoRedo } from '@mdxeditor/editor/plugins/toolbar/components/UndoRedo';
-import { BoldItalicUnderlineToggles } from '@mdxeditor/editor/plugins/toolbar/components/BoldItalicUnderlineToggles';
-import { BlockTypeSelect } from '@mdxeditor/editor/plugins/toolbar/components/BlockTypeSelect';
-import { ListsToggle } from '@mdxeditor/editor/plugins/toolbar/components/ListsToggle';
-import { InsertTable } from '@mdxeditor/editor/plugins/toolbar/components/InsertTable';
-import { DiffSourceToggleWrapper } from '@mdxeditor/editor/plugins/toolbar/components/DiffSourceToggleWrapper';
+import { MdxEditor } from "./mdx-editor";
+import { MDXEditorMethods } from '@mdxeditor/editor';
 
 
 export const InfoPanel = () => {
@@ -52,7 +31,6 @@ export const InfoPanel = () => {
     const [metadataFieldValue, setMetadataFieldValue] = useState('');
     const [extraFields, setExtraFields] = useState<PropertyMap>({});
     const [alert, setAlert] = useState('');
-    const [errorMessage, setErrorMessage] = useState('');
 
     useEffect(() => {
         const knownFields = ['name', 'pre_description', 'behaviours', 'meta',
@@ -69,7 +47,6 @@ export const InfoPanel = () => {
     }, [metadata]);
 
     const setProp = (property: string, value: string) => {
-        setErrorMessage('');
         dispatch({ type: 'metadata/propertyUpdated', payload: { property, value } });
     };
 
@@ -92,28 +69,6 @@ export const InfoPanel = () => {
         }
     };
 
-    /*
-        The following is taken from and inspired by: 
-        https://github.com/mdx-editor/editor/issues/202#issuecomment-1827182167 & 
-        https://github.com/mdx-editor/editor/issues/95#issuecomment-1755320066 
-    */
-    const catchAllVisitor: MdastImportVisitor<any> = {
-        testNode: () => true,
-        visitNode: ({ mdastNode, actions }) => {
-            // deviating from the example shown in the second link,
-            // for now, I'm simply showing an error message
-            setErrorMessage(`Sorry, we currently do not support the markdown ${mdastNode?.type} option. 
-            What you have just written was automatically removed. Please continue carefully.`);
-        }
-    };
-
-    const [catchAllPlugin] = realmPlugin({
-        id: "catchAll",
-        systemSpec: system(() => ({})),
-        init: (realm) => {
-            realm.pubKey("addImportVisitor", catchAllVisitor);
-        }
-    });
 
     return (
         <div>
@@ -161,50 +116,11 @@ export const InfoPanel = () => {
                         </Grid>
                     </Grid>
 
-                    <Grid item xs={12}>
-                        <Suspense fallback={<div>Loading...</div>}>
-                            {errorMessage && <Alert severity="error">{errorMessage}</Alert>}
-                            <Card variant="outlined">
-                                <MDXEditor
-                                    placeholder="Start typing a project description..."
-                                    markdown={metadata.pre_description as string}
-                                    plugins={[
-                                        headingsPlugin(),
-                                        listsPlugin(),
-                                        quotePlugin(),
-                                        thematicBreakPlugin(),
-                                        markdownShortcutPlugin(),
-                                        tablePlugin(),
-                                        diffSourcePlugin({ diffMarkdown: metadata.pre_description as string }),
-                                        linkPlugin(),
-                                        toolbarPlugin({
-                                            toolbarContents: () => (
-                                                <DiffSourceToggleWrapper>
-                                                    <UndoRedo />
-                                                    <Separator />
-                                                    <BoldItalicUnderlineToggles />
-                                                    <Separator />
-                                                    <BlockTypeSelect />
-                                                    <Separator />
-                                                    <ListsToggle />
-                                                    <Separator />
-                                                    <InsertTable />
-                                                </DiffSourceToggleWrapper>
-                                            )
-                                        }),
-                                        catchAllPlugin(),
-                                    ]}
-                                    ref={ref}
-                                    contentEditableClassName="mdxEditor"
-                                    onChange={() => setProp('pre_description', ref.current?.getMarkdown() as string)}
-                                />
-                            </Card>
-                        </Suspense>
-                        <FormHelperText>
-                            Use the editor above for the project description.
-                            If you use source mode, make sure you put blank lines before and after any markdown syntax for compatibility.
-                        </FormHelperText>
-                    </Grid>
+                    <MdxEditor
+                        initialMarkdown={metadata.pre_description as string}
+                        editorRef={ref}
+                        handleChange={() => setProp('pre_description', ref.current?.getMarkdown() as string)}
+                    />
 
                     <Grid container item xs={12} spacing={2.5} justifyContent="space-between">
                         <Grid container item xs={12} sm={4} spacing={5}>
