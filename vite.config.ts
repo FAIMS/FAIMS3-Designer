@@ -12,6 +12,7 @@ export default defineConfig({
     environment: 'jsdom',
     browser: {
       enabled: true,
+      headless: true,
       name: 'chrome',
     }
   }
