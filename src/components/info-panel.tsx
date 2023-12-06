@@ -200,6 +200,7 @@ export const InfoPanel = () => {
                                                         fullWidth
                                                         label={key}
                                                         name={key}
+                                                        data-testid={'extra-field-' + key}
                                                         value={extraFields[key]}
                                                         onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                                                             setProp(key, event.target.value);
