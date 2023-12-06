@@ -36,9 +36,10 @@ type Props = {
     moveCallback: (viewSetID: string, moveDirection: 'left' | 'right') => void,
     moveButtonsDisabled: boolean,
     handleChangeCallback: (viewSetID: string, ticked: boolean) => void,
+    handleDeleteCallback: (viewSetID: string) => void,
 }
 
-export const FormEditor = ({ viewSetId, moveCallback, moveButtonsDisabled, handleChangeCallback }: Props) => {
+export const FormEditor = ({ viewSetId, moveCallback, moveButtonsDisabled, handleChangeCallback, handleDeleteCallback }: Props) => {
 
     const visibleTypes = useAppSelector((state: Notebook) => state['ui-specification'].visible_types);
     const viewsets = useAppSelector((state: Notebook) => state['ui-specification'].viewsets);
@@ -203,6 +204,7 @@ export const FormEditor = ({ viewSetId, moveCallback, moveButtonsDisabled, handl
             setPreventDeleteDialog(true);
         }
         else {
+            handleDeleteCallback(viewSetId);
             dispatch({ type: 'ui-specification/viewSetDeleted', payload: { viewSetId: viewSetId } });
             handleClose();
         }

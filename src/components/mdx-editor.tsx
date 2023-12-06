@@ -14,7 +14,7 @@
 
 import { Suspense, useState } from "react";
 
-import { Grid, FormHelperText, Alert, Card } from "@mui/material";
+import { Alert, Card } from "@mui/material";
 import '@mdxeditor/editor/style.css';
 
 // importing the editor and the plugin from their full paths
@@ -73,50 +73,47 @@ export const MdxEditor = ({ initialMarkdown, editorRef, handleChange }: Props) =
     });
 
     return (
-        <Grid item xs={12}>
-            <Suspense fallback={<div>Loading...</div>}>
-                {errorMessage &&
-                    <Alert onClose={() => { setErrorMessage('') }} severity="error">
-                        {errorMessage}
-                    </Alert>
-                }
-                <Card variant="outlined">
-                    <MDXEditor
-                        placeholder="Start typing..."
-                        markdown={initialMarkdown}
-                        plugins={[
-                            headingsPlugin(),
-                            listsPlugin(),
-                            quotePlugin(),
-                            thematicBreakPlugin(),
-                            markdownShortcutPlugin(),
-                            tablePlugin(),
-                            diffSourcePlugin({ diffMarkdown: initialMarkdown }),
-                            linkPlugin(),
-                            toolbarPlugin({
-                                toolbarContents: () => (
-                                    <DiffSourceToggleWrapper>
-                                        <UndoRedo />
-                                        <Separator />
-                                        <BoldItalicUnderlineToggles />
-                                        <Separator />
-                                        <BlockTypeSelect />
-                                        <Separator />
-                                        <ListsToggle />
-                                        <Separator />
-                                        <InsertTable />
-                                    </DiffSourceToggleWrapper>
-                                )
-                            }),
-                            catchAllPlugin(),
-                        ]}
-                        ref={editorRef}
-                        onChange={handleChange}
-                        contentEditableClassName="mdxEditor"
-                    />
-                </Card>
-            </Suspense>
-            <FormHelperText>Use this editor to add rich text to your notebook.</FormHelperText>
-        </Grid>
+        <Suspense fallback={<div>Loading...</div>}>
+            {errorMessage &&
+                <Alert onClose={() => { setErrorMessage('') }} severity="error">
+                    {errorMessage}
+                </Alert>
+            }
+            <Card variant="outlined">
+                <MDXEditor
+                    placeholder="Start typing..."
+                    markdown={initialMarkdown}
+                    plugins={[
+                        headingsPlugin(),
+                        listsPlugin(),
+                        quotePlugin(),
+                        thematicBreakPlugin(),
+                        markdownShortcutPlugin(),
+                        tablePlugin(),
+                        diffSourcePlugin({ diffMarkdown: initialMarkdown }),
+                        linkPlugin(),
+                        toolbarPlugin({
+                            toolbarContents: () => (
+                                <DiffSourceToggleWrapper>
+                                    <UndoRedo />
+                                    <Separator />
+                                    <BoldItalicUnderlineToggles />
+                                    <Separator />
+                                    <BlockTypeSelect />
+                                    <Separator />
+                                    <ListsToggle />
+                                    <Separator />
+                                    <InsertTable />
+                                </DiffSourceToggleWrapper>
+                            )
+                        }),
+                        catchAllPlugin(),
+                    ]}
+                    ref={editorRef}
+                    onChange={handleChange}
+                    contentEditableClassName="mdxEditor"
+                />
+            </Card>
+        </Suspense>
     )
 }

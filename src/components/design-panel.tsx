@@ -58,6 +58,37 @@ export const DesignPanel = () => {
         }
     }
 
+    const handleDeleteFormTabChange = (viewSetID: string) => {
+        if (untickedForms.includes(viewSetID)) {
+            // if the form we want to delete is unticked, remove it from the local state
+            // this is a special case as the array that holds these forms in the frontend
+            // has nothing to do with the state in the redux store 
+            setUntickedForms(untickedForms.filter((untickedForm) => untickedForm !== viewSetID));
+
+            if (untickedForms.indexOf(viewSetID) === untickedForms.length - 1 && untickedForms.length > 1) {
+                // ensure an intuitive tab index jump when an unticked form at the end of the array gets deleted
+                // that is, jump to the second to last unticked form
+                // not to the "+" tab
+                // this is scenario 2, see PR
+                setTabIndex(`${visibleTypes.length + untickedForms.length - 2}`);
+            }
+        }
+
+        if (visibleTypes.includes(viewSetID)) {
+            // handle intuitive tab index jumps
+
+            // scenario 1
+            if (visibleTypes.indexOf(viewSetID) === visibleTypes.length - 1 && visibleTypes.length > 1) {
+                setTabIndex(`${visibleTypes.length - 2}`);
+            }
+
+            // scenario 3
+            if (visibleTypes.length === 1) {
+                setTabIndex(`${maxKeys - 1}`);
+            }
+        }
+    }
+
     const addNewForm = () => {
         setAlertMessage('');
         try {
@@ -181,7 +212,13 @@ export const DesignPanel = () => {
             {visibleTypes.map((form: string, index: number) => {
                 return (
                     <TabPanel key={index} value={`${index}`} sx={{ paddingX: 0 }}>
-                        <FormEditor viewSetId={form} moveCallback={moveForm} moveButtonsDisabled={false} handleChangeCallback={handleCheckboxTabChange} />
+                        <FormEditor
+                            viewSetId={form}
+                            moveCallback={moveForm}
+                            moveButtonsDisabled={false}
+                            handleChangeCallback={handleCheckboxTabChange}
+                            handleDeleteCallback={handleDeleteFormTabChange}
+                        />
                     </TabPanel>
                 )
             })}
@@ -189,7 +226,13 @@ export const DesignPanel = () => {
                 const startIndex: number = index + visibleTypes.length;
                 return (
                     <TabPanel key={startIndex} value={`${startIndex}`} sx={{ paddingX: 0 }}>
-                        <FormEditor viewSetId={form} moveCallback={moveForm} moveButtonsDisabled={true} handleChangeCallback={handleCheckboxTabChange} />
+                        <FormEditor
+                            viewSetId={form}
+                            moveCallback={moveForm}
+                            moveButtonsDisabled={true}
+                            handleChangeCallback={handleCheckboxTabChange}
+                            handleDeleteCallback={handleDeleteFormTabChange}
+                        />
                     </TabPanel>
                 )
             })}

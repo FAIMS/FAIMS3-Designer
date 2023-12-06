@@ -116,11 +116,17 @@ export const InfoPanel = () => {
                         </Grid>
                     </Grid>
 
-                    <MdxEditor
-                        initialMarkdown={metadata.pre_description as string}
-                        editorRef={ref}
-                        handleChange={() => setProp('pre_description', ref.current?.getMarkdown() as string)}
-                    />
+                    <Grid item xs={12}>
+                        <MdxEditor
+                            initialMarkdown={metadata.pre_description as string}
+                            editorRef={ref}
+                            handleChange={() => setProp('pre_description', ref.current?.getMarkdown() as string)}
+                        />
+                        <FormHelperText>
+                            Use the editor above for the project description.
+                            If you use source mode, make sure you put blank lines before and after any markdown syntax for compatibility.
+                        </FormHelperText>
+                    </Grid>
 
                     <Grid container item xs={12} spacing={2.5} justifyContent="space-between">
                         <Grid container item xs={12} sm={4} spacing={5}>

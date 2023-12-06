@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { Grid } from "@mui/material";
+import { Grid, FormHelperText } from "@mui/material";
 import { useAppSelector, useAppDispatch } from "../../state/hooks";
 import { useRef } from "react";
 import { MDXEditorMethods } from '@mdxeditor/editor';
@@ -54,10 +54,14 @@ export const RichTextEditor = ({ fieldName }: { fieldName: string }) => {
 
     return (
         <Grid container item xs={12} sm={8} sx={{ m: 'auto' }}>
-            <MdxEditor
-                initialMarkdown={initContent}
-                editorRef={ref}
-                handleChange={() => updateProperty('content', ref.current?.getMarkdown())} />
+            <Grid item xs={12}>
+                <MdxEditor
+                    initialMarkdown={initContent}
+                    editorRef={ref}
+                    handleChange={() => updateProperty('content', ref.current?.getMarkdown())} 
+                />
+                <FormHelperText>Use this editor to add rich text to your notebook.</FormHelperText>
+            </Grid>
         </Grid>
     )
 };
