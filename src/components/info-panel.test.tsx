@@ -20,8 +20,9 @@ import { store } from '../state/store';
 import { Provider } from 'react-redux';
 import { ThemeProvider } from "@mui/material/styles";
 import globalTheme from "../theme/index";
+import { ReactNode } from 'react';
 
-const WithProviders = ({children}: {children: any}) => (
+const WithProviders = ({children}: {children: ReactNode}) => (
     <ThemeProvider theme={globalTheme}>
         <Provider store={store}>
             {children}
