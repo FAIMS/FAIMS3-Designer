@@ -17,6 +17,10 @@ import metadataReducer from './metadata-reducer'
 import uiSpecificationReducer from './uiSpec-reducer'
 import { ToolkitStore } from '@reduxjs/toolkit/dist/configureStore';
 import { Notebook } from './initial';
+import { loadState, saveState } from './localStorage';
+import { throttle } from 'lodash';
+
+const persistedState = loadState();
 
 const loggerMiddleware: Middleware<object, Notebook> = storeAPI => next => action => {
   console.log('dispatching', action);
@@ -29,9 +33,14 @@ export const store: ToolkitStore<Notebook> = configureStore({
     metadata: metadataReducer,
     "ui-specification": uiSpecificationReducer
   },
+  preloadedState: persistedState,
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(loggerMiddleware),
 })
 
+// Write to localStorage at most once per second
+store.subscribe(throttle(() => {
+  saveState(store.getState());
+}, 1000));
 
 export type AppDispatch = typeof store.dispatch
