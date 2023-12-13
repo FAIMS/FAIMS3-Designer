@@ -20,7 +20,8 @@ import MuiAccordionSummary, {
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { useAppDispatch, useAppSelector } from "../state/hooks";
+import ArrowForwardIosSharpIcon from '@mui/icons-material/ArrowForwardIosSharp';
+
 import { MultipleTextFieldEditor } from "./Fields/MultipleTextField";
 import { BaseFieldEditor } from "./Fields/BaseFieldEditor";
 import { TakePhotoFieldEditor } from "./Fields/TakePhotoField";
@@ -33,9 +34,12 @@ import { RichTextEditor } from "./Fields/RichTextEditor";
 import { RelatedRecordEditor } from "./Fields/RelatedRecordEditor";
 import { BasicAutoIncrementerEditor } from "./Fields/BasicAutoIncrementer";
 import { TemplatedStringFieldEditor } from "./Fields/TemplatedStringFieldEditor";
+import { AdvancedSelectEditor } from "./Fields/AdvancedSelectEditor";
+
 import { Notebook } from "../state/initial";
+import { useAppDispatch, useAppSelector } from "../state/hooks";
+
 import { styled } from '@mui/material/styles';
-import ArrowForwardIosSharpIcon from '@mui/icons-material/ArrowForwardIosSharp';
 
 // customise the accordion summary a little 
 const AccordionSummary = styled((props: AccordionSummaryProps) => (
@@ -128,6 +132,8 @@ export const FieldEditor = ({ fieldName, viewId, expanded, handleExpandChange }:
                 (fieldComponent === 'Select' && <OptionsEditor fieldName={fieldName} />)
                 ||
                 (fieldComponent === 'MultiSelect' && <OptionsEditor fieldName={fieldName} />)
+                ||
+                (fieldComponent === 'AdvancedSelect' && <AdvancedSelectEditor fieldName={fieldName} />)
                 ||
                 (fieldComponent === 'RadioGroup' && <OptionsEditor fieldName={fieldName} />)
                 ||
