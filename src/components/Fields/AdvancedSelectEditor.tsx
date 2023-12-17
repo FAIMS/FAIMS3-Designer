@@ -46,10 +46,10 @@ export const AdvancedSelectEditor = ({ fieldName }: { fieldName: string }) => {
         valueType: field['component-parameters'].valuetype || 'full',
     };
 
-    const [newOptionTree, setNewOptionTree] = useState(JSON.stringify(state.optionTree))
+    const [newOptionTree, setNewOptionTree] = useState(JSON.stringify(state.optionTree, null, 2))
     const [errorMessage, setErrorMessage] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
-    const [open, setOpen] = useState(true);
+    const [open, setOpen] = useState(false);
 
     const updateFieldFromState = (newState: newState) => {
         const newField = JSON.parse(JSON.stringify(field)) as FieldType; // deep copy
@@ -67,7 +67,7 @@ export const AdvancedSelectEditor = ({ fieldName }: { fieldName: string }) => {
         updateFieldFromState(newState);
     };
 
-    function isTypeMatch(o: any): o is OptionTreeType {
+    const isTypeMatch = (o: OptionTreeType[]) => {
         return o.forEach((opt: OptionTreeType) => {
             const validKeys: string[] = ["name", "type", "label", "children"]
 
@@ -80,8 +80,11 @@ export const AdvancedSelectEditor = ({ fieldName }: { fieldName: string }) => {
             else if (opt.name && !(typeof opt.name == "string")) {
                 throw new Error(`Invalid name property: name property must be a string.`);
             }
-            else if (opt.type && (opt.type.trim().length !== 0 || opt.type !== "image")) {
+            else if (opt.type && (opt.type.trim().length !== 0 && opt.type !== "image")) {
                 throw new Error(`Invalid type property at level ${opt.name}. The 'type' property must be an empty string ("") or "image". Please refer to the example and try again.`);
+            }
+            else if (!opt.children) {
+                throw new Error(`Missing property: children at level ${opt.name}. Please refer to the example and try again.`)
             }
             else if (opt.children) {
                 // run validation check on the properties in children recursively
@@ -98,6 +101,7 @@ export const AdvancedSelectEditor = ({ fieldName }: { fieldName: string }) => {
     const validateOptionTree = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
+        let optionTree: OptionTreeType;
         // catch SyntaxErrors
         try {
             JSON.parse(newOptionTree);
@@ -108,8 +112,9 @@ export const AdvancedSelectEditor = ({ fieldName }: { fieldName: string }) => {
 
         // catch other errors
         try {
-            isTypeMatch(JSON.parse(newOptionTree));
-            updateProperty('optionTree', JSON.parse(newOptionTree));
+            optionTree = JSON.parse(newOptionTree) as OptionTreeType;
+            isTypeMatch(optionTree);
+            updateProperty('optionTree', optionTree);
             setSuccessMessage(`Saved successfully.`);
         }
         catch (error: unknown) {
@@ -131,10 +136,14 @@ export const AdvancedSelectEditor = ({ fieldName }: { fieldName: string }) => {
                                     Example Structure
                                 </AlertTitle>
 
-                                The following is an example of a valid JSON structure with 2 levels. The first level goes 1 level deep (i.e., stops at Level 1), the second goes 2 levels deep (i.e., includes Level 2 and Level 2.1).
-                                <br /><br />
-                                The property <code>name</code> must be included, whereas the properties <code>type</code>, <code>label</code> and <code>children</code> are optional.
-                                <br /><br />
+                                <p>The following is an example of a valid JSON structure 
+                                with 2 levels. The first level goes 1 level deep 
+                                (i.e., stops at Level 1), the second goes 2 levels 
+                                deep (i.e., includes Level 2 and Level 2.1).</p>
+                                
+                                <p>The properties <code>name</code> and <code>children</code> must be included, 
+                                whereas the properties <code>type</code> and <code>label</code> are 
+                                optional.</p>
 
                                 <Button
                                     onClick={() => setOpen(!open)}
@@ -142,32 +151,35 @@ export const AdvancedSelectEditor = ({ fieldName }: { fieldName: string }) => {
                                     color='info'
                                     endIcon={open ? <ExpandLess fontSize='small' /> : <ExpandMore fontSize='small' />}
                                 >
-                                    {open ? "Close" : "Open"}
+                                    {open ? "Close" : "Show Help"}
                                 </Button>
 
                                 <Collapse in={open} unmountOnExit>
                                     <pre>
                                         {JSON.stringify([
-                                            {
-                                                name: 'Level 1',
-                                                label: 'example',
-                                                type: 'image',
-                                            },
-                                            {
-                                                name: 'Level 2',
-                                                children: [
-                                                    {
-                                                        name: 'Level 2.1'
-                                                    }
-                                                ]
-                                            }
-                                        ], null, 2)}
+                                                            {
+                                                                name: "Level 1",
+                                                                label: "example",
+                                                                type: "image",
+                                                                children: []
+                                                            },
+                                                            {
+                                                                name: "Level 2",
+                                                                children: [
+                                                                {
+                                                                    name: "Level 2.1",
+                                                                    children: []
+                                                                }
+                                                                ]
+                                                            }
+                                                        ], null, 2)}
                                     </pre>
                                 </Collapse>
                             </Alert>
 
                             <form onSubmit={validateOptionTree}>
                                 <TextField
+                                    InputProps={{style: { fontFamily: 'monospace' }}}
                                     label="JSON"
                                     helperText="Use this field to type a JSON structure for your optiontree. Click 'Save' or press 'Enter' when done."
                                     value={newOptionTree}
