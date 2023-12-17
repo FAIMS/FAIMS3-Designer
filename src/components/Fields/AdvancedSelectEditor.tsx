@@ -44,9 +44,9 @@ export const AdvancedSelectEditor = ({ fieldName }: { fieldName: string }) => {
     const state = {
         optionTree: field['component-parameters'].ElementProps?.optiontree as OptionTreeType,
         valueType: field['component-parameters'].valuetype || 'full',
-    };
+    }
 
-    const [newOptionTree, setNewOptionTree] = useState(JSON.stringify(state.optionTree, null, 2))
+    const [newOptionTree, setNewOptionTree] = useState(JSON.stringify(state.optionTree, null, 2));
     const [errorMessage, setErrorMessage] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
     const [open, setOpen] = useState(false);
@@ -59,13 +59,13 @@ export const AdvancedSelectEditor = ({ fieldName }: { fieldName: string }) => {
             newField['component-parameters'].ElementProps.optiontree = newState.optionTree;
         }
 
-        dispatch({ type: 'ui-specification/fieldUpdated', payload: { fieldName, newField } })
-    };
+        dispatch({ type: 'ui-specification/fieldUpdated', payload: { fieldName, newField } });
+    }
 
     const updateProperty = (prop: string, value: string | OptionTreeType[]) => {
         const newState = { ...state, [prop]: value };
         updateFieldFromState(newState);
-    };
+    }
 
     const isTypeMatch = (o: OptionTreeType[]) => {
         return o.forEach((opt: OptionTreeType) => {
@@ -77,18 +77,21 @@ export const AdvancedSelectEditor = ({ fieldName }: { fieldName: string }) => {
             else if (!opt.name) {
                 throw new Error('Missing property: name. Please refer to the example and try again.');
             }
-            else if (opt.name && !(typeof opt.name == "string")) {
-                throw new Error(`Invalid name property: name property must be a string.`);
+            else if (opt.name && (typeof opt.name != "string")) {
+                throw new Error(`Invalid 'name' property. The 'name' property must be a string. Please refer to the example and try again.`);
             }
             else if (opt.type && (opt.type.trim().length !== 0 && opt.type !== "image")) {
-                throw new Error(`Invalid type property at level ${opt.name}. The 'type' property must be an empty string ("") or "image". Please refer to the example and try again.`);
+                throw new Error(`Invalid 'type' property at level ${opt.name}. The 'type' property must be an empty string ("") or "image". Please refer to the example and try again.`);
+            }
+            else if (opt.label && (typeof opt.label != "string")) {
+                throw new Error(`Invalid 'label' property at level ${opt.name}. The 'label' property must be a string. Please refer to the example and try again.`);
             }
             else if (!opt.children) {
-                throw new Error(`Missing property: children at level ${opt.name}. Please refer to the example and try again.`)
+                throw new Error(`Missing property: children at level ${opt.name}. Please refer to the example and try again.`);
             }
             else if (opt.children) {
                 // run validation check on the properties in children recursively
-                isTypeMatch(opt.children)
+                isTypeMatch(opt.children);
             }
             else {
                 // all good
@@ -115,6 +118,7 @@ export const AdvancedSelectEditor = ({ fieldName }: { fieldName: string }) => {
             optionTree = JSON.parse(newOptionTree) as OptionTreeType[];
             isTypeMatch(optionTree);
             updateProperty('optionTree', optionTree);
+            setErrorMessage('');
             setSuccessMessage(`Saved successfully.`);
         }
         catch (error: unknown) {
@@ -179,13 +183,18 @@ export const AdvancedSelectEditor = ({ fieldName }: { fieldName: string }) => {
 
                             <form onSubmit={validateOptionTree}>
                                 <TextField
-                                    InputProps={{style: { fontFamily: 'monospace' }}}
+                                    InputProps={{ style: { fontFamily: 'monospace', fontSize: 14 } }}
+                                    InputLabelProps={{ style: { fontSize: 14 } }}
                                     label="JSON"
                                     helperText="Use this field to type a JSON structure for your optiontree. Click 'Save' or press 'Enter' when done."
                                     value={newOptionTree}
                                     multiline
                                     fullWidth
-                                    onChange={(e) => setNewOptionTree(e.target.value)}
+                                    onChange={(e) => {
+                                        setNewOptionTree(e.target.value)
+                                        setSuccessMessage('')
+                                        setErrorMessage('')
+                                    }}
                                 />
 
                                 <Button
