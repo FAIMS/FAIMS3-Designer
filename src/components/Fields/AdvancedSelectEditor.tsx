@@ -62,7 +62,7 @@ export const AdvancedSelectEditor = ({ fieldName }: { fieldName: string }) => {
         dispatch({ type: 'ui-specification/fieldUpdated', payload: { fieldName, newField } })
     };
 
-    const updateProperty = (prop: string, value: string | OptionTreeType) => {
+    const updateProperty = (prop: string, value: string | OptionTreeType[]) => {
         const newState = { ...state, [prop]: value };
         updateFieldFromState(newState);
     };
@@ -101,7 +101,7 @@ export const AdvancedSelectEditor = ({ fieldName }: { fieldName: string }) => {
     const validateOptionTree = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        let optionTree: OptionTreeType;
+        let optionTree: OptionTreeType[];
         // catch SyntaxErrors
         try {
             JSON.parse(newOptionTree);
@@ -112,7 +112,7 @@ export const AdvancedSelectEditor = ({ fieldName }: { fieldName: string }) => {
 
         // catch other errors
         try {
-            optionTree = JSON.parse(newOptionTree) as OptionTreeType;
+            optionTree = JSON.parse(newOptionTree) as OptionTreeType[];
             isTypeMatch(optionTree);
             updateProperty('optionTree', optionTree);
             setSuccessMessage(`Saved successfully.`);
