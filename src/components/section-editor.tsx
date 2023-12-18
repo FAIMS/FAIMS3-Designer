@@ -44,8 +44,7 @@ export const SectionEditor = ({ viewSetId, viewId, viewSet, deleteCallback, addC
     const fView = useAppSelector((state: Notebook) => state['ui-specification'].fviews[viewId]);
     const dispatch = useAppDispatch();
 
-    console.log('SectionEditor', viewId);
-    console.log('SectionEditor', viewSet);
+    console.log('SectionEditor', viewId, viewSet);
 
     const [open, setOpen] = useState(false);
     const [editMode, setEditMode] = useState(false);
