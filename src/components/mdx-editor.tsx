@@ -29,6 +29,7 @@ import { markdownShortcutPlugin } from '@mdxeditor/editor/plugins/markdown-short
 import { tablePlugin } from '@mdxeditor/editor/plugins/table';
 import { diffSourcePlugin } from '@mdxeditor/editor/plugins/diff-source';
 import { linkPlugin } from '@mdxeditor/editor/plugins/link';
+import { imagePlugin } from '@mdxeditor/editor/plugins/image';
 
 // importing the desired toolbar toggle components
 import { UndoRedo } from '@mdxeditor/editor/plugins/toolbar/components/UndoRedo';
@@ -37,6 +38,7 @@ import { BlockTypeSelect } from '@mdxeditor/editor/plugins/toolbar/components/Bl
 import { ListsToggle } from '@mdxeditor/editor/plugins/toolbar/components/ListsToggle';
 import { InsertTable } from '@mdxeditor/editor/plugins/toolbar/components/InsertTable';
 import { DiffSourceToggleWrapper } from '@mdxeditor/editor/plugins/toolbar/components/DiffSourceToggleWrapper';
+import { InsertImage } from '@mdxeditor/editor/plugins/toolbar/components/InsertImage';
 
 
 type Props = {
@@ -72,6 +74,17 @@ export const MdxEditor = ({ initialMarkdown, editorRef, handleChange }: Props) =
         }
     });
 
+    const imageUploadHandler = (image: File): Promise<string> => {
+        return new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onload = () => {
+                resolve(reader.result as string)
+            }
+            reader.readAsDataURL(image);
+        })
+    }
+
+
     return (
         <Suspense fallback={<div>Loading...</div>}>
             {errorMessage &&
@@ -92,6 +105,7 @@ export const MdxEditor = ({ initialMarkdown, editorRef, handleChange }: Props) =
                         tablePlugin(),
                         diffSourcePlugin({ diffMarkdown: initialMarkdown }),
                         linkPlugin(),
+                        imagePlugin({ imageUploadHandler }),
                         toolbarPlugin({
                             toolbarContents: () => (
                                 <DiffSourceToggleWrapper>
@@ -104,6 +118,8 @@ export const MdxEditor = ({ initialMarkdown, editorRef, handleChange }: Props) =
                                     <ListsToggle />
                                     <Separator />
                                     <InsertTable />
+                                    <Separator />
+                                    <InsertImage />
                                 </DiffSourceToggleWrapper>
                             )
                         }),
