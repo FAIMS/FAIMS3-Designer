@@ -94,6 +94,7 @@ export const MdxEditor = ({ initialMarkdown, editorRef, handleChange }: Props) =
             }
             <Card variant="outlined">
                 <MDXEditor
+                    className="image-dialog"
                     placeholder="Start typing..."
                     markdown={initialMarkdown}
                     plugins={[
