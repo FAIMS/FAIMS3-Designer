@@ -48,21 +48,11 @@ export const NotebookEditor = () => {
             <Box sx={{ flexGrow: 1 }}>
                 <AppBar position="static">
                     <Toolbar>
-                        <IconButton
-                            size="large"
-                            edge="start"
-                            color="inherit"
-                            aria-label="menu"
-                            sx={{ mr: 2 }}
-                        >
-                            <MenuIcon />
-                        </IconButton>
                         <img
                             src="/static/Fieldmark-Short-Green-NoBorder.png"
                             style={{ maxWidth: '140px', flex: 1 }}
                         />
                         <Box sx={{ flexGrow: 1 }} />
-                        <Button color="inherit">Login</Button>
                     </Toolbar>
                 </AppBar>
             </Box>
