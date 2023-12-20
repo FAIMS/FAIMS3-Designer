@@ -55,7 +55,7 @@ export const RelatedRecordEditor = ({ fieldName }: Props) => {
         relatedType: field['component-parameters'].related_type as string || '',
         relatedTypeLabel: field['component-parameters'].related_type_label as string || '',
         relationType: field['component-parameters'].relation_type as string || '',
-        relationLinkedPair: field['component-parameters'].relation_linked_vocabPair as PairList|| []
+        relationLinkedPair: field['component-parameters'].relation_linked_vocabPair as PairList || []
     }
 
     type newState = {
@@ -103,7 +103,7 @@ export const RelatedRecordEditor = ({ fieldName }: Props) => {
         const empty = () => {
             if (newOption1.trim().length == 0 || newOption2.trim().length == 0) {
                 return true;
-            } else 
+            } else
                 return false;
         }
 
@@ -134,59 +134,61 @@ export const RelatedRecordEditor = ({ fieldName }: Props) => {
     return (
         <BaseFieldEditor fieldName={fieldName}>
             <Grid item xs={12}>
-                <Card variant="outlined" sx={{ display: 'flex' }}>
-                    <Grid item xs={4} sx={{ mx: 1.5, my: 2 }}>
-                        <FormControlLabel
-                            required
-                            control={
-                                <Checkbox
-                                    checked={state.multiple}
-                                    onChange={(e) => updateProperty('multiple', e.target.checked)}
-                                />
-                            }
-                            label="Multiple"
-                        />
-                        <FormHelperText>
-                            Tick if user can add multiple records for this relationship.
-                        </FormHelperText>
-                    </Grid>
+                <Card variant="outlined">
+                    <Grid container p={2} rowSpacing={3}>
+                        <Grid item xs={12} sm={4}>
+                            <FormControlLabel
+                                required
+                                control={
+                                    <Checkbox
+                                        checked={state.multiple}
+                                        onChange={(e) => updateProperty('multiple', e.target.checked)}
+                                    />
+                                }
+                                label="Multiple"
+                            />
+                            <FormHelperText>
+                                Tick if user can add multiple records for this relationship.
+                            </FormHelperText>
+                        </Grid>
 
-                    <Grid item xs={4} sx={{ mx: 1.5, my: 2 }}>
-                        <FormControl required sx={{ minWidth: 200 }}>
-                            <InputLabel id="featureType-label">Select Relation Type</InputLabel>
-                            <Select
-                                labelId="featureType-label"
-                                label="Select Relation Type *"
-                                value={state.relationType}
-                                onChange={(e) => updateProperty('relationType', e.target.value)}
-                            >
-                                <MenuItem value="faims-core::Child">Child</MenuItem>
-                                <MenuItem value="faims-core::Linked">Linked</MenuItem>
-                            </Select>
-                        </FormControl>
-                    </Grid>
+                        <Grid item xs={12} sm={4}>
+                            <FormControl required sx={{ minWidth: 200 }}>
+                                <InputLabel id="featureType-label">Select Relation Type</InputLabel>
+                                <Select
+                                    labelId="featureType-label"
+                                    label="Select Relation Type *"
+                                    value={state.relationType}
+                                    onChange={(e) => updateProperty('relationType', e.target.value)}
+                                >
+                                    <MenuItem value="faims-core::Child">Child</MenuItem>
+                                    <MenuItem value="faims-core::Linked">Linked</MenuItem>
+                                </Select>
+                            </FormControl>
+                        </Grid>
 
-                    <Grid item xs={4} sx={{ mx: 1.5, my: 2 }}>
-                        <FormControl required sx={{ minWidth: 200 }}>
-                            <InputLabel id="relatedType-label">Select Related Form</InputLabel>
-                            <Select
-                                labelId="relatedType-label"
-                                label="Select Related Form *"
-                                value={state.relatedType}
-                                onChange={(e) => updateProperty('relatedType', e.target.value)}
-                            >
-                                {arrOfEntries.map((entry) => {
-                                    return (
-                                        <MenuItem
-                                            key={entry[0]}
-                                            value={entry[0]}
-                                        >
-                                            {entry[1].label}
-                                        </MenuItem>
-                                    )
-                                })}
-                            </Select>
-                        </FormControl>
+                        <Grid item xs={12} sm={4}>
+                            <FormControl required sx={{ minWidth: 200 }}>
+                                <InputLabel id="relatedType-label">Select Related Form</InputLabel>
+                                <Select
+                                    labelId="relatedType-label"
+                                    label="Select Related Form *"
+                                    value={state.relatedType}
+                                    onChange={(e) => updateProperty('relatedType', e.target.value)}
+                                >
+                                    {arrOfEntries.map((entry) => {
+                                        return (
+                                            <MenuItem
+                                                key={entry[0]}
+                                                value={entry[0]}
+                                            >
+                                                {entry[1].label}
+                                            </MenuItem>
+                                        )
+                                    })}
+                                </Select>
+                            </FormControl>
+                        </Grid>
                     </Grid>
                 </Card>
             </Grid>
@@ -195,59 +197,61 @@ export const RelatedRecordEditor = ({ fieldName }: Props) => {
                 // TO DO: fix layout (I think it's confusing as it is right now, needs more user guidance)
                 <Grid item xs={12}>
                     <Card variant="outlined" sx={{ display: 'flex' }}>
-                        <Grid item xs={6} sx={{ m: 1.5 }}>
-                            <Alert severity="info">Add and remove Linking Pairs as needed.</Alert>
-                            <form onSubmit={addPair}>
-                                <Grid item alignItems="stretch" style={{ display: "flex" }}>
-                                    <TextField
-                                        label="Performed Before"
-                                        value={newOption1}
-                                        onChange={(e) => setNewOption1(e.target.value)}
-                                        sx={{ my: 1.5 }}
-                                    />
-                                    <TextField
-                                        label="Performed After"
-                                        value={newOption2}
-                                        onChange={(e) => setNewOption2(e.target.value)}
-                                        sx={{ my: 1.5 }}
-                                    />
-                                    <Button
-                                        color="primary"
-                                        startIcon={<AddCircleIcon />}
-                                        variant="outlined"
-                                        type="submit"
-                                        sx={{ my: 1.5 }}
-                                    >
-                                        ADD{' '}
-                                    </Button>
-                                </Grid>
-                            </form>
-                            {errorMessage && <Alert severity="error">{errorMessage}</Alert>}
-                        </Grid>
-                        <Grid item xs={6} sx={{ m: 1.5 }}>
-                            <List>
-                                {pairs.map((outer: string[], idx: number) => {
-                                    return (
-                                        <ListItem
-                                            key={idx}
-                                            secondaryAction={
-                                                <IconButton
-                                                    edge="end"
-                                                    aria-label="delete"
-                                                    onClick={() => removePair(outer)}>
-                                                    <DeleteIcon />
-                                                </IconButton>
-                                            }
+                        <Grid container p={2} columnSpacing={3} rowSpacing={3}>
+                            <Grid item xs={12} sm={6}>
+                                <Alert severity="info">Add and remove Linking Pairs as needed.</Alert>
+                                <form onSubmit={addPair}>
+                                    <Grid container item style={{ display: "flex" }} direction={{ xs: 'column', sm: 'row' }}>
+                                        <TextField
+                                            label="Performed Before"
+                                            value={newOption1}
+                                            onChange={(e) => setNewOption1(e.target.value)}
+                                            sx={{ my: 1.5 }}
+                                        />
+                                        <TextField
+                                            label="Performed After"
+                                            value={newOption2}
+                                            onChange={(e) => setNewOption2(e.target.value)}
+                                            sx={{ my: 1.5 }}
+                                        />
+                                        <Button
+                                            color="primary"
+                                            startIcon={<AddCircleIcon />}
+                                            variant="outlined"
+                                            type="submit"
+                                            sx={{ my: 1.5 }}
                                         >
-                                            {pairs[idx].map((inner: string, idx: number) => {
-                                                return (
-                                                    <ListItemText key={idx} primary={inner} />
-                                                )
-                                            })}
-                                        </ListItem>
-                                    )
-                                })}
-                            </List>
+                                            ADD{' '}
+                                        </Button>
+                                    </Grid>
+                                </form>
+                                {errorMessage && <Alert severity="error">{errorMessage}</Alert>}
+                            </Grid>
+                            <Grid item xs={12} sm={6}>
+                                <List>
+                                    {pairs.map((outer: string[], idx: number) => {
+                                        return (
+                                            <ListItem
+                                                key={idx}
+                                                secondaryAction={
+                                                    <IconButton
+                                                        edge="end"
+                                                        aria-label="delete"
+                                                        onClick={() => removePair(outer)}>
+                                                        <DeleteIcon />
+                                                    </IconButton>
+                                                }
+                                            >
+                                                {pairs[idx].map((inner: string, idx: number) => {
+                                                    return (
+                                                        <ListItemText key={idx} primary={inner} />
+                                                    )
+                                                })}
+                                            </ListItem>
+                                        )
+                                    })}
+                                </List>
+                            </Grid>
                         </Grid>
                     </Card>
                 </Grid>

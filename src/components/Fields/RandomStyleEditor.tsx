@@ -15,9 +15,9 @@
 import { Grid, TextField, Card, FormControl, InputLabel, Select, MenuItem } from "@mui/material";
 import { useAppSelector, useAppDispatch } from "../../state/hooks";
 import { BaseFieldEditor } from "./BaseFieldEditor";
-import {Notebook, FieldType} from "../../state/initial";
+import { Notebook, FieldType } from "../../state/initial";
 
-export const RandomStyleEditor = ({ fieldName }: {fieldName: string}) => {
+export const RandomStyleEditor = ({ fieldName }: { fieldName: string }) => {
 
     const field = useAppSelector((state: Notebook) => state['ui-specification'].fields[fieldName]);
     const dispatch = useAppDispatch();
@@ -54,45 +54,46 @@ export const RandomStyleEditor = ({ fieldName }: {fieldName: string}) => {
     return (
         <BaseFieldEditor fieldName={fieldName}>
             <Grid item xs={12}>
-                <Card variant="outlined" sx={{ display: 'flex' }}>
-                    <Grid item sm={6} xs={12} sx={{ mx: 1.5, my: 2 }}>
-                        <FormControl>
-                            <InputLabel id="featureType-label">Select Style</InputLabel>
-                            <Select
-                                labelId="featureType-label"
-                                label="Select Style"
-                                value={initVariantStyle}
-                                onChange={(e) => updateProperty('variantStyle', e.target.value)}
-                            >
-                                <MenuItem value="h1">Title 1</MenuItem>
-                                <MenuItem value="h2">Title 2</MenuItem>
-                                <MenuItem value="h3">Title 3</MenuItem>
-                                <MenuItem value="h4">Title 4</MenuItem>
-                                <MenuItem value="h5">Title 5</MenuItem>
-                                <MenuItem value="subtitle1">Subtitle 1</MenuItem>
-                                <MenuItem value="subtitle2">Subtitle 2</MenuItem>
-                                <MenuItem value="body1">Body 1</MenuItem>
-                                <MenuItem value="body2">Body 2</MenuItem>
-                                <MenuItem value="caption">Caption Text</MenuItem>
-                            </Select>
-                        </FormControl>
-                    </Grid>
-                    <Grid item sm={6} xs={12} sx={{ mx: 1.5, my: 2 }}>
-                        <TextField
-                            variant="outlined"
-                            label="html_tag"
-                            type="text"
-                            value={initHtmlTag}
-                            multiline
-                            fullWidth
-                            rows={5}
-                            helperText="If you want html tag ONLY, leave the label empty and input the html tag."
-                            onChange={(e) => updateProperty('htmlTag', e.target.value)}
-                        />
+                <Card variant="outlined">
+                    <Grid container p={2} rowSpacing={3}>
+                        <Grid item sm={6} xs={12}>
+                            <FormControl>
+                                <InputLabel id="featureType-label">Select Style</InputLabel>
+                                <Select
+                                    labelId="featureType-label"
+                                    label="Select Style"
+                                    value={initVariantStyle}
+                                    onChange={(e) => updateProperty('variantStyle', e.target.value)}
+                                >
+                                    <MenuItem value="h1">Title 1</MenuItem>
+                                    <MenuItem value="h2">Title 2</MenuItem>
+                                    <MenuItem value="h3">Title 3</MenuItem>
+                                    <MenuItem value="h4">Title 4</MenuItem>
+                                    <MenuItem value="h5">Title 5</MenuItem>
+                                    <MenuItem value="subtitle1">Subtitle 1</MenuItem>
+                                    <MenuItem value="subtitle2">Subtitle 2</MenuItem>
+                                    <MenuItem value="body1">Body 1</MenuItem>
+                                    <MenuItem value="body2">Body 2</MenuItem>
+                                    <MenuItem value="caption">Caption Text</MenuItem>
+                                </Select>
+                            </FormControl>
+                        </Grid>
+                        <Grid item sm={6} xs={12}>
+                            <TextField
+                                variant="outlined"
+                                label="html_tag"
+                                type="text"
+                                value={initHtmlTag}
+                                multiline
+                                fullWidth
+                                rows={5}
+                                helperText="If you want html tag ONLY, leave the label empty and input the html tag."
+                                onChange={(e) => updateProperty('htmlTag', e.target.value)}
+                            />
+                        </Grid>
                     </Grid>
                 </Card>
             </Grid>
         </BaseFieldEditor>
     )
-
 };

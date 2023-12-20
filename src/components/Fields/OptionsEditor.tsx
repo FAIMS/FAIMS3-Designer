@@ -21,7 +21,7 @@ import { useAppSelector, useAppDispatch } from "../../state/hooks";
 import { useState } from "react";
 import { FieldType, Notebook } from "../../state/initial";
 
-export const OptionsEditor = ({ fieldName }: {fieldName: string}) => {
+export const OptionsEditor = ({ fieldName }: { fieldName: string }) => {
 
     const field = useAppSelector((state: Notebook) => state['ui-specification'].fields[fieldName])
     const dispatch = useAppDispatch()
@@ -34,7 +34,7 @@ export const OptionsEditor = ({ fieldName }: {fieldName: string}) => {
         if (field['component-parameters'].ElementProps) {
             options = field['component-parameters'].ElementProps.options;
             if (options)
-               options = options.map((pair) => pair.label.trim())
+                options = options.map((pair) => pair.label.trim())
         } else {
             field['component-parameters'].ElementProps = { options: [] }
         }
@@ -51,30 +51,31 @@ export const OptionsEditor = ({ fieldName }: {fieldName: string}) => {
         const newField = JSON.parse(JSON.stringify(field)) as FieldType;
         newField['component-parameters'].ElementProps = {
             options: updatedOptions.map((o, index) => {
-            if (fieldName.includes('radio')) {
-                return {
-                    RadioProps: {
-                        id: 'radio-group-field-' + index
-                    },
-                    label: o,
-                    value: o,
+                if (fieldName.includes('radio')) {
+                    return {
+                        RadioProps: {
+                            id: 'radio-group-field-' + index
+                        },
+                        label: o,
+                        value: o,
+                    }
                 }
-            }
-            else {
-                return {
-                    label: o,
-                    value: o
+                else {
+                    return {
+                        label: o,
+                        value: o
+                    }
                 }
-            }
 
-        })};
+            })
+        };
 
         dispatch({ type: 'ui-specification/fieldUpdated', payload: { fieldName, newField } })
     }
 
     const addOption = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
-        
+
         const emptyOption: boolean = newOption.trim().length == 0
         const duplicateOption: boolean = options.some((element: string) => {
             // Making sure duplicate check is case insensitive.
@@ -106,49 +107,51 @@ export const OptionsEditor = ({ fieldName }: {fieldName: string}) => {
     return (
         <BaseFieldEditor fieldName={fieldName}>
             <Grid item xs={12}>
-                <Card variant="outlined" sx={{ display: 'flex' }}>
-                    <Grid item xs={6} sx={{ m: 1.5 }}>
-                        <Alert severity="info">Add and remove options as needed.</Alert>
-                        <form onSubmit={addOption}>
-                            <Grid item alignItems="stretch" style={{ display: "flex" }}>
-                                <TextField
-                                    label="Add Option"
-                                    value={newOption}
-                                    onChange={(e) => setNewOption(e.target.value)}
-                                    sx={{ my: 1.5 }} />
-                                <Button
-                                    color="primary"
-                                    startIcon={<AddCircleIcon />}
-                                    variant="outlined"
-                                    type="submit"
-                                    sx={{ my: 1.5 }}
-                                >
-                                    ADD{' '}
-                                </Button>
-                            </Grid>
-                        </form>
-                        {errorMessage && <Alert severity="error">{errorMessage}</Alert>}
-                    </Grid>
-                    <Grid item xs={6} sx={{ m: 1.5 }}>
-                        <List>
-                            {options.map((option: string) => {
-                                return (
-                                    <ListItem
-                                        key={option}
-                                        secondaryAction={
-                                            <IconButton
-                                                edge="end"
-                                                aria-label="delete"
-                                                onClick={() => removeOption(option)}>
-                                                <DeleteIcon />
-                                            </IconButton>
-                                        }
+                <Card variant="outlined">
+                    <Grid container p={2}>
+                        <Grid item xs={12} sm={6}>
+                            <Alert severity="info">Add and remove options as needed.</Alert>
+                            <form onSubmit={addOption}>
+                                <Grid item alignItems="stretch" style={{ display: "flex" }}>
+                                    <TextField
+                                        label="Add Option"
+                                        value={newOption}
+                                        onChange={(e) => setNewOption(e.target.value)}
+                                        sx={{ my: 1.5 }} />
+                                    <Button
+                                        color="primary"
+                                        startIcon={<AddCircleIcon />}
+                                        variant="outlined"
+                                        type="submit"
+                                        sx={{ my: 1.5 }}
                                     >
-                                        <ListItemText primary={option} />
-                                    </ListItem>
-                                )
-                            })}
-                        </List>
+                                        ADD{' '}
+                                    </Button>
+                                </Grid>
+                            </form>
+                            {errorMessage && <Alert severity="error">{errorMessage}</Alert>}
+                        </Grid>
+                        <Grid item xs={12} sm={6}>
+                            <List>
+                                {options.map((option: string) => {
+                                    return (
+                                        <ListItem
+                                            key={option}
+                                            secondaryAction={
+                                                <IconButton
+                                                    edge="end"
+                                                    aria-label="delete"
+                                                    onClick={() => removeOption(option)}>
+                                                    <DeleteIcon />
+                                                </IconButton>
+                                            }
+                                        >
+                                            <ListItemText primary={option} />
+                                        </ListItem>
+                                    )
+                                })}
+                            </List>
+                        </Grid>
                     </Grid>
                 </Card>
             </Grid>

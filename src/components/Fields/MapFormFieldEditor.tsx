@@ -17,7 +17,7 @@ import { useAppSelector, useAppDispatch } from "../../state/hooks";
 import { BaseFieldEditor } from "./BaseFieldEditor";
 import { FieldType, Notebook } from "../../state/initial";
 
-export const MapFormFieldEditor = ({ fieldName }: {fieldName: string}) => {
+export const MapFormFieldEditor = ({ fieldName }: { fieldName: string }) => {
 
     const field = useAppSelector((state: Notebook) => state['ui-specification'].fields[fieldName]);
     const dispatch = useAppDispatch();
@@ -55,31 +55,33 @@ export const MapFormFieldEditor = ({ fieldName }: {fieldName: string}) => {
         <BaseFieldEditor fieldName={fieldName}>
             <Grid item xs={12}>
                 <Card variant="outlined" sx={{ display: 'flex' }}>
-                    <Grid item sm={6} xs={12} sx={{ mx: 1.5, my: 2 }}>
-                        <TextField
-                            variant="outlined"
-                            label="Zoom Level"
-                            type="number"
-                            value={initZoom}
-                            inputProps={{ min: 0 }}
-                            onChange={(e) => updateProperty('zoom', parseFloat(e.target.value))}
-                        />
-                    </Grid>
-                    <Grid item sm={6} xs={12} sx={{ mx: 1.5, my: 2 }}>
-                        <FormControl sx={{ minWidth: 150 }}>
-                            <InputLabel id="featureType-label">Select Feature Type</InputLabel>
-                            <Select
-                                labelId="featureType-label"
-                                label="Select Feature Type"
-                                value={initFeatureType}
-                                onChange={(e) => updateProperty('featureType', e.target.value)}
-                                required
-                            >
-                                <MenuItem value="Polygon">Polygon</MenuItem>
-                                <MenuItem value="Point">Point</MenuItem>
-                                <MenuItem value="LineString">LineString</MenuItem>
-                            </Select>
-                        </FormControl>
+                    <Grid container>
+                        <Grid item sm={6} xs={12} sx={{ mx: 1.5, my: 2 }}>
+                            <TextField
+                                variant="outlined"
+                                label="Zoom Level"
+                                type="number"
+                                value={initZoom}
+                                inputProps={{ min: 0 }}
+                                onChange={(e) => updateProperty('zoom', parseFloat(e.target.value))}
+                            />
+                        </Grid>
+                        <Grid item sm={6} xs={12} sx={{ mx: 1.5, my: 2 }}>
+                            <FormControl sx={{ minWidth: 150 }}>
+                                <InputLabel id="featureType-label">Select Feature Type</InputLabel>
+                                <Select
+                                    labelId="featureType-label"
+                                    label="Select Feature Type"
+                                    value={initFeatureType}
+                                    onChange={(e) => updateProperty('featureType', e.target.value)}
+                                    required
+                                >
+                                    <MenuItem value="Polygon">Polygon</MenuItem>
+                                    <MenuItem value="Point">Point</MenuItem>
+                                    <MenuItem value="LineString">LineString</MenuItem>
+                                </Select>
+                            </FormControl>
+                        </Grid>
                     </Grid>
                 </Card>
             </Grid>
