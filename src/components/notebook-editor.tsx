@@ -13,8 +13,7 @@
 // limitations under the License.
 
 import { TabContext, TabList, TabPanel } from "@mui/lab";
-import { Box, Button, Tab, Typography, AppBar, Toolbar, IconButton } from "@mui/material";
-import MenuIcon from '@mui/icons-material/Menu';
+import { Box, Tab, Typography, AppBar, Toolbar } from "@mui/material";
 
 import { useState, useCallback } from "react";
 import { InfoPanel } from "./info-panel";
