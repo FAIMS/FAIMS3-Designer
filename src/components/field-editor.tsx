@@ -12,15 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { Accordion, AccordionDetails, Stack, 
-         Typography, IconButton, Tooltip } from "@mui/material";
-import MuiAccordionSummary, {
-    AccordionSummaryProps,
-  } from '@mui/material/AccordionSummary';
-import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
-import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-import DeleteIcon from '@mui/icons-material/Delete';
-import ArrowForwardIosSharpIcon from '@mui/icons-material/ArrowForwardIosSharp';
+import {
+    Accordion, AccordionDetails, Stack,
+    Typography, IconButton, Tooltip, Grid, Chip
+} from "@mui/material";
+import MuiAccordionSummary, { AccordionSummaryProps } from '@mui/material/AccordionSummary';
+
+import ArrowDropUpRoundedIcon from '@mui/icons-material/ArrowDropUpRounded';
+import ArrowDropDownRoundedIcon from '@mui/icons-material/ArrowDropDownRounded';
+import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
+import ArrowForwardIosRoundedIcon from '@mui/icons-material/ArrowForwardIosRounded';
 
 import { MultipleTextFieldEditor } from "./Fields/MultipleTextField";
 import { BaseFieldEditor } from "./Fields/BaseFieldEditor";
@@ -44,19 +45,19 @@ import { styled } from '@mui/material/styles';
 // customise the accordion summary a little 
 const AccordionSummary = styled((props: AccordionSummaryProps) => (
     <MuiAccordionSummary
-      expandIcon={<ArrowForwardIosSharpIcon sx={{ fontSize: '0.9rem' }} />}
-      {...props}
+        expandIcon={<ArrowForwardIosRoundedIcon sx={{ fontSize: '1rem' }} />}
+        {...props}
     />
-  ))(({ theme }) => ({
+))(({ theme }) => ({
+    backgroundColor: '#EEF1F0',
     flexDirection: 'row-reverse',
     '& .MuiAccordionSummary-expandIconWrapper.Mui-expanded': {
-      transform: 'rotate(90deg)',
+        transform: 'rotate(90deg)',
     },
     '& .MuiAccordionSummary-content': {
-      marginLeft: theme.spacing(1),
+        marginLeft: theme.spacing(1.5),
     },
-  }));
-
+}));
 
 type FieldEditorProps = {
     fieldName: string,
@@ -68,96 +69,139 @@ type FieldEditorProps = {
 
 export const FieldEditor = ({ fieldName, viewId, expanded, handleExpandChange }: FieldEditorProps) => {
 
-    const field = useAppSelector((state: Notebook) => state['ui-specification'].fields[fieldName]); 
+    const field = useAppSelector((state: Notebook) => state['ui-specification'].fields[fieldName]);
     const dispatch = useAppDispatch();
 
     const fieldComponent = field['component-name'];
 
     const getFieldLabel = () => {
-        return (field['component-parameters'] && field['component-parameters'].label) || 
-               (field['component-parameters'].InputLabelProps && field['component-parameters'].InputLabelProps.label) || 
-               field['component-parameters'].name;
+        return (field['component-parameters'] && field['component-parameters'].label) ||
+            (field['component-parameters'].InputLabelProps && field['component-parameters'].InputLabelProps.label) ||
+            field['component-parameters'].name;
     }
 
     const moveFieldDown = (event: React.SyntheticEvent) => {
         event.stopPropagation();
-        dispatch({type: 'ui-specification/fieldMoved', payload: {fieldName, viewId, direction: 'down'}});
+        dispatch({ type: 'ui-specification/fieldMoved', payload: { fieldName, viewId, direction: 'down' } });
     }
 
     const moveFieldUp = (event: React.SyntheticEvent) => {
-        event.stopPropagation(); 
-        dispatch({type: 'ui-specification/fieldMoved', payload: {fieldName, viewId, direction: 'up'}});
+        event.stopPropagation();
+        dispatch({ type: 'ui-specification/fieldMoved', payload: { fieldName, viewId, direction: 'up' } });
     }
 
     const deleteField = (event: React.SyntheticEvent) => {
-        event.stopPropagation(); 
-        dispatch({type: 'ui-specification/fieldDeleted', payload: {fieldName, viewId}});
+        event.stopPropagation();
+        dispatch({ type: 'ui-specification/fieldDeleted', payload: { fieldName, viewId } });
     }
 
-    return (
-        <Accordion key={fieldName} expanded={expanded} onChange={handleExpandChange}>
-            <AccordionSummary>
-                <Typography>{getFieldLabel()} : {fieldComponent}</Typography>
 
-                <Stack direction='row' style={{width: '100%'}} justifyContent='right'>
-                    <Tooltip title="Delete Field">
-                        <IconButton onClick={deleteField} aria-label='delete' size='small'>
-                            <DeleteIcon />
-                        </IconButton>        
-                    </Tooltip>
-                    <Tooltip title='Move up'>
-                        <IconButton onClick={moveFieldUp} aria-label='up' size='small'>
-                            <ArrowDropUpIcon />
-                        </IconButton>
-                    </Tooltip>
-                    <Tooltip title='Move down'>
-                        <IconButton onClick={moveFieldDown} aria-label='down' size='small'>
-                            <ArrowDropDownIcon />
-                        </IconButton>
-                    </Tooltip>
-                </Stack>
+    return (
+        <Accordion
+            key={fieldName}
+            expanded={expanded}
+            onChange={handleExpandChange}
+            disableGutters
+            square
+            elevation={0}
+            sx={{
+                border: `1px solid #CBCFCD`,
+                color: `#1A211E`,
+                '&:not(:nth-child(2))': {
+                    borderTop: 0,
+                },
+                '&:before': {
+                    display: 'none',
+                }
+            }}
+        >
+            <AccordionSummary>
+                <Grid container columnSpacing={1.5} rowGap={0.5}>
+                    <Grid container item xs={12} sm={4} columnGap={1} rowGap={0.5} alignItems='center'>
+                        <Typography noWrap variant="subtitle2" mr={0.5}>
+                            {getFieldLabel()}
+                        </Typography>
+                        <Chip label={fieldComponent} size="small" variant="outlined"
+                            sx={{
+                                '&.MuiChip-outlined': {
+                                    background: '#f9fafb',
+                                    color: '#546e7a',
+                                    borderColor: '#546e7a',
+                                }
+                            }} 
+                        />
+                        {field["component-parameters"].required &&
+                            <Chip label="Required" size="small" color="primary" />
+                        }
+                    </Grid>
+                    <Grid container item xs={12} sm={5} zeroMinWidth alignItems='center'>
+                        <Typography noWrap variant="body2" fontSize={12} fontWeight={400} fontStyle='italic'>
+                            {field["component-parameters"].helperText}
+                        </Typography>
+                    </Grid>
+                    <Grid item xs={12} sm={3}>
+                        <Stack direction='row' justifyContent='right'>
+                            <Tooltip title="Delete Field">
+                                <IconButton onClick={deleteField} aria-label='delete' size='small'>
+                                    <DeleteRoundedIcon />
+                                </IconButton>
+                            </Tooltip>
+                            <Tooltip title='Move up'>
+                                <IconButton onClick={moveFieldUp} aria-label='up' size='small'>
+                                    <ArrowDropUpRoundedIcon />
+                                </IconButton>
+                            </Tooltip>
+                            <Tooltip title='Move down'>
+                                <IconButton onClick={moveFieldDown} aria-label='down' size='small'>
+                                    <ArrowDropDownRoundedIcon />
+                                </IconButton>
+                            </Tooltip>
+                        </Stack>
+                    </Grid>
+                </Grid>
             </AccordionSummary>
-            <AccordionDetails>
-                {(fieldComponent === 'MultipleTextField' && 
+
+            <AccordionDetails sx={{ padding: 3, backgroundColor: '#00804004' }}>
+                {(fieldComponent === 'MultipleTextField' &&
                     <MultipleTextFieldEditor
-                        fieldName={fieldName}  
-                    />)
-                ||
-                (fieldComponent === 'TakePhoto' && <TakePhotoFieldEditor fieldName={fieldName}  />)
-                ||
-                (fieldComponent === 'TextField' && <TextFieldEditor fieldName={fieldName} />)
-                ||
-                (fieldComponent === 'DateTimeNow' && <DateTimeNowEditor fieldName={fieldName} />)
-                ||
-                (fieldComponent === 'Select' && <OptionsEditor fieldName={fieldName} />)
-                ||
-                (fieldComponent === 'MultiSelect' && <OptionsEditor fieldName={fieldName} />)
-                ||
-                (fieldComponent === 'AdvancedSelect' && <AdvancedSelectEditor fieldName={fieldName} />)
-                ||
-                (fieldComponent === 'RadioGroup' && <OptionsEditor fieldName={fieldName} />)
-                ||
-                (fieldComponent === 'MapFormField' && <MapFormFieldEditor fieldName={fieldName} />)
-                ||
-                (fieldComponent === 'RandomStyle' && <RandomStyleEditor fieldName={fieldName} />)
-                ||
-                (fieldComponent === 'RichText' && <RichTextEditor fieldName={fieldName} />)
-                ||
-                (fieldComponent === 'RelatedRecordSelector' && <RelatedRecordEditor fieldName={fieldName} />)
-                ||
-                (fieldComponent === 'BasicAutoIncrementer' && 
-                    <BasicAutoIncrementerEditor 
                         fieldName={fieldName}
-                        viewId={viewId}
+                    />)
+                    ||
+                    (fieldComponent === 'TakePhoto' && <TakePhotoFieldEditor fieldName={fieldName} />)
+                    ||
+                    (fieldComponent === 'TextField' && <TextFieldEditor fieldName={fieldName} />)
+                    ||
+                    (fieldComponent === 'DateTimeNow' && <DateTimeNowEditor fieldName={fieldName} />)
+                    ||
+                    (fieldComponent === 'Select' && <OptionsEditor fieldName={fieldName} />)
+                    ||
+                    (fieldComponent === 'MultiSelect' && <OptionsEditor fieldName={fieldName} />)
+                    ||
+                    (fieldComponent === 'AdvancedSelect' && <AdvancedSelectEditor fieldName={fieldName} />)
+                    ||
+                    (fieldComponent === 'RadioGroup' && <OptionsEditor fieldName={fieldName} />)
+                    ||
+                    (fieldComponent === 'MapFormField' && <MapFormFieldEditor fieldName={fieldName} />)
+                    ||
+                    (fieldComponent === 'RandomStyle' && <RandomStyleEditor fieldName={fieldName} />)
+                    ||
+                    (fieldComponent === 'RichText' && <RichTextEditor fieldName={fieldName} />)
+                    ||
+                    (fieldComponent === 'RelatedRecordSelector' && <RelatedRecordEditor fieldName={fieldName} />)
+                    ||
+                    (fieldComponent === 'BasicAutoIncrementer' &&
+                        <BasicAutoIncrementerEditor
+                            fieldName={fieldName}
+                            viewId={viewId}
                         />)
-                ||
-                (fieldComponent === 'TemplatedStringField' &&
-                    <TemplatedStringFieldEditor fieldName={fieldName} viewId={viewId}/>
-                )
-                || 
-                <BaseFieldEditor
-                    fieldName={fieldName} 
-                />
+                    ||
+                    (fieldComponent === 'TemplatedStringField' &&
+                        <TemplatedStringFieldEditor fieldName={fieldName} viewId={viewId} />
+                    )
+                    ||
+                    <BaseFieldEditor
+                        fieldName={fieldName}
+                    />
                 }
             </AccordionDetails>
         </Accordion>
