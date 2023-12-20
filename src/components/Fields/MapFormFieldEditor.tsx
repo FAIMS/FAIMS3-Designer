@@ -55,8 +55,8 @@ export const MapFormFieldEditor = ({ fieldName }: { fieldName: string }) => {
         <BaseFieldEditor fieldName={fieldName}>
             <Grid item xs={12}>
                 <Card variant="outlined" sx={{ display: 'flex' }}>
-                    <Grid container>
-                        <Grid item sm={6} xs={12} sx={{ mx: 1.5, my: 2 }}>
+                    <Grid container p={2} rowGap={2}>
+                        <Grid item sm={6} xs={12}>
                             <TextField
                                 variant="outlined"
                                 label="Zoom Level"
@@ -66,7 +66,7 @@ export const MapFormFieldEditor = ({ fieldName }: { fieldName: string }) => {
                                 onChange={(e) => updateProperty('zoom', parseFloat(e.target.value))}
                             />
                         </Grid>
-                        <Grid item sm={6} xs={12} sx={{ mx: 1.5, my: 2 }}>
+                        <Grid item sm={6} xs={12}>
                             <FormControl sx={{ minWidth: 150 }}>
                                 <InputLabel id="featureType-label">Select Feature Type</InputLabel>
                                 <Select

@@ -153,7 +153,7 @@ export const RelatedRecordEditor = ({ fieldName }: Props) => {
                         </Grid>
 
                         <Grid item xs={12} sm={4}>
-                            <FormControl required sx={{ minWidth: 200 }}>
+                            <FormControl required sx={{ minWidth: 150 }}>
                                 <InputLabel id="featureType-label">Select Relation Type</InputLabel>
                                 <Select
                                     labelId="featureType-label"
@@ -168,7 +168,7 @@ export const RelatedRecordEditor = ({ fieldName }: Props) => {
                         </Grid>
 
                         <Grid item xs={12} sm={4}>
-                            <FormControl required sx={{ minWidth: 200 }}>
+                            <FormControl required sx={{ minWidth: 150 }}>
                                 <InputLabel id="relatedType-label">Select Related Form</InputLabel>
                                 <Select
                                     labelId="relatedType-label"

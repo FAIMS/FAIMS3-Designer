@@ -131,7 +131,7 @@ export const BaseFieldEditor = ({ fieldName, children }: Props) => {
 
             <Grid item xs={12}>
                 <Card variant="outlined">
-                    <Grid container p={2} columnSpacing={1}>
+                    <Grid container p={2} columnSpacing={1} rowSpacing={1}>
                         <Grid item xs={12} sm={4}>
                             <FormControlLabel required
                                 control={<Checkbox
@@ -140,7 +140,7 @@ export const BaseFieldEditor = ({ fieldName, children }: Props) => {
                                 />} label="Required" />
                         </Grid>
 
-                        <Grid item xs={12} sm={4} container direction="column">
+                        <Grid item xs={12} sm={4} container direction="column" pr={1}>
                             <FormControlLabel required
                                 control={<Checkbox
                                     checked={state.annotation}
