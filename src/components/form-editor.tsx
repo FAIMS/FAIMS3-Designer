@@ -218,7 +218,7 @@ export const FormEditor = ({ viewSetId, moveCallback, moveButtonsDisabled, handl
     return (
         <Grid container spacing={2}>
             <Grid container item xs={12} spacing={1.75}>
-                <Grid item xs={2}>
+                <Grid item xs={12} sm={2}>
                     <Button variant="text" color="error" size="medium" startIcon={<DeleteRoundedIcon />} onClick={deleteConfirmation}>
                         Delete form
                     </Button>
@@ -249,7 +249,7 @@ export const FormEditor = ({ viewSetId, moveCallback, moveButtonsDisabled, handl
                     </Dialog>
                 </Grid>
 
-                <Grid item xs={3}>
+                <Grid item xs={12} sm={3}>
                     <Button variant="text" size="medium" startIcon={<EditRoundedIcon />} onClick={() => setEditMode(true)}>
                         Edit form name
                     </Button>
@@ -292,7 +292,7 @@ export const FormEditor = ({ viewSetId, moveCallback, moveButtonsDisabled, handl
 
                 {moveButtonsDisabled ?
                     (
-                        <Grid item xs={3}>
+                        <Grid item xs={12} sm={3}>
                             <Tooltip title='Only forms with an "Add New Record" button can be re-ordered.'>
                                 <span>
                                     <IconButton
@@ -310,7 +310,7 @@ export const FormEditor = ({ viewSetId, moveCallback, moveButtonsDisabled, handl
                         </Grid>
                     ) :
                     (
-                        <Grid item xs={3}>
+                        <Grid item xs={12} sm={3}>
                             <Tooltip title='Move form left'>
                                 <span>
                                     <IconButton
@@ -335,7 +335,7 @@ export const FormEditor = ({ viewSetId, moveCallback, moveButtonsDisabled, handl
                     )
                 }
 
-                <Grid item xs={4}>
+                <Grid item xs={12} sm={4}>
                     <FormControlLabel
                         control={<Checkbox
                             checked={visibleTypes.includes(viewSetId)}
