@@ -79,6 +79,7 @@ export const FieldEditor = ({ fieldName, viewId, expanded, handleExpandChange }:
             (field['component-parameters'].InputLabelProps && field['component-parameters'].InputLabelProps.label) ||
             field['component-parameters'].name;
     }
+    const label = getFieldLabel();
 
     const moveFieldDown = (event: React.SyntheticEvent) => {
         event.stopPropagation();
@@ -107,20 +108,27 @@ export const FieldEditor = ({ fieldName, viewId, expanded, handleExpandChange }:
             sx={{
                 border: `1px solid #CBCFCD`,
                 color: `#1A211E`,
-                '&:not(:nth-child(2))': {
+                '&:not(:nth-of-type(2))': {
                     borderTop: 0,
                 },
                 '&:before': {
                     display: 'none',
                 }
             }}
+            TransitionProps={{ unmountOnExit: true }}
         >
             <AccordionSummary>
-                <Grid container columnSpacing={1.5} rowGap={0.5}>
-                    <Grid container item xs={12} sm={4} columnGap={1} rowGap={0.5} alignItems='center'>
-                        <Typography noWrap variant="subtitle2" mr={0.5}>
-                            {getFieldLabel()}
-                        </Typography>
+                <Grid container rowGap={1}>
+                    <Grid container item xs={12} sm={5} columnGap={1} rowGap={0.5} alignItems='center'>
+                        {
+                            (typeof label === 'string' && label.length > 25) ? (
+                                <Typography variant="subtitle2">{label.substring(0, 24)}...</Typography>
+                            ) : (
+                                <Typography variant="subtitle2">{label}</Typography>
+                            )
+
+                        }
+
                         <Chip label={fieldComponent} size="small" variant="outlined"
                             sx={{
                                 '&.MuiChip-outlined': {
@@ -128,19 +136,27 @@ export const FieldEditor = ({ fieldName, viewId, expanded, handleExpandChange }:
                                     color: '#546e7a',
                                     borderColor: '#546e7a',
                                 }
-                            }} 
+                            }}
                         />
                         {field["component-parameters"].required &&
                             <Chip label="Required" size="small" color="primary" />
                         }
                     </Grid>
-                    <Grid container item xs={12} sm={5} zeroMinWidth alignItems='center'>
-                        <Typography noWrap variant="body2" fontSize={12} fontWeight={400} fontStyle='italic'>
-                            {field["component-parameters"].helperText}
-                        </Typography>
+                    <Grid container item xs={12} sm={4} alignItems='center' pl={{ xs: 0, sm: 1}}>
+                        {
+                            (field["component-parameters"].helperText && field["component-parameters"].helperText.length > 60) ? (
+                                <Typography variant="body2" fontSize={12} fontWeight={400} fontStyle='italic'>
+                                    {field["component-parameters"].helperText.substring(0, 59)}...
+                                </Typography>
+                            ) : (
+                                <Typography variant="body2" fontSize={12} fontWeight={400} fontStyle='italic'>
+                                    {field["component-parameters"].helperText}
+                                </Typography>
+                            )
+                        }
                     </Grid>
                     <Grid item xs={12} sm={3}>
-                        <Stack direction='row' justifyContent='right'>
+                        <Stack direction='row' justifyContent={{ sm: 'right', xs: 'left' }}>
                             <Tooltip title="Delete Field">
                                 <IconButton onClick={deleteField} aria-label='delete' size='small'>
                                     <DeleteRoundedIcon />
