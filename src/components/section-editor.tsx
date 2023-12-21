@@ -87,7 +87,7 @@ export const SectionEditor = ({ viewSetId, viewId, viewSet, deleteCallback, addC
     return (
         <>
             <Grid container spacing={1.75} mb={2}>
-                <Grid item xs={2}>
+                <Grid item xs={12} sm={2}>
                     <Button variant="text" color="error" size="small" startIcon={<DeleteRoundedIcon />} onClick={() => setOpen(true)}>
                         Delete section
                     </Button>
@@ -107,7 +107,7 @@ export const SectionEditor = ({ viewSetId, viewId, viewSet, deleteCallback, addC
                     </Dialog>
                 </Grid>
 
-                <Grid item xs={3}>
+                <Grid item xs={12} sm={3}>
                     <Button variant="text" size="small" startIcon={<EditRoundedIcon />} onClick={() => setEditMode(true)}>
                         Edit section name
                     </Button>
@@ -148,7 +148,7 @@ export const SectionEditor = ({ viewSetId, viewId, viewSet, deleteCallback, addC
                     }
                 </Grid>
 
-                <Grid item xs={2}>
+                <Grid item xs={12} sm={2}>
                     <Tooltip title='Move section left'>
                         <span>
                             <IconButton disabled={viewSet.views.indexOf(viewId) === 0 ? true : false} onClick={() => moveSection('left')} aria-label='left' size='small'>
@@ -165,7 +165,7 @@ export const SectionEditor = ({ viewSetId, viewId, viewSet, deleteCallback, addC
                     </Tooltip>
                 </Grid>
 
-                <Grid item xs={3}>
+                <Grid item xs={12} sm={3}>
                     <Button variant="text" size="small" startIcon={<AddCircleOutlineRoundedIcon />} onClick={() => setAddMode(true)}>
                         Add new section
                     </Button>

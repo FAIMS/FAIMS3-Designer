@@ -97,30 +97,32 @@ export const BaseFieldEditor = ({ fieldName, children }: Props) => {
     return (
         <Grid container spacing={2}>
             <Grid item xs={12}>
-                <Card variant="outlined" sx={{ display: 'flex' }}>
-                    <Grid item sm={6} xs={12} sx={{ mx: 1.5, my: 2 }}>
-                        <TextField
-                            name="label"
-                            variant="outlined"
-                            label="Label"
-                            value={state.label}
-                            onChange={(e) => updateProperty('label', e.target.value)}
-                            helperText="Enter a label for the field."
-                        />
-                    </Grid>
+                <Card variant="outlined">
+                    <Grid container p={2} rowSpacing={3}>
+                        <Grid item sm={6} xs={12} >
+                            <TextField
+                                name="label"
+                                variant="outlined"
+                                label="Label"
+                                value={state.label}
+                                onChange={(e) => updateProperty('label', e.target.value)}
+                                helperText="Enter a label for the field."
+                            />
+                        </Grid>
 
-                    <Grid item sm={6} xs={12} sx={{ mx: 1.5, my: 2 }}>
-                        <TextField
-                            name="helperText"
-                            variant="outlined"
-                            label="Helper Text"
-                            fullWidth
-                            multiline={true}
-                            rows={4}
-                            value={state.helperText}
-                            helperText="Help text shown along with the field (like this text)."
-                            onChange={(e) => updateProperty('helperText', e.target.value)}
-                        />
+                        <Grid item sm={6} xs={12} >
+                            <TextField
+                                name="helperText"
+                                variant="outlined"
+                                label="Helper Text"
+                                fullWidth
+                                multiline={true}
+                                rows={4}
+                                value={state.helperText}
+                                helperText="Help text shown along with the field (like this text)."
+                                onChange={(e) => updateProperty('helperText', e.target.value)}
+                            />
+                        </Grid>
                     </Grid>
                 </Card>
             </Grid>
@@ -128,53 +130,55 @@ export const BaseFieldEditor = ({ fieldName, children }: Props) => {
             {children}
 
             <Grid item xs={12}>
-                <Card variant="outlined" sx={{ display: 'flex ' }}>
-                    <Grid item sm={4} sx={{ mx: 1.5, my: 2 }}>
-                        <FormControlLabel required
-                            control={<Checkbox
-                                checked={state.required}
-                                onChange={(e) => updateProperty('required', e.target.checked)}
-                            />} label="Required" />
-                    </Grid>
+                <Card variant="outlined">
+                    <Grid container p={2} columnSpacing={1} rowSpacing={1}>
+                        <Grid item xs={12} sm={4}>
+                            <FormControlLabel required
+                                control={<Checkbox
+                                    checked={state.required}
+                                    onChange={(e) => updateProperty('required', e.target.checked)}
+                                />} label="Required" />
+                        </Grid>
 
-                    <Grid item sm={4} sx={{ mx: 1.5, my: 2 }} container direction="column">
-                        <FormControlLabel required
-                            control={<Checkbox
-                                checked={state.annotation}
-                                onChange={(e) => updateProperty('annotation', e.target.checked)}
-                            />} label="Enable Annotation" />
+                        <Grid item xs={12} sm={4} container direction="column" pr={1}>
+                            <FormControlLabel required
+                                control={<Checkbox
+                                    checked={state.annotation}
+                                    onChange={(e) => updateProperty('annotation', e.target.checked)}
+                                />} label="Enable Annotation" />
 
-                        {state.annotation &&
-                            <TextField
-                                name="label"
-                                variant="outlined"
-                                label="Label"
-                                value={state.annotationLabel}
-                                onChange={(e) => updateProperty('annotationLabel', e.target.value)}
-                                helperText="Enter a label."
-                                sx={{ mt: 1.5 }}
-                            />
-                        }
-                    </Grid>
+                            {state.annotation &&
+                                <TextField
+                                    name="label"
+                                    variant="outlined"
+                                    label="Label"
+                                    value={state.annotationLabel}
+                                    onChange={(e) => updateProperty('annotationLabel', e.target.value)}
+                                    helperText="Enter a label."
+                                    sx={{ mt: 1.5 }}
+                                />
+                            }
+                        </Grid>
 
-                    <Grid item sm={4} sx={{ mx: 1.5, my: 2 }} container direction="column">
-                        <FormControlLabel required
-                            control={<Checkbox
-                                checked={state.uncertainty}
-                                onChange={(e) => updateProperty('uncertainty', e.target.checked)}
-                            />} label="Enable Uncertainty" />
+                        <Grid item xs={12} sm={4} container direction="column">
+                            <FormControlLabel required
+                                control={<Checkbox
+                                    checked={state.uncertainty}
+                                    onChange={(e) => updateProperty('uncertainty', e.target.checked)}
+                                />} label="Enable Uncertainty" />
 
-                        {state.uncertainty &&
-                            <TextField
-                                name="label"
-                                variant="outlined"
-                                label="Label"
-                                value={state.uncertaintyLabel}
-                                onChange={(e) => updateProperty('uncertaintyLabel', e.target.value)}
-                                helperText="Enter a label."
-                                sx={{ mt: 1.5 }}
-                            />
-                        }
+                            {state.uncertainty &&
+                                <TextField
+                                    name="label"
+                                    variant="outlined"
+                                    label="Label"
+                                    value={state.uncertaintyLabel}
+                                    onChange={(e) => updateProperty('uncertaintyLabel', e.target.value)}
+                                    helperText="Enter a label."
+                                    sx={{ mt: 1.5 }}
+                                />
+                            }
+                        </Grid>
                     </Grid>
                 </Card>
             </Grid>

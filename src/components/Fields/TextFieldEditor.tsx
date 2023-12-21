@@ -17,7 +17,7 @@ import { useAppSelector, useAppDispatch } from "../../state/hooks";
 import { BaseFieldEditor } from "./BaseFieldEditor";
 import { FieldType, Notebook, ValidationSchemaElement } from "../../state/initial";
 
-export const TextFieldEditor = ({ fieldName }: {fieldName: string}) => {
+export const TextFieldEditor = ({ fieldName }: { fieldName: string }) => {
     const field = useAppSelector((state: Notebook) => state['ui-specification'].fields[fieldName]);
     const dispatch = useAppDispatch();
 
@@ -88,7 +88,7 @@ export const TextFieldEditor = ({ fieldName }: {fieldName: string}) => {
 
             {/* config option to add a default value for number fields */}
             {(subType === 'number') &&
-                <Grid item xs={6}>
+                <Grid item xs={12} sm={6}>
                     <Card variant="outlined" sx={{ display: 'flex' }}>
                         <Grid item xs={12} sx={{ mx: 1.5, my: 2 }}>
                             <TextField
@@ -107,28 +107,30 @@ export const TextFieldEditor = ({ fieldName }: {fieldName: string}) => {
 
             {/* config option to add min and max controls for controlled number fields */}
             {hasMinMax &&
-                <Grid item xs={6}>
-                    <Card variant="outlined" sx={{ display: 'flex' }}>
-                        <Grid item xs={12} sx={{ mx: 1.5, my: 2 }}>
-                            <TextField
-                                name="min"
-                                variant="outlined"
-                                label="Min Control"
-                                type="number"
-                                helperText="Min this number must be."
-                                onChange={(e) => { updateMinControl(parseFloat(e.target.value)) }}
-                            />
+                <Grid item xs={12} sm={6}>
+                    <Card variant="outlined">
+                        <Grid container p={2} rowSpacing={3}>
+                            <Grid item xs={12} sm={6}>
+                                <TextField
+                                    name="min"
+                                    variant="outlined"
+                                    label="Min Control"
+                                    type="number"
+                                    helperText="Min this number must be."
+                                    onChange={(e) => { updateMinControl(parseFloat(e.target.value)) }}
+                                />
 
-                        </Grid>
-                        <Grid item xs={12} sx={{ mx: 1.5, my: 2 }}>
-                            <TextField
-                                name="max"
-                                variant="outlined"
-                                label="Max Control"
-                                type="number"
-                                helperText="Max this number can be."
-                                onChange={(e) => { updateMaxControl(parseFloat(e.target.value)) }}
-                            />
+                            </Grid>
+                            <Grid item xs={12} sm={6}>
+                                <TextField
+                                    name="max"
+                                    variant="outlined"
+                                    label="Max Control"
+                                    type="number"
+                                    helperText="Max this number can be."
+                                    onChange={(e) => { updateMaxControl(parseFloat(e.target.value)) }}
+                                />
+                            </Grid>
                         </Grid>
                     </Card>
                 </Grid>
