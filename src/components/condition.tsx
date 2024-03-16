@@ -12,11 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { Grid, Select, FormControl, InputLabel, MenuItem, Stack, Divider, TextField, Button, IconButton, Tooltip } from "@mui/material";
+import { Grid, Select, FormControl, InputLabel, MenuItem, Stack, Divider, TextField, Button, IconButton, Tooltip, Dialog } from "@mui/material";
 import { useAppSelector } from "../state/hooks";
 import { FieldType, Notebook } from "../state/initial";
 import {useEffect, useMemo, useState} from "react";
-import AddCircleIcon from '@mui/icons-material/AddCircle';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import SplitscreenIcon from '@mui/icons-material/Splitscreen';
 import _ from "lodash";
@@ -24,7 +23,7 @@ import _ from "lodash";
 // Defines the Condition component to create a conditional expression
 // that can be attached to a View or Field (and maybe more)
 
-type ConditionType = {
+export type ConditionType = {
     operator: string;
     field?: string;
     value?: unknown;
@@ -38,6 +37,85 @@ type ConditionProps = {
 
 const EMPTY_FIELD_CONDITION = {operator: 'equal', field: '', value: ''};
 const EMPTY_BOOLEAN_CONDITION = {operator: 'and', conditions: []}
+
+const allOperators = new Map([
+    ['equal', 'Equal to'],
+    ['not-equal', 'Not equal to'],
+    ['greater', 'Greater than'],
+    ['greater-equal', 'Greater than or equal'],
+    ['less', 'Less than'],
+    ['less-equal', 'Less than or equal'],
+    ['regex', 'Matches regular expression'],
+]);
+
+
+const getFieldLabel = (f: FieldType) => {
+    return (f['component-parameters'].InputLabelProps && 
+            f['component-parameters'].InputLabelProps.label) ||
+            f['component-parameters'].name;
+};
+
+export const ConditionModal = (props: ConditionProps & {label: string}) => {
+
+    const [open, setOpen] = useState(false);
+  
+    return (
+        <>
+         <Button onClick={() => setOpen(true)}>{props.label}</Button>
+         <Dialog 
+            open={open}
+            fullWidth={true}
+            maxWidth="lg"
+         >
+            <ConditionControl 
+                initial={props.initial} 
+                onChange={props.onChange} />
+
+            <Button onClick={() => setOpen(false)}>Close</Button>
+         </Dialog>
+        </>
+    )
+}
+
+
+export const ConditionTranslation = (props: {condition: ConditionType}) => {
+
+    const allFields = useAppSelector((state: Notebook) => state['ui-specification'].fields);
+
+    const getFieldName = (field: string | undefined) => {
+        if (field !== undefined && field in allFields) 
+            return getFieldLabel(allFields[field]);
+        else 
+            return field;
+    }
+    /**
+     * Translate a condition into English for display
+     * @param condition a condition object
+     */
+    const translateCondition = (condition: ConditionType) => {
+        if (condition === undefined) 
+            return 'empty condition';
+        let result = '';
+        if (condition.operator === 'and' || condition.operator === 'or') {
+            if (condition.conditions) {
+                const subTranslations = condition.conditions.map((cond) => {
+                    return translateCondition(cond);
+                });
+                result = subTranslations.join(' ' + condition.operator + ' ');
+            } else {
+                result = 'empty condition'
+            }
+        } else {
+
+            result = getFieldName(condition.field) + ' ' + 
+            allOperators.get(condition.operator)?.toLowerCase() + ' ' + 
+            (condition.value as string);
+        }
+        return result;
+    }
+
+    return (<span>{translateCondition(props.condition)}</span>)
+}
 
 export const ConditionControl = (props: ConditionProps) => {
 
@@ -192,16 +270,6 @@ const FieldConditionControl = (props: ConditionProps) => {
 
     const allFields = useAppSelector((state: Notebook) => state['ui-specification'].fields);
 
-    const allOperators = [
-        ['equal', 'Equal to'],
-        ['not-equal', 'Not equal to'],
-        ['greater', 'Greater than'],
-        ['greater-equal', 'Greater than or equal'],
-        ['less', 'Less than'],
-        ['less-equal', 'Less than or equal'],
-        ['regex', 'Matches regular expression'],
-    ];
-
     const updateField = (value: string) => {
         setCondition({...condition, field: value});
     }
@@ -213,12 +281,6 @@ const FieldConditionControl = (props: ConditionProps) => {
     const updateValue = (value: any) => {
         setCondition({...condition, value: value});
     }
-
-    const getFieldLabel = (f: FieldType) => {
-        return (f['component-parameters'].InputLabelProps && 
-                f['component-parameters'].InputLabelProps.label) ||
-                f['component-parameters'].name;
-    };
 
     useEffect(() => {
         // call onChange if we have a full record and the condition is different ot initialValue
@@ -278,10 +340,10 @@ const FieldConditionControl = (props: ConditionProps) => {
                         onChange={(e) => updateOperator(e.target.value)}
                         value={condition.operator}
                     >
-                    {allOperators.map(([op, name]: string[]) => {
+                    {[...allOperators.keys()].map((op: string) => {
                             return (
                                 <MenuItem key={op} value={op}>
-                                    {name}
+                                    {allOperators.get(op)}
                                 </MenuItem>
                             );
                         })

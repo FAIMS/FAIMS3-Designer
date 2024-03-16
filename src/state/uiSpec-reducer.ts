@@ -270,6 +270,14 @@ export const uiSpecificationReducer = createSlice({
             }
             state.viewsets[viewSetId].views = viewList;
         },
+        sectionConditionChanged: (state: NotebookUISpec,
+            action: PayloadAction<{viewId: string, condition: ConditionType}>) => {
+                const {viewId, condition} = action.payload;
+
+                if (viewId in state.fviews) {
+                    state.fviews[viewId].condition = condition;
+                }
+        },
         viewSetAdded: (state: NotebookUISpec,
             action: PayloadAction<{ formName: string }>) => {
             const { formName } = action.payload;

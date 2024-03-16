@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import { ConditionType } from "../components/condition";
+
 
 export type NotebookMetadata = PropertyMap;
 
@@ -74,6 +76,7 @@ export type FieldType = {
     "validationSchema"?: ValidationSchemaElement[],
     "initialValue"?: unknown,
     "access"?: string[],
+    "condition"?: ConditionType,
     "meta"?: {
         "annotation_label": string,
         "annotation": boolean,
@@ -89,7 +92,8 @@ export type NotebookUISpec = {
     fviews: {[key: string]: {
         "fields": string[],
         "uidesign"?: string,
-        "label": string
+        "label": string,
+        "condition"?: ConditionType,
     }},
     viewsets: {[key: string]: {
         "views": string[],

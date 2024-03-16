@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { Grid, TextField, Button, Dialog, DialogActions, DialogTitle, InputAdornment, Tooltip, IconButton, Alert } from "@mui/material";
+import { Grid, TextField, Button, Dialog, DialogActions, DialogTitle, InputAdornment, Tooltip, IconButton, Alert, Stack } from "@mui/material";
 import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
 import EditRoundedIcon from '@mui/icons-material/EditRounded';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
@@ -26,6 +26,7 @@ import { FieldList } from "./field-list";
 import { useAppSelector, useAppDispatch } from "../state/hooks";
 import { Notebook } from '../state/initial';
 import { useState } from "react";
+import { ConditionControl, ConditionModal, ConditionTranslation, ConditionType } from "./condition";
 
 type Props = {
     viewSetId: string,
@@ -82,6 +83,11 @@ export const SectionEditor = ({ viewSetId, viewId, viewSet, deleteCallback, addC
 
     const moveSection = (moveDirection: 'left' | 'right') => {
         moveCallback(viewSetId, viewId, moveDirection);
+    }
+
+    const conditionChanged = (condition: ConditionType | null) => {
+        console.log('condition changed', condition);
+        dispatch({ type: 'ui-specification/sectionConditionChanged', payload: { viewId, condition } });
     }
 
     return (
@@ -211,6 +217,20 @@ export const SectionEditor = ({ viewSetId, viewId, viewSet, deleteCallback, addC
                     }
                     {addAlertMessage && <Alert severity="error">{addAlertMessage}</Alert>}
                 </Grid>
+
+                <Grid item>
+                    <Stack direction="row">
+                    {fView.condition ? 
+                        (<p>Show this section if&nbsp;
+                            <ConditionTranslation condition={fView.condition}/></p>)
+                        : (<></>)}
+                    <ConditionModal 
+                        label={fView.condition ? "Update Condition" : "Add Condition"}
+                        initial={fView.condition} 
+                        onChange={conditionChanged} />
+                    </Stack>
+                </Grid>
+
             </Grid>
 
 
