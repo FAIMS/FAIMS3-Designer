@@ -18,6 +18,7 @@ import { FieldType, Notebook } from "../state/initial";
 import {useEffect, useMemo, useState} from "react";
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import SplitscreenIcon from '@mui/icons-material/Splitscreen';
+import QuizIcon from '@mui/icons-material/Quiz';
 import _ from "lodash";
 
 // Defines the Condition component to create a conditional expression
@@ -61,7 +62,10 @@ export const ConditionModal = (props: ConditionProps & {label: string}) => {
   
     return (
         <>
-         <Button onClick={() => setOpen(true)}>{props.label}</Button>
+         <Button 
+            onClick={() => setOpen(true)}
+            size="small" 
+            startIcon={<QuizIcon />} >{props.label}</Button>
          <Dialog 
             open={open}
             fullWidth={true}

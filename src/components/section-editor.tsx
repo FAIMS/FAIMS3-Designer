@@ -93,7 +93,7 @@ export const SectionEditor = ({ viewSetId, viewId, viewSet, deleteCallback, addC
     return (
         <>
             <Grid container spacing={1.75} mb={2}>
-                <Grid item xs={12} sm={2}>
+                <Grid item xs={12} sm={3}>
                     <Button variant="text" color="error" size="small" startIcon={<DeleteRoundedIcon />} onClick={() => setOpen(true)}>
                         Delete section
                     </Button>
@@ -113,7 +113,7 @@ export const SectionEditor = ({ viewSetId, viewId, viewSet, deleteCallback, addC
                     </Dialog>
                 </Grid>
 
-                <Grid item xs={12} sm={3}>
+                <Grid item xs={12} sm={2}>
                     <Button variant="text" size="small" startIcon={<EditRoundedIcon />} onClick={() => setEditMode(true)}>
                         Edit section name
                     </Button>
@@ -171,7 +171,7 @@ export const SectionEditor = ({ viewSetId, viewId, viewSet, deleteCallback, addC
                     </Tooltip>
                 </Grid>
 
-                <Grid item xs={12} sm={3}>
+                <Grid item xs={12} sm={2}>
                     <Button variant="text" size="small" startIcon={<AddCircleOutlineRoundedIcon />} onClick={() => setAddMode(true)}>
                         Add new section
                     </Button>
@@ -218,22 +218,21 @@ export const SectionEditor = ({ viewSetId, viewId, viewSet, deleteCallback, addC
                     {addAlertMessage && <Alert severity="error">{addAlertMessage}</Alert>}
                 </Grid>
 
-                <Grid item>
-                    <Stack direction="row">
-                    {fView.condition ? 
-                        (<p>Show this section if&nbsp;
-                            <ConditionTranslation condition={fView.condition}/></p>)
-                        : (<></>)}
+                <Grid item xs={12} sm={3}>
                     <ConditionModal 
                         label={fView.condition ? "Update Condition" : "Add Condition"}
                         initial={fView.condition} 
                         onChange={conditionChanged} />
-                    </Stack>
                 </Grid>
-
+                
             </Grid>
 
-
+            <Grid sx={{border: 1, paddingLeft: '10px'}}>
+                {fView.condition ? 
+                        (<p><strong>Section Condition:</strong> Show this section if&nbsp;
+                            <ConditionTranslation condition={fView.condition}/></p>)
+                        : (<></>)}
+            </Grid>
             <FieldList viewId={viewId} viewSetId={viewSetId} />
         </>
     );
