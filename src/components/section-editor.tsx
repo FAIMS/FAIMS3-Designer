@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { Grid, TextField, Button, Dialog, DialogActions, DialogTitle, InputAdornment, Tooltip, IconButton, Alert, Stack } from "@mui/material";
+import { Grid, TextField, Button, Dialog, DialogActions, DialogTitle, InputAdornment, Tooltip, IconButton, Alert} from "@mui/material";
 import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
 import EditRoundedIcon from '@mui/icons-material/EditRounded';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
@@ -26,7 +26,7 @@ import { FieldList } from "./field-list";
 import { useAppSelector, useAppDispatch } from "../state/hooks";
 import { Notebook } from '../state/initial';
 import { useState } from "react";
-import { ConditionControl, ConditionModal, ConditionTranslation, ConditionType } from "./condition";
+import {ConditionModal, ConditionTranslation, ConditionType } from "./condition";
 
 type Props = {
     viewSetId: string,

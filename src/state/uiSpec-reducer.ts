@@ -15,8 +15,7 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { NotebookUISpec, initialState, FieldType } from "./initial";
 import { getFieldSpec } from "../fields";
-
-
+import { ConditionType } from "../components/condition";
 
 /**
  * Slugify a string, replacing special characters with less special ones
