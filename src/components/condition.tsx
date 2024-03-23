@@ -125,77 +125,84 @@ export const ConditionControl = (props: ConditionProps) => {
 
     const initial = props.initial || EMPTY_FIELD_CONDITION;
 
-    const [condition, setCondition] = useState(initial);
+    const [condition, setCondition] = useState<ConditionType | null>(initial);
 
     const conditionChanged = (condition: ConditionType | null) => {
-        if (condition === null) {
-            setCondition(EMPTY_FIELD_CONDITION)
-        } else {
-           setCondition(condition);
-        }
+        console.log('ConditionControl Changed', condition);
+        // if (condition === null) {
+        //     setCondition(EMPTY_FIELD_CONDITION)
+        // } else {
+        //    setCondition(condition);
+        // }
+        setCondition(condition);
         if (props.onChange !== undefined) props.onChange(condition);
     }
 
-    const isBoolean = condition.operator === 'and' || condition.operator === 'or';
-
-    return (
-        <Stack direction="row" spacing={2} sx={{border: '1px dashed grey', padding: '10px'}}>
-            {isBoolean ?
-                (<BooleanConditionControl onChange={conditionChanged} initial={condition} />)
-                :
-                (<FieldConditionControl onChange={conditionChanged} initial={condition} />)
-            }
-        </Stack>
-    )
+    if (condition === null) 
+        return (<p>Empty Condition</p>);
+    else {
+        const isBoolean = condition.operator === 'and' || condition.operator === 'or';
+        return (
+            <Stack direction="row" spacing={2} sx={{border: '1px dashed grey', padding: '10px'}}>
+                {isBoolean ?
+                    (<BooleanConditionControl onChange={conditionChanged} initial={condition} />)
+                    :
+                    (<FieldConditionControl onChange={conditionChanged} initial={condition} />)
+                }
+            </Stack>
+        )
+    }
 
 }
 
-export const BooleanConditionControl = (props: ConditionProps) => {
+const BooleanConditionControl = (props: ConditionProps) => {
 
     const initial: ConditionType = useMemo(() => props.initial || EMPTY_BOOLEAN_CONDITION, [props]);
 
     const [condition, setCondition] = useState<ConditionType|null>(initial);
 
     const updateOperator = (value: string) => {
-        setCondition({...condition, operator: value})
+        updateCondition({...condition, operator: value})
     }
 
-    const updateCondition = (index: number) => {
+    const updateCondition = (condition: ConditionType | null) => {
+        console.log('updateCondition', condition);
+        setCondition(condition);
+        if (condition && props.onChange && 
+            condition.operator && condition.conditions) {
+            props.onChange(condition);
+        }
+    }
+
+    // callback for each condition inside the boolean
+    const conditionCallback = (index: number) => {
         return (value: ConditionType | null) => {
+            console.log('conditionCallback', index, value)
             if (condition && condition.conditions) {
                 if (value === null) {
                     const newConditions = condition.conditions.filter((v: ConditionType, i: number) => {
                         return (i !== index)
                     })
                     if (newConditions.length === 0) 
-                        setCondition(null);
+                        updateCondition(null);
                     else 
-                        setCondition({...condition, conditions: newConditions})
+                        updateCondition({...condition, conditions: newConditions})
                 } else {
                     const newConditions = condition.conditions.map((v: ConditionType, i: number) => {
                         if (i === index) return value;
                         else return v;
                     })
-                    setCondition({...condition, conditions: newConditions})
+                    updateCondition({...condition, conditions: newConditions})
                 }
             } else if (condition) {
-                if (value) setCondition({...condition, conditions: [value]})
-                else setCondition(null)
+                if (value) updateCondition({...condition, conditions: [value]})
+                else updateCondition(null)
             }
         }
     }
-
-    useEffect(() => {
-        // call onChange if we have a full record and the condition is different t initialValue
-        if (!_.isEqual(condition, initial)) {
-            if (props.onChange) {
-                props.onChange(condition);
-            }
-        }
-    }, [props, initial, condition]);
-        
+    
     const addCondition = () => {
-        if (props.onChange) {
+        if (condition) {
             const existing = condition.conditions || [];
             // construct a condition with an new empty field condition
             const newCondition = {...condition, 
@@ -204,8 +211,7 @@ export const BooleanConditionControl = (props: ConditionProps) => {
                         EMPTY_FIELD_CONDITION
                     ]
                 };
-            setCondition(newCondition)
-            props.onChange(newCondition)
+            updateCondition(newCondition)
         }
     };
 
@@ -223,7 +229,7 @@ export const BooleanConditionControl = (props: ConditionProps) => {
                         {condition.conditions ? 
                             condition.conditions.map((cond: ConditionType, index: number) => 
                             (
-                                <ConditionControl key={index} onChange={updateCondition(index)} initial={cond}/>
+                                <ConditionControl key={index} onChange={conditionCallback(index)} initial={cond}/>
                             ))
                             : (<div></div>)
                         }
@@ -275,25 +281,23 @@ const FieldConditionControl = (props: ConditionProps) => {
     const allFields = useAppSelector((state: Notebook) => state['ui-specification'].fields);
 
     const updateField = (value: string) => {
-        setCondition({...condition, field: value});
+        updateCondition({...condition, field: value});
     }
 
     const updateOperator = (value: string) => {
-        setCondition({...condition, operator: value});
+        updateCondition({...condition, operator: value});
     }
 
     const updateValue = (value: any) => {
-        setCondition({...condition, value: value});
+        updateCondition({...condition, value: value});
     }
 
-    useEffect(() => {
-        // call onChange if we have a full record and the condition is different ot initialValue
-        if (!_.isEqual(condition, initialValue)) {
-            if (props.onChange && condition.field && condition.operator && condition.value) {
-                props.onChange(condition);
-            }
+    const updateCondition = (condition: ConditionType) => {
+        setCondition(condition);
+        if (props.onChange && condition.field && condition.operator && condition.value) {
+            props.onChange(condition);
         }
-    }, [props, initialValue, condition])
+    }
 
     const addCondition = () => {
         if (props.onChange) {
