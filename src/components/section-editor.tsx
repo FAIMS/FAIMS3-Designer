@@ -227,10 +227,10 @@ export const SectionEditor = ({ viewSetId, viewId, viewSet, deleteCallback, addC
                 
             </Grid>
 
-            <Grid sx={{border: 1, paddingLeft: '10px'}}>
+            <Grid>
                 {fView.condition ? 
-                        (<p><strong>Section Condition:</strong> Show this section if&nbsp;
-                            <ConditionTranslation condition={fView.condition}/></p>)
+                        (<Alert severity="info"><strong>Section Condition:</strong> Show this section if&nbsp;
+                            <ConditionTranslation condition={fView.condition}/></Alert>)
                         : (<></>)}
             </Grid>
             <FieldList viewId={viewId} viewSetId={viewSetId} />

@@ -12,9 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { Checkbox, FormControlLabel, Grid, TextField, Card } from "@mui/material";
+import { Checkbox, FormControlLabel, Grid, TextField, Card, Alert } from "@mui/material";
 import { useAppSelector, useAppDispatch } from "../../state/hooks";
 import { FieldType, Notebook } from "../../state/initial";
+import { ConditionModal, ConditionTranslation, ConditionType } from "../condition";
 
 type Props = {
     fieldName: string,
@@ -29,7 +30,8 @@ type StateType = {
     annotation: boolean,
     annotationLabel: string,
     uncertainty: boolean,
-    uncertaintyLabel: string
+    uncertaintyLabel: string,
+    condition?: ConditionType | null,
 }
 
 export const BaseFieldEditor = ({ fieldName, children }: Props) => {
@@ -70,6 +72,7 @@ export const BaseFieldEditor = ({ fieldName, children }: Props) => {
         annotationLabel: field.meta ? field.meta.annotation_label || '' : '',
         uncertainty: field.meta ? field.meta.uncertainty.include || false : false,
         uncertaintyLabel: field.meta ? field.meta.uncertainty.label || '' : '',
+        condition: field.condition,
     };
 
     const updateFieldFromState = (newState: StateType) => {
@@ -86,6 +89,10 @@ export const BaseFieldEditor = ({ fieldName, children }: Props) => {
                 label: newState.uncertaintyLabel || ''
             }
         }
+        if (newState.condition) 
+            newField.condition = newState.condition;
+        else
+            newField.condition = null;
         updateField(fieldName, newField);
     };
 
@@ -93,6 +100,17 @@ export const BaseFieldEditor = ({ fieldName, children }: Props) => {
         const newState: StateType = { ...state, [prop]: value };
         updateFieldFromState(newState);
     };
+
+    const conditionChanged = (condition: ConditionType | null) => {
+        console.log('Field Condition Changed', condition);
+        if (condition) {
+            const newState: StateType = { ...state, condition: condition};
+            updateFieldFromState(newState);
+        } else {
+            const newState: StateType = { ...state, condition: null};
+            updateFieldFromState(newState);
+        }
+    }
 
     return (
         <Grid container spacing={2}>
@@ -132,7 +150,7 @@ export const BaseFieldEditor = ({ fieldName, children }: Props) => {
             <Grid item xs={12}>
                 <Card variant="outlined">
                     <Grid container p={2} columnSpacing={1} rowSpacing={1}>
-                        <Grid item xs={12} sm={4}>
+                        <Grid item xs={12} sm={3}>
                             <FormControlLabel required
                                 control={<Checkbox
                                     checked={state.required}
@@ -140,7 +158,7 @@ export const BaseFieldEditor = ({ fieldName, children }: Props) => {
                                 />} label="Required" />
                         </Grid>
 
-                        <Grid item xs={12} sm={4} container direction="column" pr={1}>
+                        <Grid item xs={12} sm={3} container direction="column" pr={1}>
                             <FormControlLabel required
                                 control={<Checkbox
                                     checked={state.annotation}
@@ -160,7 +178,7 @@ export const BaseFieldEditor = ({ fieldName, children }: Props) => {
                             }
                         </Grid>
 
-                        <Grid item xs={12} sm={4} container direction="column">
+                        <Grid item xs={12} sm={3} container direction="column">
                             <FormControlLabel required
                                 control={<Checkbox
                                     checked={state.uncertainty}
@@ -179,7 +197,23 @@ export const BaseFieldEditor = ({ fieldName, children }: Props) => {
                                 />
                             }
                         </Grid>
+
+
+                        <Grid item xs={12} sm={3}>
+                            <ConditionModal 
+                                label={state.condition ? "Update Condition" : "Add Condition"}
+                                initial={state.condition} 
+                                onChange={conditionChanged} />
+                        </Grid>
+                
                     </Grid>
+
+            <Grid>
+                {state.condition ? 
+                        (<Alert severity="info"><strong>Field Condition:</strong> Show this field if&nbsp;
+                            <ConditionTranslation condition={state.condition}/></Alert>)
+                        : (<></>)}
+            </Grid>
                 </Card>
             </Grid>
         </Grid>
