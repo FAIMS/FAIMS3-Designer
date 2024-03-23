@@ -15,11 +15,10 @@
 import { Grid, Select, FormControl, InputLabel, MenuItem, Stack, Divider, TextField, Button, IconButton, Tooltip, Dialog } from "@mui/material";
 import { useAppSelector } from "../state/hooks";
 import { FieldType, Notebook } from "../state/initial";
-import {useEffect, useMemo, useState} from "react";
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import SplitscreenIcon from '@mui/icons-material/Splitscreen';
 import QuizIcon from '@mui/icons-material/Quiz';
-import _ from "lodash";
+import {useState, useMemo} from "react";
 
 // Defines the Condition component to create a conditional expression
 // that can be attached to a View or Field (and maybe more)
@@ -33,7 +32,7 @@ export type ConditionType = {
 
 type ConditionProps = {
     onChange?: ((v: ConditionType | null) => void);
-    initial?: ConditionType;
+    initial?: ConditionType | null;
 }
 
 const EMPTY_FIELD_CONDITION = {operator: 'equal', field: '', value: ''};
@@ -180,7 +179,7 @@ const BooleanConditionControl = (props: ConditionProps) => {
             console.log('conditionCallback', index, value)
             if (condition && condition.conditions) {
                 if (value === null) {
-                    const newConditions = condition.conditions.filter((v: ConditionType, i: number) => {
+                    const newConditions = condition.conditions.filter((_v: ConditionType, i: number) => {
                         return (i !== index)
                     })
                     if (newConditions.length === 0) 
@@ -288,7 +287,7 @@ const FieldConditionControl = (props: ConditionProps) => {
         updateCondition({...condition, operator: value});
     }
 
-    const updateValue = (value: any) => {
+    const updateValue = (value: unknown) => {
         updateCondition({...condition, value: value});
     }
 

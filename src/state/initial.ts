@@ -76,7 +76,7 @@ export type FieldType = {
     "validationSchema"?: ValidationSchemaElement[],
     "initialValue"?: unknown,
     "access"?: string[],
-    "condition"?: ConditionType,
+    "condition"?: ConditionType | null,
     "meta"?: {
         "annotation_label": string,
         "annotation": boolean,
