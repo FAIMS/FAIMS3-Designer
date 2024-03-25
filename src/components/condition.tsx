@@ -127,12 +127,6 @@ export const ConditionControl = (props: ConditionProps) => {
     const [condition, setCondition] = useState<ConditionType | null>(initial);
 
     const conditionChanged = (condition: ConditionType | null) => {
-        console.log('ConditionControl Changed', condition);
-        // if (condition === null) {
-        //     setCondition(EMPTY_FIELD_CONDITION)
-        // } else {
-        //    setCondition(condition);
-        // }
         setCondition(condition);
         if (props.onChange !== undefined) props.onChange(condition);
     }
@@ -365,12 +359,12 @@ const FieldConditionControl = (props: ConditionProps) => {
                       onChange={(e) => updateValue(e.target.value)} />
                 </FormControl>
                 <Tooltip describeChild title="Make this an 'and' or 'or' condition">
-                    <IconButton color='primary' onClick={addCondition}>
+                    <IconButton color='primary' onClick={addCondition} data-testid="split-button">
                         <SplitscreenIcon/>
                     </IconButton>
                 </Tooltip>
                 <Tooltip describeChild title="Remove this condition">
-                    <IconButton color='secondary' onClick={deleteCondition}>
+                    <IconButton color='secondary' onClick={deleteCondition} data-testid="delete-button">
                         <RemoveCircleIcon/>
                     </IconButton>
                 </Tooltip>

@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { describe, expect, test } from 'vitest';
-import {render, screen} from '@testing-library/react';
-import {ConditionControl} from './condition';
+import {vi, describe, expect, test } from 'vitest';
+import {act, fireEvent, render, screen} from '@testing-library/react';
+import {ConditionControl, ConditionType} from './condition';
 import {sampleNotebook} from '../test-notebook';
 import { store } from '../state/store';
 import { Provider } from 'react-redux';
@@ -30,8 +30,8 @@ const WithProviders = ({children}: {children: ReactNode}) => (
     </ThemeProvider>
     );
 
-describe('Info Panel',  () => {
-    test('render the info panel', () => { 
+describe('ConditionControl',  () => {
+    test('render and interact with a field condition', () => { 
 
         store.dispatch({ type: 'ui-specification/loaded', payload: sampleNotebook['ui-specification'] })
         const condition = {
@@ -39,9 +39,11 @@ describe('Info Panel',  () => {
             field: 'Sample-Location',
             value: 100,
         };
+
+        const onChangeFn = vi.fn();
         render (
             <WithProviders>
-                <ConditionControl initial={condition}/>
+                <ConditionControl initial={condition} onChange={onChangeFn}/>
             </WithProviders>
         )
 
@@ -49,14 +51,65 @@ describe('Info Panel',  () => {
         expect(screen.getByTestId('operator-input')).toBeDefined();
         expect(screen.getByTestId('value-input')).toBeDefined();
         
-        // act(() => {
-        //     const metaName = screen.getByLabelText('Metadata Field Name');
-        //     const metaValue = screen.getByLabelText('Metadata Field Value');
-        //     fireEvent.change(metaName, { target: { value: 'Bob' } });
-        //     fireEvent.change(metaValue, { target: { value: 'Bobalooba' } });
-        //     const createButton = screen.getByText('Create New Field');
-        //     createButton.click();
-        //     expect(store.getState().metadata.Bob).toBe('Bobalooba');
-        // });
-    })
-})
+        act(() => {
+            const fieldInput = screen.getByTestId('field-input').querySelector('input');
+            const opInput = screen.getByTestId('operator-input').querySelector('input');
+            const valueInput = screen.getByTestId('value-input').querySelector('input');
+            if (fieldInput && valueInput) {
+                fireEvent.change(fieldInput, { target: { value: 'New-Text-Field' } });
+                expect(onChangeFn).toHaveBeenCalled();
+                expect(onChangeFn.mock.lastCall).toStrictEqual([
+                    {
+                        field: "New-Text-Field", 
+                        operator: "equal",
+                        value: 100,
+                    }]
+                );
+                fireEvent.change(valueInput, { target: { value: 'Bobalooba' } });
+                expect(onChangeFn.mock.lastCall).toStrictEqual([
+                    {
+                        field: "New-Text-Field", 
+                        operator: "equal",
+                        value: 'Bobalooba',
+                    }]
+                );
+                fireEvent.change(opInput, { target: { value: 'not-equal' } });
+                expect(onChangeFn.mock.lastCall).toStrictEqual([
+                    {
+                        field: "New-Text-Field", 
+                        operator: "not-equal",
+                        value: 'Bobalooba',
+                    }]
+                );
+            };
+        });
+    });
+
+    test('make a boolean condition from a field', () => { 
+
+        store.dispatch({ type: 'ui-specification/loaded', payload: sampleNotebook['ui-specification'] })
+        const condition = {
+            operator: 'equal',
+            field: 'Sample-Location',
+            value: 100,
+        };
+
+        const onChangeFn = vi.fn();
+        render (
+            <WithProviders>
+                <ConditionControl initial={condition} onChange={onChangeFn}/>
+            </WithProviders>
+        )
+        
+        act(() => {
+            const splitButton = screen.getByTestId('split-button');
+            if (splitButton) {
+                fireEvent.click(splitButton);
+                expect(onChangeFn).toHaveBeenCalled();
+                const last = onChangeFn.mock.lastCall as ConditionType[];
+                expect(last[0].operator).toBe('and');
+                expect(last[0].conditions?.length).toBe(2);
+            };
+        });
+    });
+});
