@@ -26,8 +26,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-json-view-lite": "^1.1.0",
-    "react-redux": "^8.1.2",
-    "webdriverio": "^8.24.12"
+    "react-redux": "^8.1.2"
   },
   "devDependencies": {
     "@testing-library/react": "^14.0.0",
@@ -45,6 +44,7 @@
     "jsdom": "^22.1.0",
     "typescript": "^5.0.2",
     "vite": "^4.5.2",
-    "vitest": "^1.0.1"
+    "vitest": "^1.0.1",
+    "webdriverio": "^8.32.2"
   }
 }

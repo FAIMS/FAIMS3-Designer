@@ -127,12 +127,6 @@ export const ConditionControl = (props: ConditionProps) => {
     const [condition, setCondition] = useState<ConditionType | null>(initial);
 
     const conditionChanged = (condition: ConditionType | null) => {
-        console.log('ConditionControl Changed', condition);
-        // if (condition === null) {
-        //     setCondition(EMPTY_FIELD_CONDITION)
-        // } else {
-        //    setCondition(condition);
-        // }
         setCondition(condition);
         if (props.onChange !== undefined) props.onChange(condition);
     }
@@ -315,13 +309,13 @@ const FieldConditionControl = (props: ConditionProps) => {
 
     return (
         <Grid container>
-            <Stack 
+            <Stack
               direction="row" 
               spacing={2} 
               divider={<Divider orientation="vertical" flexItem />}
               justifyContent="space-evenly"
             >
-                <FormControl sx={{ minWidth: 200 }}>
+                <FormControl sx={{ minWidth: 200 }} data-testid="field-input">
                     <InputLabel id="field">Field</InputLabel>
                     <Select
                         labelId="field"
@@ -339,7 +333,7 @@ const FieldConditionControl = (props: ConditionProps) => {
                         }
                     </Select>
                 </FormControl>
-                <FormControl sx={{ minWidth: 200 }}>
+                <FormControl sx={{ minWidth: 200 }} data-testid="operator-input">
                     <InputLabel id="operator">Operator</InputLabel>
                     <Select
                         labelId="operator"
@@ -357,7 +351,7 @@ const FieldConditionControl = (props: ConditionProps) => {
                     }
                     </Select>
                 </FormControl>
-                <FormControl sx={{ minWidth: 200 }}>
+                <FormControl sx={{ minWidth: 200 }} data-testid="value-input">
                     <TextField 
                       variant="outlined"
                       label="Value"
@@ -365,12 +359,12 @@ const FieldConditionControl = (props: ConditionProps) => {
                       onChange={(e) => updateValue(e.target.value)} />
                 </FormControl>
                 <Tooltip describeChild title="Make this an 'and' or 'or' condition">
-                    <IconButton color='primary' onClick={addCondition}>
+                    <IconButton color='primary' onClick={addCondition} data-testid="split-button">
                         <SplitscreenIcon/>
                     </IconButton>
                 </Tooltip>
                 <Tooltip describeChild title="Remove this condition">
-                    <IconButton color='secondary' onClick={deleteCondition}>
+                    <IconButton color='secondary' onClick={deleteCondition} data-testid="delete-button">
                         <RemoveCircleIcon/>
                     </IconButton>
                 </Tooltip>
