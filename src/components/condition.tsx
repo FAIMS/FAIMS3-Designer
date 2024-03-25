@@ -315,13 +315,13 @@ const FieldConditionControl = (props: ConditionProps) => {
 
     return (
         <Grid container>
-            <Stack 
+            <Stack
               direction="row" 
               spacing={2} 
               divider={<Divider orientation="vertical" flexItem />}
               justifyContent="space-evenly"
             >
-                <FormControl sx={{ minWidth: 200 }}>
+                <FormControl sx={{ minWidth: 200 }} data-testid="field-input">
                     <InputLabel id="field">Field</InputLabel>
                     <Select
                         labelId="field"
@@ -339,7 +339,7 @@ const FieldConditionControl = (props: ConditionProps) => {
                         }
                     </Select>
                 </FormControl>
-                <FormControl sx={{ minWidth: 200 }}>
+                <FormControl sx={{ minWidth: 200 }} data-testid="operator-input">
                     <InputLabel id="operator">Operator</InputLabel>
                     <Select
                         labelId="operator"
@@ -357,7 +357,7 @@ const FieldConditionControl = (props: ConditionProps) => {
                     }
                     </Select>
                 </FormControl>
-                <FormControl sx={{ minWidth: 200 }}>
+                <FormControl sx={{ minWidth: 200 }} data-testid="value-input">
                     <TextField 
                       variant="outlined"
                       label="Value"
