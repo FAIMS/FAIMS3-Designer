@@ -44,6 +44,7 @@ type StateType = {
   uncertaintyLabel: string;
   condition?: ConditionType | null;
   persistent?: boolean;
+  displayParent?: boolean;
 };
 
 export const BaseFieldEditor = ({ fieldName, children }: Props) => {
@@ -98,6 +99,7 @@ export const BaseFieldEditor = ({ fieldName, children }: Props) => {
     uncertaintyLabel: field.meta ? field.meta.uncertainty.label || "" : "",
     condition: field.condition,
     persistent: cParams.persistent,
+    displayParent: cParams.displayParent,
   };
 
   const updateFieldFromState = (newState: StateType) => {
@@ -106,6 +108,7 @@ export const BaseFieldEditor = ({ fieldName, children }: Props) => {
     newField["component-parameters"].helperText = newState.helperText;
     newField["component-parameters"].required = newState.required;
     newField["component-parameters"].persistent = newState.persistent;
+    newField["component-parameters"].displayParent = newState.displayParent;
     if (newField.meta) {
       newField.meta.annotation = newState.annotation;
       newField.meta.annotation_label = newState.annotationLabel || "";
@@ -255,31 +258,49 @@ export const BaseFieldEditor = ({ fieldName, children }: Props) => {
             </Grid>
           </Grid>
 
-          <Grid>
-            {state.condition ? (
-              <Alert severity="info">
-                <strong>Field Condition:</strong> Show this field if&nbsp;
-                <ConditionTranslation condition={state.condition} />
-              </Alert>
-            ) : (
-              <></>
-            )}
-          </Grid>
+          <Grid container p={2} columnSpacing={1} rowSpacing={1}>
+            <Grid>
+              {state.condition ? (
+                <Alert severity="info">
+                  <strong>Field Condition:</strong> Show this field if&nbsp;
+                  <ConditionTranslation condition={state.condition} />
+                </Alert>
+              ) : (
+                <></>
+              )}
+            </Grid>
 
-          {/* Checkbox to persistent to true */}
-          <Grid item xs={12} sm={12}>
-            <FormControlLabel
-              required
-              control={
-                <Checkbox
-                  checked={state.persistent}
-                  onChange={(e) =>
-                    updateProperty("persistent", e.target.checked)
-                  }
-                />
-              }
-              label="Make Persistent"
-            />
+            {/* Checkbox to persistent to true */}
+            <Grid item xs={12} sm={6}>
+              <FormControlLabel
+                required
+                control={
+                  <Checkbox
+                    checked={state.persistent}
+                    onChange={(e) =>
+                      updateProperty("persistent", e.target.checked)
+                    }
+                  />
+                }
+                label="Make Persistent"
+              />
+            </Grid>
+
+            {/* Checkbox set DisplayParent to true */}
+            <Grid item xs={12} sm={6}>
+              <FormControlLabel
+                required
+                control={
+                  <Checkbox
+                    checked={state.displayParent}
+                    onChange={(e) =>
+                      updateProperty("displayParent", e.target.checked)
+                    }
+                  />
+                }
+                label="Display Parent"
+              />
+            </Grid>
           </Grid>
         </Card>
       </Grid>
