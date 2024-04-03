@@ -55,7 +55,7 @@ describe('ConditionControl',  () => {
             const fieldInput = screen.getByTestId('field-input').querySelector('input');
             const opInput = screen.getByTestId('operator-input').querySelector('input');
             const valueInput = screen.getByTestId('value-input').querySelector('input');
-            if (fieldInput && valueInput) {
+            if (fieldInput !== null && valueInput !== null && opInput !== null) {
                 fireEvent.change(fieldInput, { target: { value: 'New-Text-Field' } });
                 expect(onChangeFn).toHaveBeenCalled();
                 expect(onChangeFn.mock.lastCall).toStrictEqual([
