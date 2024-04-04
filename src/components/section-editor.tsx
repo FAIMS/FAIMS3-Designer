@@ -222,7 +222,8 @@ export const SectionEditor = ({ viewSetId, viewId, viewSet, deleteCallback, addC
                     <ConditionModal 
                         label={fView.condition ? "Update Condition" : "Add Condition"}
                         initial={fView.condition} 
-                        onChange={conditionChanged} />
+                        onChange={conditionChanged}
+                        view={viewId} />
                 </Grid>
                 
             </Grid>
