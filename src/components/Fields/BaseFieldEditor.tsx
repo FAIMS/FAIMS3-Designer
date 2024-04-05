@@ -203,7 +203,8 @@ export const BaseFieldEditor = ({ fieldName, children }: Props) => {
                             <ConditionModal 
                                 label={state.condition ? "Update Condition" : "Add Condition"}
                                 initial={state.condition} 
-                                onChange={conditionChanged} />
+                                onChange={conditionChanged}
+                                field={fieldName}/>
                         </Grid>
                 
                     </Grid>

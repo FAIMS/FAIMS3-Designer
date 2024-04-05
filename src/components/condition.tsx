@@ -33,6 +33,8 @@ export type ConditionType = {
 type ConditionProps = {
     onChange?: ((v: ConditionType | null) => void);
     initial?: ConditionType | null;
+    field?: string; // the field this condition will attach to
+    view?: string; // the view this condition will attach to
 }
 
 const EMPTY_FIELD_CONDITION = {operator: 'equal', field: '', value: ''};
@@ -72,7 +74,9 @@ export const ConditionModal = (props: ConditionProps & {label: string}) => {
          >
             <ConditionControl 
                 initial={props.initial} 
-                onChange={props.onChange} />
+                onChange={props.onChange}
+                field={props.field}
+                view={props.view}/>
 
             <Button onClick={() => setOpen(false)}>Close</Button>
          </Dialog>
@@ -127,12 +131,6 @@ export const ConditionControl = (props: ConditionProps) => {
     const [condition, setCondition] = useState<ConditionType | null>(initial);
 
     const conditionChanged = (condition: ConditionType | null) => {
-        console.log('ConditionControl Changed', condition);
-        // if (condition === null) {
-        //     setCondition(EMPTY_FIELD_CONDITION)
-        // } else {
-        //    setCondition(condition);
-        // }
         setCondition(condition);
         if (props.onChange !== undefined) props.onChange(condition);
     }
@@ -144,9 +142,17 @@ export const ConditionControl = (props: ConditionProps) => {
         return (
             <Stack direction="row" spacing={2} sx={{border: '1px dashed grey', padding: '10px'}}>
                 {isBoolean ?
-                    (<BooleanConditionControl onChange={conditionChanged} initial={condition} />)
+                    (<BooleanConditionControl 
+                        onChange={conditionChanged} 
+                        initial={condition}
+                        field={props.field}
+                        view={props.view} />)
                     :
-                    (<FieldConditionControl onChange={conditionChanged} initial={condition} />)
+                    (<FieldConditionControl 
+                        onChange={conditionChanged} 
+                        initial={condition}
+                        field={props.field}
+                        view={props.view} />)
                 }
             </Stack>
         )
@@ -165,7 +171,6 @@ const BooleanConditionControl = (props: ConditionProps) => {
     }
 
     const updateCondition = (condition: ConditionType | null) => {
-        console.log('updateCondition', condition);
         setCondition(condition);
         if (condition && props.onChange && 
             condition.operator && condition.conditions) {
@@ -176,7 +181,6 @@ const BooleanConditionControl = (props: ConditionProps) => {
     // callback for each condition inside the boolean
     const conditionCallback = (index: number) => {
         return (value: ConditionType | null) => {
-            console.log('conditionCallback', index, value)
             if (condition && condition.conditions) {
                 if (value === null) {
                     const newConditions = condition.conditions.filter((_v: ConditionType, i: number) => {
@@ -228,7 +232,12 @@ const BooleanConditionControl = (props: ConditionProps) => {
                         {condition.conditions ? 
                             condition.conditions.map((cond: ConditionType, index: number) => 
                             (
-                                <ConditionControl key={index} onChange={conditionCallback(index)} initial={cond}/>
+                                <ConditionControl 
+                                    key={index} 
+                                    onChange={conditionCallback(index)} 
+                                    initial={cond}
+                                    field={props.field}
+                                    view={props.view}/>
                             ))
                             : (<div></div>)
                         }
@@ -278,6 +287,17 @@ const FieldConditionControl = (props: ConditionProps) => {
     const [condition, setCondition] = useState(initialValue);
 
     const allFields = useAppSelector((state: Notebook) => state['ui-specification'].fields);
+    const views = useAppSelector((state: Notebook) => state['ui-specification'].fviews);
+
+    // work out which fields to show in the select, remove either 
+    // the current field or the fields in the current view
+    let selectFields = Object.keys(allFields);
+    if (props.field) {
+        selectFields = selectFields.filter(f => f !== props.field);
+    } else if (props.view) {
+        const view = views[props.view];
+        selectFields = selectFields.filter(f => view.fields.indexOf(f) < 0)
+    }
 
     const updateField = (value: string) => {
         updateCondition({...condition, field: value});
@@ -315,13 +335,13 @@ const FieldConditionControl = (props: ConditionProps) => {
 
     return (
         <Grid container>
-            <Stack 
+            <Stack
               direction="row" 
               spacing={2} 
               divider={<Divider orientation="vertical" flexItem />}
               justifyContent="space-evenly"
             >
-                <FormControl sx={{ minWidth: 200 }}>
+                <FormControl sx={{ minWidth: 200 }} data-testid="field-input">
                     <InputLabel id="field">Field</InputLabel>
                     <Select
                         labelId="field"
@@ -329,7 +349,7 @@ const FieldConditionControl = (props: ConditionProps) => {
                         onChange={(e) => updateField(e.target.value)}
                         value={condition.field}
                     >
-                        {Object.keys(allFields).map((fieldId) => {
+                        {selectFields.map((fieldId) => {
                             return (
                                 <MenuItem key={fieldId} value={fieldId}>
                                     {getFieldLabel(allFields[fieldId])}
@@ -339,7 +359,7 @@ const FieldConditionControl = (props: ConditionProps) => {
                         }
                     </Select>
                 </FormControl>
-                <FormControl sx={{ minWidth: 200 }}>
+                <FormControl sx={{ minWidth: 200 }} data-testid="operator-input">
                     <InputLabel id="operator">Operator</InputLabel>
                     <Select
                         labelId="operator"
@@ -357,7 +377,7 @@ const FieldConditionControl = (props: ConditionProps) => {
                     }
                     </Select>
                 </FormControl>
-                <FormControl sx={{ minWidth: 200 }}>
+                <FormControl sx={{ minWidth: 200 }} data-testid="value-input">
                     <TextField 
                       variant="outlined"
                       label="Value"
@@ -365,12 +385,12 @@ const FieldConditionControl = (props: ConditionProps) => {
                       onChange={(e) => updateValue(e.target.value)} />
                 </FormControl>
                 <Tooltip describeChild title="Make this an 'and' or 'or' condition">
-                    <IconButton color='primary' onClick={addCondition}>
+                    <IconButton color='primary' onClick={addCondition} data-testid="split-button">
                         <SplitscreenIcon/>
                     </IconButton>
                 </Tooltip>
                 <Tooltip describeChild title="Remove this condition">
-                    <IconButton color='secondary' onClick={deleteCondition}>
+                    <IconButton color='secondary' onClick={deleteCondition} data-testid="delete-button">
                         <RemoveCircleIcon/>
                     </IconButton>
                 </Tooltip>
