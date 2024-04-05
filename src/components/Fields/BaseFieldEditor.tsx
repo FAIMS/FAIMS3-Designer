@@ -27,7 +27,7 @@ type StateType = {
     label?: string,
     helperText: string,
     required: boolean,
-    persistent: boolean;
+    persistent: boolean,
     annotation: boolean,
     annotationLabel: string,
     uncertainty: boolean,
