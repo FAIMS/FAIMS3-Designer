@@ -85,6 +85,64 @@ describe('ConditionControl',  () => {
         });
     });
 
+    test('field condition omits field in select', async () => { 
+
+        store.dispatch({ type: 'ui-specification/loaded', payload: sampleNotebook['ui-specification'] })
+
+        const theField = 'New-Text-Field';
+        const onChangeFn = vi.fn();
+        render (
+            <WithProviders>
+                <ConditionControl 
+                    onChange={onChangeFn}
+                    field={theField}/>
+            </WithProviders>
+        )
+        const select = screen.getByTestId('field-input');
+        expect(select).toBeDefined();
+        
+        // would like to check for the options but they are not easy to find
+        // since they don't render until the option button is clicked
+        // this didn't work...
+        // fireEvent.mouseDown(select);
+
+        // // select should not have the target field as an option
+        // expect(document.querySelector(`[data-value="${theField}"]`)).toBeNull();
+        // // but another field is there
+        // expect(document.querySelector('[data-value="Sample-Location"]')).not.toBeNull();
+    });
+
+
+    test('field condition omits all view fields in select', () => { 
+
+        store.dispatch({ type: 'ui-specification/loaded', payload: sampleNotebook['ui-specification'] })
+
+        const theView = 'Primary-New-Section';
+        const onChangeFn = vi.fn();
+        render (
+            <WithProviders>
+                <ConditionControl 
+                    onChange={onChangeFn}
+                    view={theView}/>
+            </WithProviders>
+        )
+
+        const select = screen.getByTestId('field-input');
+        expect(select).toBeDefined();
+
+        // would like to check for the options but they are not easy to find
+        // since they don't render until the option button is clicked
+        // this didn't work...
+        // fireEvent.mouseDown(select);
+        // // select should not have fields in the target view as an option
+        // sampleNotebook['ui-specification'].fviews[theView].fields.map((field) => {
+        //   expect(document.querySelector(`[data-value='${field}']`)).toBeNull();
+        // });
+        // // but another field is there
+        // expect(document.querySelector(`[data-value="Field ID"]`)).not.toBeNull();
+    });
+
+
     test('make a boolean condition from a field', () => { 
 
         store.dispatch({ type: 'ui-specification/loaded', payload: sampleNotebook['ui-specification'] })

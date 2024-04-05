@@ -171,7 +171,6 @@ const BooleanConditionControl = (props: ConditionProps) => {
     }
 
     const updateCondition = (condition: ConditionType | null) => {
-        console.log('updateCondition', condition);
         setCondition(condition);
         if (condition && props.onChange && 
             condition.operator && condition.conditions) {
@@ -182,7 +181,6 @@ const BooleanConditionControl = (props: ConditionProps) => {
     // callback for each condition inside the boolean
     const conditionCallback = (index: number) => {
         return (value: ConditionType | null) => {
-            console.log('conditionCallback', index, value)
             if (condition && condition.conditions) {
                 if (value === null) {
                     const newConditions = condition.conditions.filter((_v: ConditionType, i: number) => {
