@@ -50,6 +50,7 @@ export type ComponentParameters = {
     related_type_label?: string,
     relation_linked_vocabPair?: [string, string][],
     required?: boolean,
+    persistent?: boolean;
     template?: string,
     num_digits?: number,
     form_id?: string,
