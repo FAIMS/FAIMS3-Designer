@@ -27,6 +27,8 @@ type StateType = {
     label?: string,
     helperText: string,
     required: boolean,
+    persistent: boolean,
+    displayParent: boolean,
     annotation: boolean,
     annotationLabel: string,
     uncertainty: boolean,
@@ -73,6 +75,8 @@ export const BaseFieldEditor = ({ fieldName, children }: Props) => {
         uncertainty: field.meta ? field.meta.uncertainty.include || false : false,
         uncertaintyLabel: field.meta ? field.meta.uncertainty.label || '' : '',
         condition: field.condition,
+        persistent: field.persistent || false,
+        displayParent: field.displayParent || false,
     };
 
     const updateFieldFromState = (newState: StateType) => {
@@ -93,6 +97,17 @@ export const BaseFieldEditor = ({ fieldName, children }: Props) => {
             newField.condition = newState.condition;
         else
             newField.condition = null;
+
+        if (newState.persistent) 
+            newField.persistent = newState.persistent;
+        else
+            newField.persistent = false;
+
+        if (newState.displayParent) 
+            newField.displayParent = newState.displayParent;
+        else
+            newField.displayParent = false;        
+        
         updateField(fieldName, newField);
     };
 
@@ -215,8 +230,39 @@ export const BaseFieldEditor = ({ fieldName, children }: Props) => {
                             <ConditionTranslation condition={state.condition}/></Alert>)
                         : (<></>)}
             </Grid>
-                </Card>
+
+            <Grid container p={2} columnSpacing={1} rowSpacing={1}>
+                <Grid item xs={12} sm={6}>
+                    <FormControlLabel
+                        control={
+                        <Checkbox
+                            checked={state.persistent}
+                            onChange={(e) =>
+                            updateProperty("persistent", e.target.checked)
+                            }
+                        />
+                        }
+                        label="Copy this field value to new records of this type"
+                    />
+                </Grid> 
+                <Grid item xs={12} sm={6}>
+                    <FormControlLabel
+                        control={
+                        <Checkbox
+                            checked={state.displayParent}
+                            onChange={(e) =>
+                            updateProperty("displayParent", e.target.checked)
+                            }
+                        />
+                        }
+                        label="Display this field in any parent record"
+                    />
+                </Grid>  
             </Grid>
+                </Card>
+
+            </Grid>
+                  
         </Grid>
     )
 };
