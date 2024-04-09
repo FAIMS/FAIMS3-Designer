@@ -70,13 +70,13 @@ export const BaseFieldEditor = ({ fieldName, children }: Props) => {
         label: getFieldLabel(),
         helperText: cParams.helperText || "",
         required: cParams.required || false,
-        persistent: cParams.persistent || false,
-        displayParent: cParams.displayParent || false,
         annotation: field.meta ? field.meta.annotation || false : false,
         annotationLabel: field.meta ? field.meta.annotation_label || '' : '',
         uncertainty: field.meta ? field.meta.uncertainty.include || false : false,
         uncertaintyLabel: field.meta ? field.meta.uncertainty.label || '' : '',
         condition: field.condition,
+        persistent: field.persistent || false,
+        displayParent: field.displayParent || false,
     };
 
     const updateFieldFromState = (newState: StateType) => {
@@ -85,8 +85,6 @@ export const BaseFieldEditor = ({ fieldName, children }: Props) => {
             setFieldLabel(newField, newState.label);
         newField['component-parameters'].helperText = newState.helperText;
         newField['component-parameters'].required = newState.required;
-        newField['component-parameters'].persistent = newState.persistent;
-        newField['component-parameters'].displayParent = newState.displayParent;
         if (newField.meta) {
             newField.meta.annotation = newState.annotation;
             newField.meta.annotation_label = newState.annotationLabel || '';
@@ -99,6 +97,17 @@ export const BaseFieldEditor = ({ fieldName, children }: Props) => {
             newField.condition = newState.condition;
         else
             newField.condition = null;
+
+        if (newState.persistent) 
+            newField.persistent = newState.persistent;
+        else
+            newField.persistent = false;
+
+        if (newState.displayParent) 
+            newField.displayParent = newState.displayParent;
+        else
+            newField.displayParent = false;        
+        
         updateField(fieldName, newField);
     };
 

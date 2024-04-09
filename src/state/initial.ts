@@ -50,8 +50,6 @@ export type ComponentParameters = {
     related_type_label?: string,
     relation_linked_vocabPair?: [string, string][],
     required?: boolean,
-    persistent?: boolean,
-    displayParent?: boolean,
     template?: string,
     num_digits?: number,
     form_id?: string,
@@ -79,6 +77,8 @@ export type FieldType = {
     "initialValue"?: unknown,
     "access"?: string[],
     "condition"?: ConditionType | null,
+    "persistent"?: boolean,
+    "displayParent"?: boolean,
     "meta"?: {
         "annotation_label": string,
         "annotation": boolean,
