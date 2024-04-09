@@ -234,7 +234,6 @@ export const BaseFieldEditor = ({ fieldName, children }: Props) => {
             <Grid container p={2} columnSpacing={1} rowSpacing={1}>
                 <Grid item xs={12} sm={6}>
                     <FormControlLabel
-                        required
                         control={
                         <Checkbox
                             checked={state.persistent}
@@ -243,12 +242,11 @@ export const BaseFieldEditor = ({ fieldName, children }: Props) => {
                             }
                         />
                         }
-                        label="Make Persistent"
+                        label="Copy this field value to new records of this type"
                     />
                 </Grid> 
                 <Grid item xs={12} sm={6}>
                     <FormControlLabel
-                        required
                         control={
                         <Checkbox
                             checked={state.displayParent}
@@ -257,7 +255,7 @@ export const BaseFieldEditor = ({ fieldName, children }: Props) => {
                             }
                         />
                         }
-                        label="Display Parent"
+                        label="Display this field in any parent record"
                     />
                 </Grid>  
             </Grid>
