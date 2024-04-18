@@ -12,19 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { TabContext, TabList, TabPanel } from "@mui/lab";
+import { TabContext, TabList } from "@mui/lab";
 import { Box, Tab, Typography, AppBar, Toolbar } from "@mui/material";
 
-import { useState, useCallback } from "react";
+import { useCallback } from "react";
 import { InfoPanel } from "./info-panel";
 import { DesignPanel } from "./design-panel";
 import { ReviewPanel } from './review-panel';
 import { useAppDispatch } from '../state/hooks';
 import { Notebook } from '../state/initial';
 import { NotebookLoader } from "./notebook-loader";
+import { Link, Route, Routes, useLocation, useNavigate } from "react-router-dom";
 
 export const NotebookEditor = () => {
-
+   
     const dispatch = useAppDispatch();
 
     const loadNotebook = useCallback((notebook: Notebook) => {
@@ -32,15 +33,12 @@ export const NotebookEditor = () => {
         dispatch({ type: 'ui-specification/loaded', payload: notebook['ui-specification'] })
     }, [dispatch]);
 
-    const [tabNumber, setTabNumber] = useState(0);
+    const navigate = useNavigate();
+    const { pathname } = useLocation();
 
     const goToFirstTab = () => {
-        setTabNumber(1);
+        navigate("/info");
     }
-
-    const handleChange = (_event: React.SyntheticEvent, newValue: number) => {
-        setTabNumber(newValue);
-    };
 
     return (
         <>
@@ -60,23 +58,24 @@ export const NotebookEditor = () => {
                 <Typography variant="h1">Notebook Editor</Typography>
 
                 <Box pt={2}>
-                    <TabContext value={tabNumber.toString()}>
+                    <TabContext value={pathname}>
                         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-                            <TabList onChange={handleChange} aria-label="lab API tabs example">
-                                <Tab label="Start" value="0" />
-                                <Tab label="Info" value="1" />
-                                <Tab label="Design" value="3" />
-                                <Tab label="Export" value="4" />
+                            <TabList aria-label="lab API tabs example">
+                                <Tab label="Start" component={Link} to="/" value="/" />
+                                <Tab label="Info" component={Link} to="/info" value="/info" />
+                                <Tab label="Design" component={Link} to="/design" value="/design" />
+                                <Tab label="Export" component={Link} to="/export" value="/export" />
                             </TabList>
                         </Box>
-                        
-                        <TabPanel value="0"><NotebookLoader loadFn={loadNotebook} afterLoad={goToFirstTab} /></TabPanel>
-                        <TabPanel value="1"><InfoPanel /></TabPanel>
-                        <TabPanel value="3"><DesignPanel /></TabPanel>
-                        <TabPanel value="4"><ReviewPanel /></TabPanel>
-
                     </TabContext>
                 </Box>
+
+                <Routes>
+                    <Route path="/" element={<NotebookLoader loadFn={loadNotebook} afterLoad={goToFirstTab} />} />
+                    <Route path="/info" element={<InfoPanel />} />
+                    <Route path="/design" element={<DesignPanel />} />
+                    <Route path="/export" element={<ReviewPanel />} />
+                </Routes>
             </Box>
         </>
     );
