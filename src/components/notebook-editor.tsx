@@ -12,34 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { TabContext, TabList } from "@mui/lab";
+import { TabContext, TabList} from "@mui/lab";
 import { Box, Tab, Typography, AppBar, Toolbar } from "@mui/material";
-
-import { useCallback } from "react";
-import { InfoPanel } from "./info-panel";
-import { DesignPanel } from "./design-panel";
-import { ReviewPanel } from './review-panel';
-import { useAppDispatch } from '../state/hooks';
-import { Notebook } from '../state/initial';
-import { NotebookLoader } from "./notebook-loader";
-import { Link, Route, Routes, useLocation, useNavigate } from "react-router-dom";
+import { Link, Outlet, useLocation } from "react-router-dom";
 
 export const NotebookEditor = () => {
-   
-    const dispatch = useAppDispatch();
 
-    const loadNotebook = useCallback((notebook: Notebook) => {
-        dispatch({ type: 'metadata/loaded', payload: notebook.metadata })
-        dispatch({ type: 'ui-specification/loaded', payload: notebook['ui-specification'] })
-    }, [dispatch]);
-
-    const navigate = useNavigate();
     const { pathname } = useLocation();
-
-    const goToFirstTab = () => {
-        navigate("/info");
-    }
-
     return (
         <>
             <Box sx={{ flexGrow: 1 }}>
@@ -67,15 +46,9 @@ export const NotebookEditor = () => {
                                 <Tab label="Export" component={Link} to="/export" value="/export" />
                             </TabList>
                         </Box>
+                        <Outlet />
                     </TabContext>
                 </Box>
-
-                <Routes>
-                    <Route path="/" element={<NotebookLoader loadFn={loadNotebook} afterLoad={goToFirstTab} />} />
-                    <Route path="/info" element={<InfoPanel />} />
-                    <Route path="/design" element={<DesignPanel />} />
-                    <Route path="/export" element={<ReviewPanel />} />
-                </Routes>
             </Box>
         </>
     );
