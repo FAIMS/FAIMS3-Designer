@@ -22,8 +22,11 @@ import { useAppDispatch, useAppSelector } from "../state/hooks";
 import { FormEditor } from "./form-editor";
 import { shallowEqual } from "react-redux";
 import { Notebook } from "../state/initial";
+import { Link, Route, Routes, useNavigate } from "react-router-dom";
 
 export const DesignPanel = () => {
+
+    const navigate = useNavigate();
 
     const viewSets = useAppSelector((state: Notebook) => state['ui-specification'].viewsets, shallowEqual);
     const visibleTypes: string[] = useAppSelector((state: Notebook) => state['ui-specification'].visible_types)
@@ -94,6 +97,7 @@ export const DesignPanel = () => {
         try {
             dispatch({ type: 'ui-specification/viewSetAdded', payload: { formName: newFormName } });
             setTabIndex(`${visibleTypes.length}`);
+            navigate(`${tabIndex}`)
             setAlertMessage('');
         }
         catch (error: unknown) {
@@ -134,7 +138,7 @@ export const DesignPanel = () => {
                 >
                     {visibleTypes.map((form: string, index: number) => {
                         return (
-                            <Tab key={index} value={`${index}`} label={`Form: ${viewSets[form].label}`}
+                            <Tab component={Link} to={`${index}`} key={index} value={`${index}`} label={`Form: ${viewSets[form].label}` }
                                 sx={{
                                     '&.MuiTab-root': {
                                         backgroundColor: '#F9FAFB',
@@ -160,7 +164,7 @@ export const DesignPanel = () => {
                     {untickedForms.map((form: string, index: number) => {
                         const startIndex: number = index + visibleTypes.length;
                         return (
-                            <Tab key={startIndex} value={`${startIndex}`} label={`Form: ${viewSets[form].label}`}
+                            <Tab component={Link} to={`${startIndex}`} key={startIndex} value={`${startIndex}`} label={`Form: ${viewSets[form].label}`}
                                 sx={{
                                     '&.MuiTab-root': {
                                         backgroundColor: '#F9FAFB',
@@ -184,7 +188,7 @@ export const DesignPanel = () => {
                             />
                         )
                     })}
-                    <Tab key={maxKeys} value={maxKeys.toString()} icon={<AddIcon />}
+                    <Tab component={Link} to="/design/new-form" key={maxKeys} value={maxKeys.toString()} icon={<AddIcon />}
                         sx={{
                             '&.MuiTab-root': {
                                 backgroundColor: '#F9FAFB',
@@ -211,29 +215,29 @@ export const DesignPanel = () => {
 
             {visibleTypes.map((form: string, index: number) => {
                 return (
-                    <TabPanel key={index} value={`${index}`} sx={{ paddingX: 0 }}>
-                        <FormEditor
+                    <Routes key={index}>
+                        <Route path={`${index}`} element={<FormEditor
                             viewSetId={form}
                             moveCallback={moveForm}
                             moveButtonsDisabled={false}
                             handleChangeCallback={handleCheckboxTabChange}
                             handleDeleteCallback={handleDeleteFormTabChange}
-                        />
-                    </TabPanel>
+                        />}/>
+                    </Routes>
                 )
             })}
             {untickedForms.map((form: string, index: number) => {
                 const startIndex: number = index + visibleTypes.length;
                 return (
-                    <TabPanel key={startIndex} value={`${startIndex}`} sx={{ paddingX: 0 }}>
-                        <FormEditor
+                    <Routes key={startIndex}>
+                        <Route path={`${startIndex}`} element={<FormEditor
                             viewSetId={form}
                             moveCallback={moveForm}
-                            moveButtonsDisabled={true}
+                            moveButtonsDisabled={false}
                             handleChangeCallback={handleCheckboxTabChange}
                             handleDeleteCallback={handleDeleteFormTabChange}
-                        />
-                    </TabPanel>
+                        />}/>
+                    </Routes>
                 )
             })}
             <TabPanel key={maxKeys} value={maxKeys.toString()}>
