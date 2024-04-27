@@ -18,12 +18,40 @@ import { store } from './state/store';
 import { Provider } from 'react-redux';
 import { ThemeProvider } from "@mui/material/styles";
 import globalTheme from "./theme/index";
+import { RouterProvider, createBrowserRouter } from 'react-router-dom';
+import { InfoPanel } from './components/info-panel';
+import { DesignPanel } from './components/design-panel';
+import { ReviewPanel } from './components/review-panel';
+import { NotebookLoader } from './components/notebook-loader';
+
+const router = createBrowserRouter([
+  {path: "/",
+    element:<NotebookEditor />,
+    children: [
+      {
+        index: true,
+        element: <NotebookLoader />,
+      },
+      {
+        path: "info",
+        element: <InfoPanel />,
+      },
+      {
+        path: "design/*", element: <DesignPanel />,
+      },
+      {
+        path: "export",
+        element: <ReviewPanel />,
+      },
+    ],
+  },
+]);
 
 function App() {
   return (
     <ThemeProvider theme={globalTheme}>
       <Provider store={store}>
-        <NotebookEditor />
+        <RouterProvider router={router}/>
       </Provider>
     </ThemeProvider>
   )
