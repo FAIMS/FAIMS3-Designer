@@ -74,6 +74,7 @@ export const DesignPanel = () => {
                 // not to the "+" tab
                 // this is scenario 2, see PR
                 setTabIndex(`${visibleTypes.length + untickedForms.length - 2}`);
+                navigate(`${parseInt(tabIndex) - 1}`);
             }
         }
 
@@ -83,11 +84,13 @@ export const DesignPanel = () => {
             // scenario 1
             if (visibleTypes.indexOf(viewSetID) === visibleTypes.length - 1 && visibleTypes.length > 1) {
                 setTabIndex(`${visibleTypes.length - 2}`);
+                navigate(`${parseInt(tabIndex) - 1}`);
             }
 
             // scenario 3
             if (visibleTypes.length === 1) {
                 setTabIndex(`${maxKeys - 1}`);
+                navigate("new-form");
             }
         }
     }
@@ -110,7 +113,7 @@ export const DesignPanel = () => {
         if (moveDirection === 'left') {
             dispatch({ type: 'ui-specification/viewSetMoved', payload: { viewSetId: viewSetID, direction: 'left' } });
             setTabIndex(`${parseInt(tabIndex) - 1}`);
-              navigate(`${parseInt(tabIndex) - 1}`);
+            navigate(`${parseInt(tabIndex) - 1}`);
         }
         else {
             dispatch({ type: 'ui-specification/viewSetMoved', payload: { viewSetId: viewSetID, direction: 'right' } });
