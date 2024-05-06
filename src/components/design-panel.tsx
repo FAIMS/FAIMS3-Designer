@@ -110,10 +110,12 @@ export const DesignPanel = () => {
         if (moveDirection === 'left') {
             dispatch({ type: 'ui-specification/viewSetMoved', payload: { viewSetId: viewSetID, direction: 'left' } });
             setTabIndex(`${parseInt(tabIndex) - 1}`);
+              navigate(`${parseInt(tabIndex) - 1}`);
         }
         else {
             dispatch({ type: 'ui-specification/viewSetMoved', payload: { viewSetId: viewSetID, direction: 'right' } });
             setTabIndex(`${parseInt(tabIndex) + 1}`);
+            navigate(`${parseInt(tabIndex) + 1}`);
         }
     }
 
@@ -213,33 +215,33 @@ export const DesignPanel = () => {
                 </Tabs>
             </Box>
 
-            {visibleTypes.map((form: string, index: number) => {
-                return (
-                    <Routes key={index}>
-                        <Route path={`${index}`} element={<FormEditor
-                            viewSetId={form}
-                            moveCallback={moveForm}
-                            moveButtonsDisabled={false}
-                            handleChangeCallback={handleCheckboxTabChange}
-                            handleDeleteCallback={handleDeleteFormTabChange}
-                        />}/>
-                    </Routes>
-                )
-            })}
-            {untickedForms.map((form: string, index: number) => {
-                const startIndex: number = index + visibleTypes.length;
-                return (
-                    <Routes key={startIndex}>
-                        <Route path={`${startIndex}`} element={<FormEditor
-                            viewSetId={form}
-                            moveCallback={moveForm}
-                            moveButtonsDisabled={false}
-                            handleChangeCallback={handleCheckboxTabChange}
-                            handleDeleteCallback={handleDeleteFormTabChange}
-                        />}/>
-                    </Routes>
-                )
-            })}
+            <Routes >
+                {visibleTypes.map((form: string, index: number) => {
+                    return (
+                            <Route key={index} path={`${index}`} element={<FormEditor
+                                viewSetId={form}
+                                moveCallback={moveForm}
+                                moveButtonsDisabled={false}
+                                handleChangeCallback={handleCheckboxTabChange}
+                                handleDeleteCallback={handleDeleteFormTabChange}
+                            />}/>
+                    )
+                })}
+            </Routes>
+                  
+            <Routes >
+                {untickedForms.map((form: string, index: number) => {
+                    const startIndex: number = index + visibleTypes.length;
+                    return (
+                            <Route key={startIndex} path={`${startIndex}`} element={<FormEditor
+                                viewSetId={form}
+                                moveCallback={moveForm}
+                                moveButtonsDisabled={true}
+                                handleChangeCallback={handleCheckboxTabChange}
+                                handleDeleteCallback={handleDeleteFormTabChange}
+                            />}/>                    )
+                })}
+            </Routes>
             <TabPanel key={maxKeys} value={maxKeys.toString()}>
                 <Grid container spacing={2} pt={3}>
                     <Grid item xs={12} sm={6}>
