@@ -51,13 +51,13 @@ export const DesignPanel = () => {
             // add form to the array of unticked forms (the form has already been removed from visible_types at this point)
             setUntickedForms([...untickedForms, viewSetID]);
             // ensure the tab index jumps to the end of all the tabs
-            setTabIndex(`${maxKeys - 1}`);
+            setIndexAndNavigate(`${maxKeys - 1}`);
         }
         else {
             // filter the form out of the array of unticked forms (the form has already been re-added to visible_types at this point)
             setUntickedForms(untickedForms.filter((untickedForm) => untickedForm !== viewSetID));
             // ensure the tab index jumps somewhat intuitively
-            setTabIndex(`${visibleTypes.length}`);
+            setIndexAndNavigate(`${visibleTypes.length}`);
         }
     }
 
@@ -73,8 +73,7 @@ export const DesignPanel = () => {
                 // that is, jump to the second to last unticked form
                 // not to the "+" tab
                 // this is scenario 2, see PR
-                setTabIndex(`${visibleTypes.length + untickedForms.length - 2}`);
-                navigate(`${parseInt(tabIndex) - 1}`);
+                setIndexAndNavigate(`${visibleTypes.length + untickedForms.length - 2}`);
             }
         }
 
@@ -83,14 +82,12 @@ export const DesignPanel = () => {
 
             // scenario 1
             if (visibleTypes.indexOf(viewSetID) === visibleTypes.length - 1 && visibleTypes.length > 1) {
-                setTabIndex(`${visibleTypes.length - 2}`);
-                navigate(`${parseInt(tabIndex) - 1}`);
+                setIndexAndNavigate(`${visibleTypes.length - 2}`);
             }
 
             // scenario 3
             if (visibleTypes.length === 1) {
-                setTabIndex(`${maxKeys - 1}`);
-                navigate(`${parseInt(tabIndex)}`);
+                setIndexAndNavigate(`${maxKeys - 1}`);
             }
         }
     }
@@ -99,8 +96,7 @@ export const DesignPanel = () => {
         setAlertMessage('');
         try {
             dispatch({ type: 'ui-specification/viewSetAdded', payload: { formName: newFormName } });
-            setTabIndex(`${visibleTypes.length}`);
-            navigate(`${tabIndex}`)
+            setIndexAndNavigate(`${visibleTypes.length}`);
             setAlertMessage('');
         }
         catch (error: unknown) {
@@ -112,16 +108,18 @@ export const DesignPanel = () => {
     const moveForm = (viewSetID: string, moveDirection: 'left' | 'right') => {
         if (moveDirection === 'left') {
             dispatch({ type: 'ui-specification/viewSetMoved', payload: { viewSetId: viewSetID, direction: 'left' } });
-            setTabIndex(`${parseInt(tabIndex) - 1}`);
-            navigate(`${parseInt(tabIndex) - 1}`);
+            setIndexAndNavigate(`${parseInt(tabIndex) - 1}`);
         }
         else {
             dispatch({ type: 'ui-specification/viewSetMoved', payload: { viewSetId: viewSetID, direction: 'right' } });
-            setTabIndex(`${parseInt(tabIndex) + 1}`);
-            navigate(`${parseInt(tabIndex) + 1}`);
+            setIndexAndNavigate(`${parseInt(tabIndex) + 1}`);
         }
     }
 
+    const setIndexAndNavigate = (index: string) => {
+        setTabIndex(index);
+        navigate(index);
+    }
 
     return (
         <TabContext value={tabIndex}>
