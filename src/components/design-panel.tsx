@@ -22,17 +22,19 @@ import { useAppDispatch, useAppSelector } from "../state/hooks";
 import { FormEditor } from "./form-editor";
 import { shallowEqual } from "react-redux";
 import { Notebook } from "../state/initial";
-import { Link, Route, Routes, useNavigate } from "react-router-dom";
+import { Link, Route, Routes, useLocation, useNavigate } from "react-router-dom";
 
 export const DesignPanel = () => {
 
     const navigate = useNavigate();
+    const { pathname } = useLocation();
 
     const viewSets = useAppSelector((state: Notebook) => state['ui-specification'].viewsets, shallowEqual);
     const visibleTypes: string[] = useAppSelector((state: Notebook) => state['ui-specification'].visible_types)
     const dispatch = useAppDispatch();
 
-    const [tabIndex, setTabIndex] = useState('0');
+    const startTabIndex = pathname.split('/')[2];
+    const [tabIndex, setTabIndex] = useState(startTabIndex);
     const [newFormName, setNewFormName] = useState('New Form');
     const [alertMessage, setAlertMessage] = useState<string>('');
     const [untickedForms, setUntickedForms] = useState<string[]>(Object.keys(viewSets).filter((form) => !visibleTypes.includes(form)));
