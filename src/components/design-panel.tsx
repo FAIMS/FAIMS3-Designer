@@ -230,9 +230,7 @@ export const DesignPanel = () => {
                             />}/>
                     )
                 })}
-            </Routes>
-                  
-            <Routes >
+
                 {untickedForms.map((form: string, index: number) => {
                     const startIndex: number = index + visibleTypes.length;
                     return (
@@ -244,8 +242,7 @@ export const DesignPanel = () => {
                                 handleDeleteCallback={handleDeleteFormTabChange}
                             />}/>                    )
                 })}
-            </Routes>
-            <Routes>
+
                 <Route path={maxKeys.toString()} element={
                     <Grid container spacing={2} pt={3}>
                     <Grid item xs={12} sm={6}>
