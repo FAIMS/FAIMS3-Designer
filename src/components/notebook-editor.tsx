@@ -49,7 +49,9 @@ export const NotebookEditor = () => {
                                 <Tab label="Export" component={Link} to="/export" value="/export" />
                             </TabList>
                         </Box>
-                        <Outlet />
+                        <Box p={3}>
+                            <Outlet />
+                        </Box>
                     </TabContext>
                 </Box>
             </Box>

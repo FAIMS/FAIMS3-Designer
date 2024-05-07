@@ -216,7 +216,7 @@ export const FormEditor = ({ viewSetId, moveCallback, moveButtonsDisabled, handl
 
 
     return (
-        <Grid container spacing={2}>
+        <Grid container spacing={2} pt={3}>
             <Grid container item xs={12} spacing={1.75}>
                 <Grid item xs={12} sm={2}>
                     <Button variant="text" color="error" size="medium" startIcon={<DeleteRoundedIcon />} onClick={deleteConfirmation}>
