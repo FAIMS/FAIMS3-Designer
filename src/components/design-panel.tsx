@@ -16,7 +16,7 @@ import { Alert, Box, Button, Grid, Tab, Tabs, TextField } from "@mui/material";
 
 import AddIcon from '@mui/icons-material/Add';
 
-import { TabContext, TabPanel } from "@mui/lab";
+import { TabContext } from "@mui/lab";
 import { useState } from "react";
 import { useAppDispatch, useAppSelector } from "../state/hooks";
 import { FormEditor } from "./form-editor";
@@ -90,7 +90,7 @@ export const DesignPanel = () => {
             // scenario 3
             if (visibleTypes.length === 1) {
                 setTabIndex(`${maxKeys - 1}`);
-                navigate("new-form");
+                navigate(`${parseInt(tabIndex)}`);
             }
         }
     }
@@ -193,7 +193,7 @@ export const DesignPanel = () => {
                             />
                         )
                     })}
-                    <Tab component={Link} to="/design/new-form" key={maxKeys} value={maxKeys.toString()} icon={<AddIcon />}
+                    <Tab component={Link} to={maxKeys.toString()} key={maxKeys} value={maxKeys.toString()}  icon={<AddIcon />}
                         sx={{
                             '&.MuiTab-root': {
                                 backgroundColor: '#F9FAFB',
@@ -245,8 +245,9 @@ export const DesignPanel = () => {
                             />}/>                    )
                 })}
             </Routes>
-            <TabPanel key={maxKeys} value={maxKeys.toString()}>
-                <Grid container spacing={2} pt={3}>
+            <Routes>
+                <Route path={maxKeys.toString()} element={
+                    <Grid container spacing={2} pt={3}>
                     <Grid item xs={12} sm={6}>
                         <form onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
                             e.preventDefault();
@@ -275,8 +276,8 @@ export const DesignPanel = () => {
                         {alertMessage && <Alert severity="error">{alertMessage}</Alert>}
                     </Grid>
                 </Grid>
-            </TabPanel>
-
+                }/>
+            </Routes>
         </TabContext>
     )
 };
