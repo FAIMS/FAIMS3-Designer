@@ -16,20 +16,25 @@ import { Alert, Box, Button, Grid, Tab, Tabs, TextField } from "@mui/material";
 
 import AddIcon from '@mui/icons-material/Add';
 
-import { TabContext, TabPanel } from "@mui/lab";
+import { TabContext } from "@mui/lab";
 import { useState } from "react";
 import { useAppDispatch, useAppSelector } from "../state/hooks";
 import { FormEditor } from "./form-editor";
 import { shallowEqual } from "react-redux";
 import { Notebook } from "../state/initial";
+import { Link, Route, Routes, useLocation, useNavigate } from "react-router-dom";
 
 export const DesignPanel = () => {
+
+    const navigate = useNavigate();
+    const { pathname } = useLocation();
 
     const viewSets = useAppSelector((state: Notebook) => state['ui-specification'].viewsets, shallowEqual);
     const visibleTypes: string[] = useAppSelector((state: Notebook) => state['ui-specification'].visible_types)
     const dispatch = useAppDispatch();
 
-    const [tabIndex, setTabIndex] = useState('0');
+    const startTabIndex = pathname.split('/')[2];
+    const [tabIndex, setTabIndex] = useState(startTabIndex);
     const [newFormName, setNewFormName] = useState('New Form');
     const [alertMessage, setAlertMessage] = useState<string>('');
     const [untickedForms, setUntickedForms] = useState<string[]>(Object.keys(viewSets).filter((form) => !visibleTypes.includes(form)));
@@ -48,13 +53,13 @@ export const DesignPanel = () => {
             // add form to the array of unticked forms (the form has already been removed from visible_types at this point)
             setUntickedForms([...untickedForms, viewSetID]);
             // ensure the tab index jumps to the end of all the tabs
-            setTabIndex(`${maxKeys - 1}`);
+            setIndexAndNavigate(`${maxKeys - 1}`);
         }
         else {
             // filter the form out of the array of unticked forms (the form has already been re-added to visible_types at this point)
             setUntickedForms(untickedForms.filter((untickedForm) => untickedForm !== viewSetID));
             // ensure the tab index jumps somewhat intuitively
-            setTabIndex(`${visibleTypes.length}`);
+            setIndexAndNavigate(`${visibleTypes.length}`);
         }
     }
 
@@ -70,7 +75,7 @@ export const DesignPanel = () => {
                 // that is, jump to the second to last unticked form
                 // not to the "+" tab
                 // this is scenario 2, see PR
-                setTabIndex(`${visibleTypes.length + untickedForms.length - 2}`);
+                setIndexAndNavigate(`${visibleTypes.length + untickedForms.length - 2}`);
             }
         }
 
@@ -79,12 +84,12 @@ export const DesignPanel = () => {
 
             // scenario 1
             if (visibleTypes.indexOf(viewSetID) === visibleTypes.length - 1 && visibleTypes.length > 1) {
-                setTabIndex(`${visibleTypes.length - 2}`);
+                setIndexAndNavigate(`${visibleTypes.length - 2}`);
             }
 
             // scenario 3
             if (visibleTypes.length === 1) {
-                setTabIndex(`${maxKeys - 1}`);
+                setIndexAndNavigate(`${maxKeys - 1}`);
             }
         }
     }
@@ -93,7 +98,7 @@ export const DesignPanel = () => {
         setAlertMessage('');
         try {
             dispatch({ type: 'ui-specification/viewSetAdded', payload: { formName: newFormName } });
-            setTabIndex(`${visibleTypes.length}`);
+            setIndexAndNavigate(`${visibleTypes.length}`);
             setAlertMessage('');
         }
         catch (error: unknown) {
@@ -105,14 +110,18 @@ export const DesignPanel = () => {
     const moveForm = (viewSetID: string, moveDirection: 'left' | 'right') => {
         if (moveDirection === 'left') {
             dispatch({ type: 'ui-specification/viewSetMoved', payload: { viewSetId: viewSetID, direction: 'left' } });
-            setTabIndex(`${parseInt(tabIndex) - 1}`);
+            setIndexAndNavigate(`${parseInt(tabIndex) - 1}`);
         }
         else {
             dispatch({ type: 'ui-specification/viewSetMoved', payload: { viewSetId: viewSetID, direction: 'right' } });
-            setTabIndex(`${parseInt(tabIndex) + 1}`);
+            setIndexAndNavigate(`${parseInt(tabIndex) + 1}`);
         }
     }
 
+    const setIndexAndNavigate = (index: string) => {
+        setTabIndex(index);
+        navigate(index);
+    }
 
     return (
         <TabContext value={tabIndex}>
@@ -134,7 +143,7 @@ export const DesignPanel = () => {
                 >
                     {visibleTypes.map((form: string, index: number) => {
                         return (
-                            <Tab key={index} value={`${index}`} label={`Form: ${viewSets[form].label}`}
+                            <Tab component={Link} to={`${index}`} key={index} value={`${index}`} label={`Form: ${viewSets[form].label}` }
                                 sx={{
                                     '&.MuiTab-root': {
                                         backgroundColor: '#F9FAFB',
@@ -160,7 +169,7 @@ export const DesignPanel = () => {
                     {untickedForms.map((form: string, index: number) => {
                         const startIndex: number = index + visibleTypes.length;
                         return (
-                            <Tab key={startIndex} value={`${startIndex}`} label={`Form: ${viewSets[form].label}`}
+                            <Tab component={Link} to={`${startIndex}`} key={startIndex} value={`${startIndex}`} label={`Form: ${viewSets[form].label}`}
                                 sx={{
                                     '&.MuiTab-root': {
                                         backgroundColor: '#F9FAFB',
@@ -184,7 +193,7 @@ export const DesignPanel = () => {
                             />
                         )
                     })}
-                    <Tab key={maxKeys} value={maxKeys.toString()} icon={<AddIcon />}
+                    <Tab component={Link} to={maxKeys.toString()} key={maxKeys} value={maxKeys.toString()}  icon={<AddIcon />}
                         sx={{
                             '&.MuiTab-root': {
                                 backgroundColor: '#F9FAFB',
@@ -209,35 +218,33 @@ export const DesignPanel = () => {
                 </Tabs>
             </Box>
 
-            {visibleTypes.map((form: string, index: number) => {
-                return (
-                    <TabPanel key={index} value={`${index}`} sx={{ paddingX: 0 }}>
-                        <FormEditor
-                            viewSetId={form}
-                            moveCallback={moveForm}
-                            moveButtonsDisabled={false}
-                            handleChangeCallback={handleCheckboxTabChange}
-                            handleDeleteCallback={handleDeleteFormTabChange}
-                        />
-                    </TabPanel>
-                )
-            })}
-            {untickedForms.map((form: string, index: number) => {
-                const startIndex: number = index + visibleTypes.length;
-                return (
-                    <TabPanel key={startIndex} value={`${startIndex}`} sx={{ paddingX: 0 }}>
-                        <FormEditor
-                            viewSetId={form}
-                            moveCallback={moveForm}
-                            moveButtonsDisabled={true}
-                            handleChangeCallback={handleCheckboxTabChange}
-                            handleDeleteCallback={handleDeleteFormTabChange}
-                        />
-                    </TabPanel>
-                )
-            })}
-            <TabPanel key={maxKeys} value={maxKeys.toString()}>
-                <Grid container spacing={2} pt={3}>
+            <Routes >
+                {visibleTypes.map((form: string, index: number) => {
+                    return (
+                            <Route key={index} path={`${index}`} element={<FormEditor
+                                viewSetId={form}
+                                moveCallback={moveForm}
+                                moveButtonsDisabled={false}
+                                handleChangeCallback={handleCheckboxTabChange}
+                                handleDeleteCallback={handleDeleteFormTabChange}
+                            />}/>
+                    )
+                })}
+
+                {untickedForms.map((form: string, index: number) => {
+                    const startIndex: number = index + visibleTypes.length;
+                    return (
+                            <Route key={startIndex} path={`${startIndex}`} element={<FormEditor
+                                viewSetId={form}
+                                moveCallback={moveForm}
+                                moveButtonsDisabled={true}
+                                handleChangeCallback={handleCheckboxTabChange}
+                                handleDeleteCallback={handleDeleteFormTabChange}
+                            />}/>                    )
+                })}
+
+                <Route path={maxKeys.toString()} element={
+                    <Grid container spacing={2} pt={3}>
                     <Grid item xs={12} sm={6}>
                         <form onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
                             e.preventDefault();
@@ -266,8 +273,8 @@ export const DesignPanel = () => {
                         {alertMessage && <Alert severity="error">{alertMessage}</Alert>}
                     </Grid>
                 </Grid>
-            </TabPanel>
-
+                }/>
+            </Routes>
         </TabContext>
     )
 };

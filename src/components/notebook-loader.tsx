@@ -17,6 +17,9 @@ import {styled} from '@mui/material/styles';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import {Grid, Button, Typography} from "@mui/material";
 import {initialState, Notebook} from '../state/initial';
+import { useAppDispatch } from '../state/hooks';
+import { useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -29,11 +32,6 @@ const VisuallyHiddenInput = styled('input')({
   whiteSpace: 'nowrap',
   width: 1,
 });
-
-interface Props {
-    loadFn: (notebook: Notebook) => void;
-    afterLoad: () => void;
-}
 
 const validateNotebook = (jsonText: string): Notebook => {
     try {
@@ -57,7 +55,19 @@ const validateNotebook = (jsonText: string): Notebook => {
     }
 };
 
-export const NotebookLoader = ({loadFn, afterLoad}: Props) => {
+export const NotebookLoader = () => {
+
+    const dispatch = useAppDispatch();
+    const navigate = useNavigate();
+
+    const loadFn = useCallback((notebook: Notebook) => {
+        dispatch({ type: 'metadata/loaded', payload: notebook.metadata })
+        dispatch({ type: 'ui-specification/loaded', payload: notebook['ui-specification'] })
+    }, [dispatch]);
+
+    const afterLoad = () =>  {
+        navigate("/info");
+    }
 
     const newNotebook = () => {
         loadFn(initialState);
