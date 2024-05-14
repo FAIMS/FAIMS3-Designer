@@ -15,10 +15,10 @@
 // Component to load a notebook file and initialise the state
 import {styled} from '@mui/material/styles';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
-import {Grid, Button, Typography} from "@mui/material";
+import {Grid, Button, Typography, Dialog, DialogActions, DialogTitle, DialogContentText} from "@mui/material";
 import {initialState, Notebook} from '../state/initial';
-import { useAppDispatch } from '../state/hooks';
-import { useCallback } from 'react';
+import { useAppDispatch, useAppSelector } from '../state/hooks';
+import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const VisuallyHiddenInput = styled('input')({
@@ -59,6 +59,32 @@ export const NotebookLoader = () => {
 
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
+    
+    const viewSets = useAppSelector((state: Notebook) => state['ui-specification'].viewsets);
+    const totalSets = Object.keys(viewSets).length;
+
+    const [open, setOpen] = useState(false);
+    const [alertMsgContext, setAlertMsgContext ] = useState(' ');
+
+    const handleAbandon = () => {
+        setOpen(false);
+        navigate("/export");
+    }
+
+    const handleContinue = () => {
+        setOpen(false);
+        newNotebook();
+    }
+
+    const handleNewNotebook = () => {
+        if(totalSets > 0) {
+            setAlertMsgContext("start a new notebook")
+            setOpen(true);
+        }
+        else {
+            newNotebook();
+        }
+    }
 
     const loadFn = useCallback((notebook: Notebook) => {
         dispatch({ type: 'metadata/loaded', payload: notebook.metadata })
@@ -70,8 +96,8 @@ export const NotebookLoader = () => {
     }
 
     const newNotebook = () => {
-        loadFn(initialState);
-        afterLoad();
+            loadFn(initialState);
+            afterLoad();
     };
 
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -105,13 +131,30 @@ export const NotebookLoader = () => {
             </Grid>
 
             <Grid item xs={12} sm={6}>                           
-                <Button variant="contained" onClick={newNotebook}>
+                <Button variant="contained" onClick={handleNewNotebook}>
                     New Notebook
                 </Button>
                 <Typography variant="body2" color="text.secondary">
                     Create a new notebook from scratch.
                 </Typography>
             </Grid>
+            <Dialog
+                open={open}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description">
+                <DialogTitle id="draggable-dialog-title">
+                    You have unsaved work!
+                </DialogTitle>
+                <DialogContentText id="alert-dialog-title">
+                    You are about to {alertMsgContext}. Are you sure you want to discard your current work?
+                </DialogContentText>
+                <DialogActions>
+                    <Button autoFocus onClick={handleContinue}>
+                        I'm sure
+                    </Button>
+                        <Button onClick={handleAbandon}>Dowload Notebook</Button>
+                    </DialogActions>
+            </Dialog>
         </Grid>
   );
 };
