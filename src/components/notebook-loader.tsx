@@ -15,11 +15,13 @@
 // Component to load a notebook file and initialise the state
 import {styled} from '@mui/material/styles';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
-import {Grid, Button, Typography, Dialog, DialogActions, DialogTitle, DialogContentText} from "@mui/material";
+import {Grid, Button, Typography, Dialog, DialogActions, DialogTitle, DialogContentText, IconButton} from "@mui/material";
 import {initialState, Notebook} from '../state/initial';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
 import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import CloseIcon from '@mui/icons-material/Close';
+import { CloseRounded } from '@mui/icons-material';
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -64,7 +66,9 @@ export const NotebookLoader = () => {
     const totalSets = Object.keys(viewSets).length;
 
     const [open, setOpen] = useState(false);
+    const [alertTitle, setAlertTitle ] = useState(' ');
     const [alertMsgContext, setAlertMsgContext ] = useState(' ');
+    const [alertBtnLabel, setAlertBtnLabel ] = useState(' ');
     const [isUpload, setIsUpload ] = useState(false);
 
     const handleAbandon = () => {
@@ -77,9 +81,15 @@ export const NotebookLoader = () => {
         newNotebook();
     }
 
+    const handleClose = () => {
+        setOpen(false);
+    }
+
     const handleNewNotebook = () => {
         if(totalSets > 0) {
-            setAlertMsgContext("start a new notebook")
+            setAlertTitle("Start a new notebook?")
+            setAlertMsgContext("You have a notebook currently open. Starting a new notebook will overwrite your work.");
+            setAlertBtnLabel("Start New Notebook");
             setOpen(true);
         }
         else {
@@ -90,8 +100,9 @@ export const NotebookLoader = () => {
     const handleUploadFile = () => {
         if(totalSets > 0) {
             setIsUpload(true);
-            console.log("isUpload???:::", isUpload);
-            setAlertMsgContext("upload a notebook")
+            setAlertTitle("Upload a notebook file?")
+            setAlertMsgContext("You have a notebook currently open. Uploading a new file will overwrite your work.");
+            setAlertBtnLabel("Continue Uploading");
             setOpen(true);
         }
     }
@@ -157,28 +168,40 @@ export const NotebookLoader = () => {
                 open={open}
                 aria-labelledby="alert-dialog-title"
                 aria-describedby="alert-dialog-description">
-                <DialogTitle id="draggable-dialog-title">
-                    You have unsaved work!
+                    <DialogTitle id="draggable-dialog-title">
+                    <Typography sx={{ ml: 0, flex: 1 }} variant="h6" component="div">
+                        {alertTitle}
+                    </Typography>
+                    <IconButton
+                        aria-label="close"
+                        onClick={handleClose}
+                        sx={{
+                            position: 'absolute',
+                            right: 8,
+                            top: 8,
+                            color: (theme) => theme.palette.grey[500],
+                        }}
+                    >
+                        <CloseIcon />
+                    </IconButton>
                 </DialogTitle>
-                <DialogContentText id="alert-dialog-title">
-                    You are about to {alertMsgContext}. Are you sure you want to discard your current work?
+                <DialogContentText id="alert-dialog-title" sx={{ p: 3}}>
+                    {alertMsgContext}
                 </DialogContentText>
-                <DialogActions>
+                <DialogActions sx={{ pb: 3, pr: 1, justifyContent: "center"}}>
+                    <Button onClick={handleAbandon} variant="outlined" sx={{ mr: 1}}>Dowload Current Notebook</Button>
                     {isUpload ? (
                         <Button autoFocus
                             component="label" 
-                            variant="contained" 
+                            variant="outlined" 
                             startIcon={<CloudUploadIcon />}>
-                            I'm Sure
+                            {alertBtnLabel}
                             <VisuallyHiddenInput type="file" onChange={handleFileChange} id="file-upload"/>
                         </Button>
                         ) : (
-                        <Button autoFocus onClick={handleContinue}>
-                            I'm sure
-                        </Button>)}
-
-                <Button onClick={handleAbandon}>Dowload Notebook</Button>
-                    
+                        <Button autoFocus onClick={handleContinue} variant="outlined" >
+                            {alertBtnLabel}
+                        </Button>)}     
                 </DialogActions>
             </Dialog>
         </Grid>
