@@ -65,6 +65,7 @@ export const NotebookLoader = () => {
 
     const [open, setOpen] = useState(false);
     const [alertMsgContext, setAlertMsgContext ] = useState(' ');
+    const [isUpload, setIsUpload ] = useState(false);
 
     const handleAbandon = () => {
         setOpen(false);
@@ -83,6 +84,15 @@ export const NotebookLoader = () => {
         }
         else {
             newNotebook();
+        }
+    }
+
+    const handleUploadFile = () => {
+        if(totalSets > 0) {
+            setIsUpload(true);
+            console.log("isUpload???:::", isUpload);
+            setAlertMsgContext("upload a notebook")
+            setOpen(true);
         }
     }
 
@@ -118,11 +128,16 @@ export const NotebookLoader = () => {
     return (
         <Grid container spacing={2} pt={3}>
             <Grid item xs={12} sm={6}>
-                <Button component="label" 
+                <Button
+                        component="label" 
                         variant="contained" 
-                        startIcon={<CloudUploadIcon />}>
+                        startIcon={<CloudUploadIcon />}
+                        onClick={handleUploadFile}
+                >
                     Upload file
-                    <VisuallyHiddenInput type="file" onChange={handleFileChange} />
+                    {totalSets == 0 ? (
+                    <VisuallyHiddenInput type="file" onChange={handleFileChange} id="file-upload"/>
+                    ) : (null)}
                 </Button>
 
                 <Typography variant="body2" color="text.secondary">
@@ -149,11 +164,22 @@ export const NotebookLoader = () => {
                     You are about to {alertMsgContext}. Are you sure you want to discard your current work?
                 </DialogContentText>
                 <DialogActions>
-                    <Button autoFocus onClick={handleContinue}>
-                        I'm sure
-                    </Button>
-                        <Button onClick={handleAbandon}>Dowload Notebook</Button>
-                    </DialogActions>
+                    {isUpload ? (
+                        <Button autoFocus
+                            component="label" 
+                            variant="contained" 
+                            startIcon={<CloudUploadIcon />}>
+                            I'm Sure
+                            <VisuallyHiddenInput type="file" onChange={handleFileChange} id="file-upload"/>
+                        </Button>
+                        ) : (
+                        <Button autoFocus onClick={handleContinue}>
+                            I'm sure
+                        </Button>)}
+
+                <Button onClick={handleAbandon}>Dowload Notebook</Button>
+                    
+                </DialogActions>
             </Dialog>
         </Grid>
   );
