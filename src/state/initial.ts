@@ -66,7 +66,7 @@ export type ComponentParameters = {
     valuetype?: string,
 };
 
-export type ValidationSchemaElement =  (string | number)[];
+export type ValidationSchemaElement =  (string | number | ValidationSchemaElement)[];
 
 export type FieldType = {
     "component-namespace": string,
