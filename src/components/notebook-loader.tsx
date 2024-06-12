@@ -21,6 +21,7 @@ import { useAppDispatch, useAppSelector } from '../state/hooks';
 import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import CloseIcon from '@mui/icons-material/Close';
+import { slugify } from '../state/uiSpec-reducer';
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -60,17 +61,18 @@ export const NotebookLoader = () => {
 
     const dispatch = useAppDispatch();
     const notebookModified = useAppSelector((state: Notebook) => state['ui-specification'].modified);
+    const state = useAppSelector((state: Notebook) => state);
+    const updateSavedState = (savedState: boolean) => {
+        dispatch({type: 'ui-specification/notebookSaved', payload: {savedState}});
+    }
+
     const navigate = useNavigate();
+
     const [open, setOpen] = useState(false);
     const [alertTitle, setAlertTitle ] = useState(' ');
     const [alertMsgContext, setAlertMsgContext ] = useState(' ');
     const [alertBtnLabel, setAlertBtnLabel ] = useState(' ');
     const [isUpload, setIsUpload ] = useState(false);
-
-    const handleAbandon = () => {
-        setOpen(false);
-        navigate("/export");
-    }
 
     const handleContinue = () => {
         setOpen(false);
@@ -133,6 +135,18 @@ export const NotebookLoader = () => {
         }
     };
 
+    const downloadNotebook = () => {
+        const element = document.createElement("a");
+        const file = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
+        element.href = URL.createObjectURL(file);
+        const name = slugify(state.metadata.name as string);
+        element.download = `${name}.json`;
+        document.body.appendChild(element);
+        element.click();
+        setOpen(false);
+        updateSavedState(true);
+    };
+
     return (
         <Grid container spacing={2} pt={3}>
             <Grid item xs={12} sm={6}>
@@ -186,7 +200,7 @@ export const NotebookLoader = () => {
                     {alertMsgContext}
                 </DialogContentText>
                 <DialogActions sx={{ pb: 3, pr: 1, justifyContent: "center"}}>
-                    <Button onClick={handleAbandon} variant="outlined" sx={{ mr: 1}}>Dowload Current Notebook</Button>
+                    <Button onClick={downloadNotebook} variant="outlined" sx={{ mr: 1}}>Save Current Notebook</Button>
                     {isUpload ? (
                         <Button autoFocus
                             component="label" 
