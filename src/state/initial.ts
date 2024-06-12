@@ -90,6 +90,7 @@ export type FieldType = {
 }; 
 
 export type NotebookUISpec = {
+    modified: boolean,
     fields: {[key: string]: FieldType},
     fviews: {[key: string]: {
         "fields": string[],
@@ -112,6 +113,7 @@ export type Notebook = {
 // an empty notebook
 export const initialState: Notebook = {
     "metadata": {
+        "modified": false,
         "notebook_version": "1.0",
         "schema_version": "1.0",
         "name": "",
@@ -127,6 +129,7 @@ export const initialState: Notebook = {
         "sections": {}
     },
     "ui-specification": {
+        "modified": false,
         "fields":{},
         "fviews": {},
         "viewsets": {},
