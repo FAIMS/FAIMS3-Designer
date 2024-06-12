@@ -21,7 +21,6 @@ import { useAppDispatch, useAppSelector } from '../state/hooks';
 import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import CloseIcon from '@mui/icons-material/Close';
-import { CloseRounded } from '@mui/icons-material';
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -60,11 +59,8 @@ const validateNotebook = (jsonText: string): Notebook => {
 export const NotebookLoader = () => {
 
     const dispatch = useAppDispatch();
+    const notebookModified = useAppSelector((state: Notebook) => state['ui-specification'].modified);
     const navigate = useNavigate();
-    
-    const viewSets = useAppSelector((state: Notebook) => state['ui-specification'].viewsets);
-    const totalSets = Object.keys(viewSets).length;
-
     const [open, setOpen] = useState(false);
     const [alertTitle, setAlertTitle ] = useState(' ');
     const [alertMsgContext, setAlertMsgContext ] = useState(' ');
@@ -86,7 +82,8 @@ export const NotebookLoader = () => {
     }
 
     const handleNewNotebook = () => {
-        if(totalSets > 0) {
+        if(notebookModified) {
+            setIsUpload(false)
             setAlertTitle("Start a new notebook?")
             setAlertMsgContext("You have a notebook currently open. Starting a new notebook will overwrite your work.");
             setAlertBtnLabel("Start New Notebook");
@@ -98,7 +95,7 @@ export const NotebookLoader = () => {
     }
 
     const handleUploadFile = () => {
-        if(totalSets > 0) {
+        if(notebookModified) {
             setIsUpload(true);
             setAlertTitle("Upload a notebook file?")
             setAlertMsgContext("You have a notebook currently open. Uploading a new file will overwrite your work.");
@@ -146,7 +143,7 @@ export const NotebookLoader = () => {
                         onClick={handleUploadFile}
                 >
                     Upload file
-                    {totalSets == 0 ? (
+                    {!notebookModified ? (
                     <VisuallyHiddenInput type="file" onChange={handleFileChange} id="file-upload"/>
                     ) : (null)}
                 </Button>
