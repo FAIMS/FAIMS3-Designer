@@ -109,6 +109,7 @@ export const NotebookLoader = () => {
     const loadFn = useCallback((notebook: Notebook) => {
         dispatch({ type: 'metadata/loaded', payload: notebook.metadata })
         dispatch({ type: 'ui-specification/loaded', payload: notebook['ui-specification'] })
+        dispatch({ type: 'ui-specification/notebookSaved', payload: true})
     }, [dispatch]);
 
     const afterLoad = () =>  {
