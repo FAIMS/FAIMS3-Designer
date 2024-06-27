@@ -86,8 +86,10 @@ export const BaseFieldEditor = ({ fieldName, children }: Props) => {
         newField['component-parameters'].helperText = newState.helperText;
         newField['component-parameters'].required = newState.required;
         if (newField.meta) {
-            newField.meta.annotation = newState.annotation;
-            newField.meta.annotation_label = newState.annotationLabel || '';
+            newField.meta.annotation = {
+                include: newState.annotation,
+                label: newState.annotationLabel || '',
+            }
             newField.meta.uncertainty = {
                 include: newState.uncertainty,
                 label: newState.uncertaintyLabel || ''
