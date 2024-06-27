@@ -66,7 +66,7 @@ export type ComponentParameters = {
     valuetype?: string,
 };
 
-export type ValidationSchemaElement =  (string | number)[];
+export type ValidationSchemaElement =  (string | number | ValidationSchemaElement)[];
 
 export type FieldType = {
     "component-namespace": string,
@@ -80,8 +80,11 @@ export type FieldType = {
     "persistent"?: boolean,
     "displayParent"?: boolean,
     "meta"?: {
-        "annotation_label": string,
-        "annotation": boolean,
+        "annotation": boolean | {
+            "include": boolean,
+            "label": string,
+        },
+        "annotation_label"?: boolean,
         "uncertainty": {
             "include" : boolean,
             "label": string,
