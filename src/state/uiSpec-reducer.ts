@@ -42,21 +42,12 @@ export const slugify = (str: string) => {
     return str;
 };
 
-// make sure that the UISpec is up to scratch, upgrade any old 
-// constructs
-const preprocessUISpec = (uiSpec: NotebookUISpec) => {
-
-
-    return uiSpec;
-}
-
-
 export const uiSpecificationReducer = createSlice({
     name: 'ui-specification',
     initialState: initialState["ui-specification"],
     reducers: {
         loaded: (_state, action: PayloadAction<NotebookUISpec>) => {
-            return preprocessUISpec(action.payload);
+            return action.payload;
         },
         fieldUpdated: (state,
             action: PayloadAction<{ fieldName: string, newField: FieldType }>) => {

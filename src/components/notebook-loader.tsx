@@ -20,6 +20,7 @@ import {initialState, Notebook} from '../state/initial';
 import { useAppDispatch } from '../state/hooks';
 import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { migrateNotebook } from '../state/migrateNotebook';
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -61,8 +62,10 @@ export const NotebookLoader = () => {
     const navigate = useNavigate();
 
     const loadFn = useCallback((notebook: Notebook) => {
-        dispatch({ type: 'metadata/loaded', payload: notebook.metadata })
-        dispatch({ type: 'ui-specification/loaded', payload: notebook['ui-specification'] })
+
+        const updatedNotebook = migrateNotebook(notebook);
+        dispatch({ type: 'metadata/loaded', payload: updatedNotebook.metadata })
+        dispatch({ type: 'ui-specification/loaded', payload: updatedNotebook['ui-specification'] })
     }, [dispatch]);
 
     const afterLoad = () =>  {

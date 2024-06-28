@@ -19,7 +19,7 @@ import { Notebook } from './initial';
 export const loadState = () => {
     try {
         const serializedState = localStorage.getItem('notebook');
-        return serializedState ? JSON.parse(serializedState) : undefined;
+        return serializedState ? JSON.parse(serializedState) as Notebook : undefined;
     } 
     catch (error: unknown) {
         return undefined;

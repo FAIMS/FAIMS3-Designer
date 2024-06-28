@@ -26,6 +26,7 @@ export type ComponentParameters = {
     name?: string,
     id?: string,
     helperText?: string,
+    helpertext?: string, // was allowed for TakePhoto
     variant?: string,
     label?: string,
     multiline?: boolean,
@@ -84,7 +85,7 @@ export type FieldType = {
             "include": boolean,
             "label": string,
         },
-        "annotation_label"?: boolean,
+        "annotation_label"?: string,
         "uncertainty": {
             "include" : boolean,
             "label": string,
