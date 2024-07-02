@@ -42,27 +42,18 @@ export const slugify = (str: string) => {
     return str;
 };
 
-
-
 export const uiSpecificationReducer = createSlice({
     name: 'ui-specification',
-    initialState: initialState["ui-specification"],
+    initialState: initialState['ui-specification'],
     reducers: {
         loaded: (_state: NotebookUISpec, action: PayloadAction<NotebookUISpec>) => {
             return action.payload;
-        },
-        notebookSaved: (state: NotebookUISpec, action: PayloadAction<{saved: boolean}>) => {
-                const saved = action.payload;
-                if(saved) {
-                    state.modified = false;
-                }
         },
         fieldUpdated: (state: NotebookUISpec,
             action: PayloadAction<{ fieldName: string, newField: FieldType }>) => {
             const { fieldName, newField } = action.payload;
             if (fieldName in state.fields) {
                 state.fields[fieldName] = newField;
-                state.modified = true;
             } else {
                 throw new Error(`Cannot update unknown field ${fieldName} via fieldUpdated action`);
             }
@@ -75,18 +66,15 @@ export const uiSpecificationReducer = createSlice({
             // and moving it up or down one
             const fieldList = state.fviews[viewId].fields;
             for (let i = 0; i < fieldList.length; i++) {
-                // state.modified = true;
                 if (fieldList[i] == fieldName) {
                     if (direction === 'up') {
                         if (i > 0) {
-                            state.modified = true;
                             const tmp = fieldList[i - 1];
                             fieldList[i - 1] = fieldList[i];
                             fieldList[i] = tmp;
                         }
                     } else {
                         if (i < fieldList.length - 1) {
-                            state.modified = true;
                             const tmp = fieldList[i + 1];
                             fieldList[i + 1] = fieldList[i];
                             fieldList[i] = tmp;
@@ -103,7 +91,6 @@ export const uiSpecificationReducer = createSlice({
 
             const { viewId, fieldName, newFieldName } = action.payload;
             if (fieldName in state.fields) {
-                state.modified = true;
                 const field = state.fields[fieldName];
 
                 // ensure newFieldName is unique
@@ -196,7 +183,6 @@ export const uiSpecificationReducer = createSlice({
             // add to fields and to the fview section
             state.fields[fieldLabel] = newField;
             state.fviews[viewId].fields.push(fieldLabel);
-            state.modified = true;
         },
         fieldDeleted: (state: NotebookUISpec,
             action: PayloadAction<{ fieldName: string, viewId: string }>) => {
@@ -206,7 +192,6 @@ export const uiSpecificationReducer = createSlice({
                 delete state.fields[fieldName];
                 const newView = state.fviews[viewId].fields.filter((field) => field !== fieldName);
                 state.fviews[viewId].fields = newView;
-                state.modified = true;
             } else {
                 throw new Error(`Cannot delete unknown field ${fieldName} via fieldDeleted action`);
             }
@@ -216,7 +201,6 @@ export const uiSpecificationReducer = createSlice({
             const { viewId, label } = action.payload;
             if (viewId in state.fviews) {
                 state.fviews[viewId].label = label;
-                state.modified = true;
             } else {
                 throw new Error(`Can't update unknown section ${viewId} via sectionNameUpdated action`);
             }
@@ -234,7 +218,6 @@ export const uiSpecificationReducer = createSlice({
             } else {
                 state.fviews[sectionId] = newSection;
                 state.viewsets[viewSetId].views.push(sectionId);
-                state.modified = true;
             }
         },
         sectionDeleted: (state: NotebookUISpec, action: PayloadAction<{ viewSetID: string, viewID: string }>) => {
@@ -253,7 +236,6 @@ export const uiSpecificationReducer = createSlice({
                 delete state.fviews[viewID];
                 const newViewSetViews = state.viewsets[viewSetID].views.filter((view) => view !== viewID);
                 state.viewsets[viewSetID].views = newViewSetViews;
-                state.modified = true;
             }
         },
         sectionMoved: (state: NotebookUISpec,
@@ -264,7 +246,6 @@ export const uiSpecificationReducer = createSlice({
             // and moving it left or right one
             const viewList = state.viewsets[viewSetId].views;
             for (let i = 0; i < viewList.length; i++) {
-                state.modified = true;
                 if (viewList[i] == viewId) {
                     if (direction === 'left') {
                         if (i > 0) {
@@ -291,7 +272,6 @@ export const uiSpecificationReducer = createSlice({
 
                 if (viewId in state.fviews) {
                     state.fviews[viewId].condition = condition;
-                    state.modified = true;
                 }
         },
         viewSetAdded: (state: NotebookUISpec,
@@ -308,7 +288,6 @@ export const uiSpecificationReducer = createSlice({
             } else {
                 state.viewsets[formID] = newViewSet;
                 state.visible_types.push(formID);
-                state.modified = true;
             }
         },
         viewSetDeleted: (state: NotebookUISpec, action: PayloadAction<{ viewSetId: string }>) => {
@@ -335,7 +314,6 @@ export const uiSpecificationReducer = createSlice({
                 delete state.viewsets[viewSetId];
                 const newVisibleTypes = state.visible_types.filter((field) => field !== viewSetId);
                 state.visible_types = newVisibleTypes;
-                state.modified = true;
             }
         },
         viewSetMoved: (state: NotebookUISpec,
@@ -346,7 +324,6 @@ export const uiSpecificationReducer = createSlice({
             const formsList = state.visible_types;
             // re-order the array
             for (let i = 0; i < formsList.length; i++) {
-                state.modified = true;
                 if (formsList[i] == viewSetId) {
                     if (direction === 'left') {
                         if (i > 0) {
@@ -373,7 +350,6 @@ export const uiSpecificationReducer = createSlice({
             const { viewSetId, label } = action.payload;
             if (viewSetId in state.viewsets) {
                 state.viewsets[viewSetId].label = label;
-                state.modified = true;
             }
         },
         formVisibilityUpdated: (state: NotebookUISpec,
@@ -389,11 +365,10 @@ export const uiSpecificationReducer = createSlice({
                 // I can't figure out how to store the initial index correctly (keeps being -1, which obviously won't work)
                 state.visible_types.splice(state.visible_types.length, 0, viewSetId);
             }
-            state.modified = true;
         },
     }
 })
 
-export const { loaded, fieldUpdated } = uiSpecificationReducer.actions;
+export const { loaded, fieldUpdated, fieldMoved, fieldRenamed, fieldAdded, fieldDeleted, sectionRenamed, sectionAdded, sectionDeleted, sectionMoved, sectionConditionChanged, viewSetAdded, viewSetDeleted, viewSetMoved, viewSetRenamed, formVisibilityUpdated } = uiSpecificationReducer.actions;
 
 export default uiSpecificationReducer.reducer;
