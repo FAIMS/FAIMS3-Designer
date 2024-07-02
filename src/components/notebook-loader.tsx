@@ -60,10 +60,10 @@ const validateNotebook = (jsonText: string): Notebook => {
 export const NotebookLoader = () => {
 
     const dispatch = useAppDispatch();
-    const notebookModified = useAppSelector((state: Notebook) => state['ui-specification'].modified);
+    const notebookModified = useAppSelector((state: Notebook) => state.modifiedStatus.flag);
     const state = useAppSelector((state: Notebook) => state);
-    const updateSavedState = (savedState: boolean) => {
-        dispatch({type: 'ui-specification/notebookSaved', payload: {savedState}});
+    const resetModifiedStatus = (newStatus: boolean) => {
+        dispatch({type: "modifiedStatus/resetFlag", payload: {newStatus}});
     }
 
     const navigate = useNavigate();
@@ -109,7 +109,7 @@ export const NotebookLoader = () => {
     const loadFn = useCallback((notebook: Notebook) => {
         dispatch({ type: 'metadata/loaded', payload: notebook.metadata })
         dispatch({ type: 'ui-specification/loaded', payload: notebook['ui-specification'] })
-        dispatch({ type: 'ui-specification/notebookSaved', payload: true})
+        resetModifiedStatus(false)
     }, [dispatch]);
 
     const afterLoad = () =>  {
@@ -145,7 +145,7 @@ export const NotebookLoader = () => {
         document.body.appendChild(element);
         element.click();
         setOpen(false);
-        updateSavedState(true);
+        resetModifiedStatus(false);
     };
 
     return (
