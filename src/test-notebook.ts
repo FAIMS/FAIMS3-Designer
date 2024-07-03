@@ -330,5 +330,8 @@ export const sampleNotebook:Notebook = {
     "visible_types": [
       "Primary"
     ]
-  }
+  },
+  "modifiedStatus": {
+    flag: false,
+  },
 }
