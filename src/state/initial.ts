@@ -105,7 +105,7 @@ export type NotebookUISpec = {
 }
 
 export type NotebookModified = {
-    flag?: boolean,
+    flag: boolean,
 }
 
 export type Notebook = {
