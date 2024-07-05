@@ -91,7 +91,7 @@ export type FieldType = {
             "label": string,
         }
     }
-}; 
+};
 
 export type NotebookUISpec = {
     fields: {[key: string]: FieldType},

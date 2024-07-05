@@ -18,9 +18,9 @@ import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import {Grid, Button, Typography} from "@mui/material";
 import {initialState, Notebook} from '../state/initial';
 import { useAppDispatch } from '../state/hooks';
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { migrateNotebook } from '../state/migrateNotebook';
+import { ValidationError, migrateNotebook } from '../state/migrateNotebook';
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -42,14 +42,6 @@ const validateNotebook = (jsonText: string): Notebook => {
             throw new Error('Invalid notebook file: not an object');
         }
 
-        if (!Object.prototype.hasOwnProperty.call(data, 'metadata')) {
-            throw new Error('Invalid notebook file: metadata missing');
-        }
-
-        if (!Object.prototype.hasOwnProperty.call(data, 'ui-specification')) {
-            throw new Error('Invalid notebook file: ui-specification missing');
-        }
-
         return data as Notebook;
     } catch (error) {
         throw new Error('Invalid notebook file: not JSON');
@@ -60,12 +52,24 @@ export const NotebookLoader = () => {
 
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
+    const [errors, setErrors] = useState<string[]>([]);
 
     const loadFn = useCallback((notebook: Notebook) => {
-
-        const updatedNotebook = migrateNotebook(notebook);
-        dispatch({ type: 'metadata/loaded', payload: updatedNotebook.metadata })
-        dispatch({ type: 'ui-specification/loaded', payload: updatedNotebook['ui-specification'] })
+        try {
+          const updatedNotebook = migrateNotebook(notebook);
+          dispatch({ type: 'metadata/loaded', payload: updatedNotebook.metadata })
+          dispatch({ type: 'ui-specification/loaded', payload: updatedNotebook['ui-specification'] })
+          return true;
+        } catch (e) {
+            if (e instanceof ValidationError) {
+                console.log('Error >>', e.messages);
+                setErrors(e.messages);
+            } else {
+                console.log("SOME OTHER ERROR", e);
+                setErrors(['unknown error']);
+            }
+            return false;
+        }
     }, [dispatch]);
 
     const afterLoad = () =>  {
@@ -80,14 +84,14 @@ export const NotebookLoader = () => {
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.item(0);
         if (file) {
+            setErrors([]);
             file.text()
                 .then(text => {
                     const data = validateNotebook(text);
-                    loadFn(data);
-                    afterLoad();
+                    if (loadFn(data))  afterLoad();
                 })
-            .catch((error) => {
-            console.error(error); 
+            .catch(({message}) => {
+                setErrors([message]);
             });
         }
     };
@@ -99,12 +103,23 @@ export const NotebookLoader = () => {
                         variant="contained" 
                         startIcon={<CloudUploadIcon />}>
                     Upload file
-                    <VisuallyHiddenInput type="file" onChange={handleFileChange} />
+                    <VisuallyHiddenInput type="file" 
+                        onChange={handleFileChange} 
+                        // below removes the value on click so we can upload the same file again
+                        onClick={(e) => { const element = e.target as HTMLInputElement; element.value = ''; }}/>
                 </Button>
 
-                <Typography variant="body2" color="text.secondary">
-                   Upload a notebook file to start editing.
-                </Typography>
+
+                {errors.length ? 
+                    (<div>
+                         <p>Errors in notebook format:</p> 
+                         <ul>{errors.map(e => (<li key={e}>{e}</li>))}</ul>
+                    </div>
+                    ) : (               
+                    <Typography variant="body2" color="text.secondary">
+                        Upload a notebook file to start editing.
+                    </Typography>)
+                }
             </Grid>
 
             <Grid item xs={12} sm={6}>                           

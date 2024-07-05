@@ -14,10 +14,23 @@
 
 
 import {vi, describe, expect, test } from 'vitest';
-import { migrateNotebook } from './migrateNotebook';
+import { migrateNotebook, validateNotebook } from './migrateNotebook';
 import { sampleNotebook } from '../test-notebook';
 
 describe('Migrate Notebook Tests', () => {
+
+    test('validate notebook', () => {
+        
+        const valid = validateNotebook(sampleNotebook);
+        expect(valid).toBeTruthy();
+
+        const invalidNotebook = {
+            metadata: {},
+            foo: {},
+        }
+        expect(() => validateNotebook(invalidNotebook))
+            .toThrowError("");  // message is empty but errors in .messages
+    });
 
     test('update labels', () => {
 

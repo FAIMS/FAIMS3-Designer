@@ -13,28 +13,69 @@
 // limitations under the License.
 
 import {FieldType, Notebook} from "./initial";
+import _ from "lodash";
+import {Ajv} from "ajv";
+import {schema} from "../notebook-schema";
 
 /**
  * Migrate a notebook to the most recent notebook format
- * @param notebook - a notebook object that may be out of date
+ * @param notebook - a notebook object that may be out of date or not even a notebook
  * @returns an updated version of the same notebook
- * 
- * TODO: type of input is not really a notebook if we update that type
+ * @throws an Error if the notebook is not valid
  */
-export const migrateNotebook = (notebook: Notebook) => {
+export const migrateNotebook = (notebook: unknown) => {
 
-    const notebookCopy = JSON.parse(JSON.stringify(notebook)) as Notebook;  // deep copy
-    // move field labels from old locations to .label
-    updateFieldLabels(notebookCopy);
+    // we should maybe in future have validation against alternate notebook schema versions...
+    const valid = validateNotebook(notebook);
+    // error will be thrown by validateNotebook if invalid, let it go through
 
-    // update format of annotation settings
-    updateAnnotationFormat(notebookCopy);
+    if (valid) {
+        const notebookCopy = JSON.parse(JSON.stringify(notebook)) as Notebook;  // deep copy
 
-    // change `helpertext` in `TakePhoto` to `helperText`
-    updateHelperText(notebookCopy);
+        // move field labels from old locations to .label
+        updateFieldLabels(notebookCopy);
 
-    return notebookCopy;
+        // update format of annotation settings
+        updateAnnotationFormat(notebookCopy);
+
+        // change `helpertext` in `TakePhoto` to `helperText`
+        updateHelperText(notebookCopy);
+
+        return notebookCopy;
+    }
 };
+
+export class ValidationError extends Error {
+    messages: string[];
+
+    constructor(messages: string[]) {
+        super();
+        this.messages = messages;
+    }
+}
+
+/**
+ * 
+ * @param pNB - an object that might be a notebook
+ * @returns a validated Notebook object
+ */
+export const validateNotebook = (n: unknown) => {
+
+    const ajv = new Ajv();
+    const validate = ajv.compile<Notebook>(schema);
+
+    const valid = validate(n);
+    console.log('valid', valid);
+    if (!valid) {
+        if (validate.errors) {
+            console.log("Validation Errors:", validate.errors);
+            const errorTexts = validate.errors.map(e => `${e.instancePath} ${e.message}`);
+            throw new ValidationError(errorTexts);
+        }
+    }
+    return valid;
+}
+
 
 /**
  * Update notebook fields so that labels are directly on component-parameters
