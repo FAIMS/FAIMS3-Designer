@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {FieldType, Notebook} from "./initial";
+import {FieldType, Notebook, PropertyMap} from "./initial";
 import _ from "lodash";
 import {Ajv} from "ajv";
 import {schema} from "../notebook-schema";
@@ -39,6 +39,9 @@ export const migrateNotebook = (notebook: unknown) => {
 
     // change `helpertext` in `TakePhoto` to `helperText`
     updateHelperText(notebookCopy);
+
+    // move any form descriptions from metadata into the fview
+    updateFormSectionMeta(notebookCopy);
 
     return notebookCopy;
 
@@ -166,4 +169,38 @@ const updateHelperText = (notebook: Notebook) => {
     notebook['ui-specification'].fields = fields;
 }
 
+
+
+type StringMap = {
+    [key: string]: string; 
+};
+
+type SectionType = {
+    [key: string]: StringMap 
+};
+
+
+/**
+ * Update a notebook to put form labels in the form section
+ * 
+ * @param notebook A notebook that might be out of date, modified
+ */
+const updateFormSectionMeta = (notebook: Notebook) => {
+
+    const sections = notebook.metadata?.sections as SectionType;
+    const fviews = notebook['ui-specification'].fviews;
+    const prefix = 'sectiondescription';
+
+    if (sections) {
+        for(const sectionId in sections) {
+
+            const description = sections[sectionId][prefix+sectionId] || "";
+
+            if (fviews[sectionId]) {
+                fviews[sectionId].description = description;
+            }
+        }
+        delete notebook.metadata.sections;
+    }
+}
 

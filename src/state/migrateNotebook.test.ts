@@ -60,9 +60,6 @@ describe('Migrate Notebook Tests', () => {
 
     });
 
-
-
-
     test('update helperText', () => {
 
         const migrated = migrateNotebook(sampleNotebook);
@@ -72,6 +69,19 @@ describe('Migrate Notebook Tests', () => {
         expect(fields['Sample-Photograph']['component-parameters'].helpertext).toBe(undefined);
 
         expect(fields['IGSN-QR-Code']['component-parameters'].helperText).toBe('Scan the pre-printed QR Code for this sample.');
+
+    });
+
+
+    test('update form descriptions', () => {
+
+        const migrated = migrateNotebook(sampleNotebook);
+        const fviews = migrated['ui-specification'].fviews; 
+
+        expect(fviews['Primary-New-Section'].description).toBe('This description.');
+        expect(fviews['Primary-Next-Section'].description).toBe('That description.');
+
+        expect(migrated.metadata.sections).toBeUndefined();
 
     });
 

@@ -18,7 +18,14 @@ export const sampleNotebook:Notebook = {
     "pre_description": "Demonstration notebook to help develop an export pipeline from Fieldmark to RSpace.",
     "project_lead": "Steve Cassidy",
     "project_status": "New",
-    "sections": {}
+    "sections": {
+          "Primary-New-Section": {
+            "sectiondescriptionPrimary-New-Section": "This description."
+          },
+          "Primary-Next-Section": {
+            "sectiondescriptionPrimary-Next-Section": "That description."
+          },
+        },
   },
   "ui-specification": {
     "fields": {
