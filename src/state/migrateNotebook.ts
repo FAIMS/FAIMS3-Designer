@@ -43,6 +43,9 @@ export const migrateNotebook = (notebook: unknown) => {
     // move any form descriptions from metadata into the fview
     updateFormSectionMeta(notebookCopy);
 
+    // fix validation for photo fields which had a bad default
+    fixPhotoValidation(notebookCopy);
+
     return notebookCopy;
 
 };
@@ -225,3 +228,26 @@ const updateFormSectionMeta = (notebook: Notebook) => {
     }
 }
 
+const fixPhotoValidation = (notebook: Notebook) => {
+    const goodValidation = [
+        ["yup.array"],
+        ["yup.of", [["yup.object"], ["yup.nullable"]]],
+        ["yup.nullable"]
+      ];
+
+      const fields : {[key: string]: FieldType} = {};
+
+      for(const fieldName in notebook['ui-specification'].fields) {
+        const field = notebook['ui-specification'].fields[fieldName];
+        
+        if (field['component-name'] === 'TakePhoto') {
+            if (field.validationSchema?.length === 2)
+                field.validationSchema = goodValidation;
+        }
+      
+        fields[fieldName] = field;
+    }
+
+    notebook['ui-specification'].fields = fields;
+
+}
