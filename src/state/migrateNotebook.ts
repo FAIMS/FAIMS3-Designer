@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {FieldType, Notebook, PropertyMap} from "./initial";
+import {FieldType, Notebook} from "./initial";
 import _ from "lodash";
 import {Ajv} from "ajv";
 import {schema} from "../notebook-schema";
@@ -115,6 +115,19 @@ const updateFieldLabels = (notebook: Notebook) => {
     notebook['ui-specification'].fields = fields;
 }
 
+type LabelInclude = {
+    label: string;
+    include: boolean;
+}
+
+type OldMetaType = {
+    annotation_label?: string;
+    annotation?: boolean | LabelInclude;
+    uncertainty: {
+        include: boolean;
+        label: string;
+    }
+}
 
 /**
  * Update a notebook to use the newer annotation field specification
@@ -127,12 +140,18 @@ const updateAnnotationFormat = (notebook: Notebook) => {
 
     for(const fieldName in notebook['ui-specification'].fields) {
         const field = notebook['ui-specification'].fields[fieldName];
-        if (typeof(field.meta?.annotation) === 'boolean') {
-            field.meta.annotation = {
-                include: field.meta?.annotation,
-                label: field.meta?.annotation_label || 'Annotation'
-            };
-            if (field.meta?.annotation_label) delete field.meta.annotation_label;
+        const meta = field.meta as OldMetaType;
+        if (typeof(meta?.annotation) === 'boolean') {
+            field.meta = {
+                annotation: {
+                    include: meta.annotation,
+                    label: meta.annotation_label || 'Annotation'
+                },
+                uncertainty: {
+                    include: meta.uncertainty?.include || false,
+                    label: meta.uncertainty?.label || "uncertainty",
+                },
+            }
         }
         fields[fieldName] = field;
     }
@@ -171,14 +190,16 @@ const updateHelperText = (notebook: Notebook) => {
 
 
 
+/**
+ * A couple of types to make the migration code easier below
+ * since we're removing this stuff it doesn't need to be seen outside here
+ */
 type StringMap = {
     [key: string]: string; 
 };
-
 type SectionType = {
     [key: string]: StringMap 
 };
-
 
 /**
  * Update a notebook to put form labels in the form section
