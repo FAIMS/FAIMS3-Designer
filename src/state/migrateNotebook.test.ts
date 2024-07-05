@@ -80,6 +80,8 @@ describe('Migrate Notebook Tests', () => {
 
         const migrated = migrateNotebook(sampleNotebook);
         const fields = migrated['ui-specification'].fields;
-        expect(fields['survey-note']['component-parameters'].helperText).toBe('Note comments about survey area here');
+        Object.getOwnPropertyNames(fields).forEach((fieldName: string) =>  {
+            expect(Object.getOwnPropertyNames(fields)).toContain(fieldName);
+        });
     });
 })

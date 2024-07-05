@@ -26,23 +26,22 @@ import {schema} from "../notebook-schema";
 export const migrateNotebook = (notebook: unknown) => {
 
     // we should maybe in future have validation against alternate notebook schema versions...
-    const valid = validateNotebook(notebook);
+    validateNotebook(notebook);
     // error will be thrown by validateNotebook if invalid, let it go through
 
-    if (valid) {
-        const notebookCopy = JSON.parse(JSON.stringify(notebook)) as Notebook;  // deep copy
+    const notebookCopy = JSON.parse(JSON.stringify(notebook)) as Notebook;  // deep copy
 
-        // move field labels from old locations to .label
-        updateFieldLabels(notebookCopy);
+    // move field labels from old locations to .label
+    updateFieldLabels(notebookCopy);
 
-        // update format of annotation settings
-        updateAnnotationFormat(notebookCopy);
+    // update format of annotation settings
+    updateAnnotationFormat(notebookCopy);
 
-        // change `helpertext` in `TakePhoto` to `helperText`
-        updateHelperText(notebookCopy);
+    // change `helpertext` in `TakePhoto` to `helperText`
+    updateHelperText(notebookCopy);
 
-        return notebookCopy;
-    }
+    return notebookCopy;
+
 };
 
 export class ValidationError extends Error {
@@ -58,6 +57,7 @@ export class ValidationError extends Error {
  * 
  * @param pNB - an object that might be a notebook
  * @returns a validated Notebook object
+ * @throws ValidationError if there is one, `messages` property contains error messages for presentation
  */
 export const validateNotebook = (n: unknown) => {
 
@@ -130,8 +130,8 @@ const updateAnnotationFormat = (notebook: Notebook) => {
                 label: field.meta?.annotation_label || 'Annotation'
             };
             if (field.meta?.annotation_label) delete field.meta.annotation_label;
-            fields[fieldName] = field;
         }
+        fields[fieldName] = field;
     }
 
     notebook['ui-specification'].fields = fields;
