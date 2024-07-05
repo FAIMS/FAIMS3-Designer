@@ -157,21 +157,17 @@ export const uiSpecificationReducer = createSlice({
 
             // add in the meta field 
             newField.meta = {
-                "annotation": true,
-                "annotation_label": "annotation",
+                "annotation": {
+                    "include": true,
+                    "label": "annotation",
+                },
                 "uncertainty": {
                     "include": true,
                     "label": "uncertainty"
                 }
             };
-            // try to set the field label
-            if (newField['component-parameters'] && 'label' in newField['component-parameters']) {
-                newField['component-parameters'].label = fieldName;
-            } else if ('InputLabelProps' in newField['component-parameters'] &&
-                newField['component-parameters'].InputLabelProps &&
-                'label' in newField['component-parameters'].InputLabelProps) {
-                newField['component-parameters'].InputLabelProps.label = fieldName;
-            }
+            // set the field label
+            newField['component-parameters'].label = fieldName;
 
             // ensure a unique field name
             let N = 1;

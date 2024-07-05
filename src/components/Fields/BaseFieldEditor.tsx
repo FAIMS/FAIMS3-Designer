@@ -44,20 +44,12 @@ export const BaseFieldEditor = ({ fieldName, children }: Props) => {
     // These are needed because there is no consistency in how
     // the field label is stored in the notebook
     const getFieldLabel = () => {
-        return (field['component-parameters'] && field['component-parameters'].label) ||
-            (field['component-parameters'].InputLabelProps && field['component-parameters'].InputLabelProps.label) ||
-            field['component-parameters'].name;
+        return (field['component-parameters']?.label) || field['component-parameters'].name;
     }
 
     const setFieldLabel = (newField: FieldType, label: string) => {
         console.log('setFieldLabel', newField, label);
-        if (newField['component-parameters'] && 'label' in newField['component-parameters'])
-            newField['component-parameters'].label = label;
-        else if (newField['component-parameters'] &&
-            'InputLabelProps' in newField['component-parameters'] &&
-            newField['component-parameters'].InputLabelProps &&
-            newField['component-parameters'].InputLabelProps.label)
-            newField['component-parameters'].InputLabelProps.label = label;
+        newField['component-parameters'].label = label;
     }
 
     const updateField = (fieldName: string, newField: FieldType) => {
@@ -70,8 +62,8 @@ export const BaseFieldEditor = ({ fieldName, children }: Props) => {
         label: getFieldLabel(),
         helperText: cParams.helperText || "",
         required: cParams.required || false,
-        annotation: field.meta ? field.meta.annotation || false : false,
-        annotationLabel: field.meta ? field.meta.annotation_label || '' : '',
+        annotation: field.meta ? field.meta.annotation?.include : false,
+        annotationLabel: field.meta ? field.meta.annotation?.label || '' : '',
         uncertainty: field.meta ? field.meta.uncertainty.include || false : false,
         uncertaintyLabel: field.meta ? field.meta.uncertainty.label || '' : '',
         condition: field.condition,

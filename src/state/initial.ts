@@ -81,11 +81,10 @@ export type FieldType = {
     "persistent"?: boolean,
     "displayParent"?: boolean,
     "meta"?: {
-        "annotation": boolean | {
+        "annotation": {
             "include": boolean,
             "label": string,
         },
-        "annotation_label"?: string,
         "uncertainty": {
             "include" : boolean,
             "label": string,
