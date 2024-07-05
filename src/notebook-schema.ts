@@ -51,7 +51,6 @@ export const schema = {
               },
             },
             required: ["fields", "label"],
-            additionalProperties: false,
           },
         },
         viewsets: {
@@ -66,7 +65,6 @@ export const schema = {
               label: {type: "string",},
             },
             required: ["views", "label"],
-            additionalProperties: false,
           },
         },
         visible_types: {
@@ -164,7 +162,7 @@ export const schema = {
         variant: {type: "string",},
         label: {type: "string",},
         multiline: {type: "boolean",},
-        multiple: {type: "string",},
+        multiple: {type: "boolean",},
         SelectProps: {},
         ElementProps: {
           type: "object",
@@ -184,7 +182,7 @@ export const schema = {
             },
             optiontree: {},
           },
-          additionalProperties: false,
+          additionalProperties: true,
         },
         InputLabelProps: {
           type: "object",
@@ -192,7 +190,7 @@ export const schema = {
             label: {type: "string",},
           },
           required: ["label"],
-          additionalProperties: false,
+          additionalProperties: true,
         },
         InputProps: {
           type: "object",
@@ -204,7 +202,6 @@ export const schema = {
               type: "string",
             },
           },
-          additionalProperties: false,
         },
         FormLabelProps: {
           type: "object",
@@ -251,7 +248,10 @@ export const schema = {
         num_digits: {type: "number",},
         form_id: {type: "string",},
         is_auto_pick: {type: "boolean",},
-        zoom: {type: "number",},
+        zoom: {"anyOf": [
+            {type: "number",},
+            {type: "string"},
+        ]},
         featureType: {type: "string",},
         variant_style: {type: "string",},
         html_tag: {type: "string",},
@@ -262,7 +262,7 @@ export const schema = {
         type: {type: "string",},
         valuetype: {type: "string",},
       },
-      additionalProperties: false,
+      additionalProperties: true,
     },
     ValidationSchemaElement: {
       type: "array",
