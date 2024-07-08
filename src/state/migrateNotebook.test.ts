@@ -13,7 +13,7 @@
 // limitations under the License.
 
 
-import {vi, describe, expect, test } from 'vitest';
+import {describe, expect, test } from 'vitest';
 import { migrateNotebook, validateNotebook } from './migrateNotebook';
 import { sampleNotebook } from '../test-notebook';
 

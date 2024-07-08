@@ -21,6 +21,7 @@ import { Provider } from 'react-redux';
 import { ThemeProvider } from "@mui/material/styles";
 import globalTheme from "../theme/index";
 import { ReactNode } from 'react';
+import { migrateNotebook } from '../state/migrateNotebook';
 
 const WithProviders = ({children}: {children: ReactNode}) => (
     <ThemeProvider theme={globalTheme}>
@@ -33,7 +34,8 @@ const WithProviders = ({children}: {children: ReactNode}) => (
 describe('ConditionControl',  () => {
     test('render and interact with a field condition', () => { 
 
-        store.dispatch({ type: 'ui-specification/loaded', payload: sampleNotebook['ui-specification'] })
+        const notebook = migrateNotebook(sampleNotebook)
+        store.dispatch({ type: 'ui-specification/loaded', payload: notebook['ui-specification'] })
         const condition = {
             operator: 'equal',
             field: 'Sample-Location',
@@ -87,7 +89,9 @@ describe('ConditionControl',  () => {
 
     test('field condition omits field in select', async () => { 
 
-        store.dispatch({ type: 'ui-specification/loaded', payload: sampleNotebook['ui-specification'] })
+
+        const notebook = migrateNotebook(sampleNotebook)
+        store.dispatch({ type: 'ui-specification/loaded', payload: notebook['ui-specification'] })
 
         const theField = 'New-Text-Field';
         const onChangeFn = vi.fn();
@@ -115,7 +119,8 @@ describe('ConditionControl',  () => {
 
     test('field condition omits all view fields in select', () => { 
 
-        store.dispatch({ type: 'ui-specification/loaded', payload: sampleNotebook['ui-specification'] })
+        const notebook = migrateNotebook(sampleNotebook)
+        store.dispatch({ type: 'ui-specification/loaded', payload: notebook['ui-specification'] })
 
         const theView = 'Primary-New-Section';
         const onChangeFn = vi.fn();
@@ -145,7 +150,9 @@ describe('ConditionControl',  () => {
 
     test('make a boolean condition from a field', () => { 
 
-        store.dispatch({ type: 'ui-specification/loaded', payload: sampleNotebook['ui-specification'] })
+        const notebook = migrateNotebook(sampleNotebook)
+        store.dispatch({ type: 'ui-specification/loaded', payload: notebook['ui-specification'] })
+
         const condition = {
             operator: 'equal',
             field: 'Sample-Location',

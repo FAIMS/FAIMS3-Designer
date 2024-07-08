@@ -1,6 +1,6 @@
-import { Notebook } from "./state/initial";
+//import { Notebook } from "./state/initial";
 
-export const sampleNotebook:Notebook = {
+export const sampleNotebook:unknown = {
   "metadata": {
     "notebook_version": "1.0",
     "schema_version": "1.0",
