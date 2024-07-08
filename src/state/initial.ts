@@ -126,7 +126,7 @@ export type Notebook = {
 export const initialState: AppState = 
 {
     modified: false,
-        notebook: {
+    notebook: {
         "metadata": {
             "notebook_version": "1.0",
             "schema_version": "1.0",

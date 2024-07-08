@@ -102,7 +102,7 @@ export const NotebookLoader = () => {
           const updatedNotebook = migrateNotebook(notebook);
           dispatch({ type: 'metadata/loaded', payload: updatedNotebook.metadata })
           dispatch({ type: 'ui-specification/loaded', payload: updatedNotebook['ui-specification'] })
-          dispatch({ type: "modifiedStatus/resetFlag", payload: {status: false}});
+          dispatch({ type: "modifiedStatus/resetFlag", payload: false});
           
           return true;
         } catch (e) {
@@ -150,7 +150,7 @@ export const NotebookLoader = () => {
         document.body.appendChild(element);
         element.click();
         setOpen(false);
-        dispatch({ type: "modifiedStatus/resetFlag", payload: {status: false}});
+        dispatch({ type: "modifiedStatus/resetFlag", payload: false});
     };
 
     return (
@@ -170,7 +170,7 @@ export const NotebookLoader = () => {
                         onClick={(e) => { const element = e.target as HTMLInputElement; element.value = ''; }}/>)
                         : (null)}
                 </Button>
-
+                {notebookModified ? (<p>Modified</p>): (<p>Not Modified</p>)}
 
                 {errors.length ? 
                     (<div>
