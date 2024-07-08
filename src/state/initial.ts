@@ -108,9 +108,14 @@ export type NotebookUISpec = {
     visible_types: string[],
 }
 
+export type NotebookModified = {
+    flag: boolean,
+}
+
 export type Notebook = {
     metadata: NotebookMetadata,
-    "ui-specification": NotebookUISpec
+    "ui-specification": NotebookUISpec,
+    modifiedStatus: NotebookModified,
 }
 
 // an empty notebook
@@ -131,9 +136,12 @@ export const initialState: Notebook = {
         "sections": {}
     },
     "ui-specification": {
-        "fields":{},
+        "fields": {},
         "fviews": {},
         "viewsets": {},
         "visible_types": []
+    },
+    "modifiedStatus": {
+        "flag": false
     }
 }

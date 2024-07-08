@@ -409,5 +409,8 @@ export const sampleNotebook:unknown = {
     "visible_types": [
       "Primary"
     ]
-  }
+  },
+  "modifiedStatus": {
+    flag: false,
+  },
 }
