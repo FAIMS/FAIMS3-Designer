@@ -27,7 +27,7 @@ import { Notebook } from '../state/initial';
  */
 export const RolesPanel = () => {
 
-    const roles = useAppSelector((state: Notebook) => state.metadata.accesses) as string[];
+    const roles = useAppSelector((state) => state.notebook.metadata.accesses) as string[];
     const dispatch = useAppDispatch();
 
     const [newRole, setNewRole] = useState('');

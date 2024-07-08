@@ -83,13 +83,11 @@ describe('ConditionControl',  () => {
                         value: 'Bobalooba',
                     }]
                 );
-            };
+            }
         });
     });
 
-    test('field condition omits field in select', async () => { 
-
-
+    test('field condition omits field in select', () => { 
         const notebook = migrateNotebook(sampleNotebook)
         store.dispatch({ type: 'ui-specification/loaded', payload: notebook['ui-specification'] })
 
@@ -174,7 +172,7 @@ describe('ConditionControl',  () => {
                 const last = onChangeFn.mock.lastCall as ConditionType[];
                 expect(last[0].operator).toBe('and');
                 expect(last[0].conditions?.length).toBe(2);
-            };
+            }
         });
     });
 });

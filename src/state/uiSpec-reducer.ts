@@ -44,7 +44,7 @@ export const slugify = (str: string) => {
 
 export const uiSpecificationReducer = createSlice({
     name: 'ui-specification',
-    initialState: initialState['ui-specification'],
+    initialState: initialState.notebook['ui-specification'],
     reducers: {
         loaded: (_state, action: PayloadAction<NotebookUISpec>) => {
             return action.payload;
@@ -52,8 +52,9 @@ export const uiSpecificationReducer = createSlice({
         fieldUpdated: (state,
             action: PayloadAction<{ fieldName: string, newField: FieldType }>) => {
             const { fieldName, newField } = action.payload;
-            if (fieldName in state.fields) {
-                state.fields[fieldName] = newField;
+            const fields = state.fields as {[key: string]: FieldType};
+            if (fieldName in fields) {
+                fields[fieldName] = newField;
             } else {
                 throw new Error(`Cannot update unknown field ${fieldName} via fieldUpdated action`);
             }

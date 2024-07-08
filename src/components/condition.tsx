@@ -87,7 +87,7 @@ export const ConditionModal = (props: ConditionProps & {label: string}) => {
 
 export const ConditionTranslation = (props: {condition: ConditionType}) => {
 
-    const allFields = useAppSelector((state: Notebook) => state['ui-specification'].fields);
+    const allFields = useAppSelector((state) => state.notebook['ui-specification'].fields);
 
     const getFieldName = (field: string | undefined) => {
         if (field !== undefined && field in allFields) 
@@ -286,8 +286,8 @@ const FieldConditionControl = (props: ConditionProps) => {
     }, [props]);
     const [condition, setCondition] = useState(initialValue);
 
-    const allFields = useAppSelector((state: Notebook) => state['ui-specification'].fields);
-    const views = useAppSelector((state: Notebook) => state['ui-specification'].fviews);
+    const allFields = useAppSelector((state) => state.notebook['ui-specification'].fields);
+    const views = useAppSelector((state) => state.notebook['ui-specification'].fviews);
 
     // work out which fields to show in the select, remove either 
     // the current field or the fields in the current view

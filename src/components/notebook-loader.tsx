@@ -53,11 +53,8 @@ const validateNotebook = (jsonText: string): Notebook => {
 export const NotebookLoader = () => {
 
     const dispatch = useAppDispatch();
-    const notebookModified = useAppSelector((state: Notebook) => state.modifiedStatus.flag);
-    const state = useAppSelector((state: Notebook) => state);
-    const resetModifiedStatus = (newStatus: boolean) => {
-        dispatch({type: "modifiedStatus/resetFlag", payload: {newStatus}});
-    }
+    const notebookModified = useAppSelector((state) => state.modified);
+    const notebook = useAppSelector((state) => state.notebook);
 
     const navigate = useNavigate();
 
@@ -66,6 +63,7 @@ export const NotebookLoader = () => {
     const [alertMsgContext, setAlertMsgContext ] = useState(' ');
     const [alertBtnLabel, setAlertBtnLabel ] = useState(' ');
     const [isUpload, setIsUpload ] = useState(false);
+    const [errors, setErrors] = useState<string[]>([]);
 
     const handleContinue = () => {
         setOpen(false);
@@ -104,7 +102,8 @@ export const NotebookLoader = () => {
           const updatedNotebook = migrateNotebook(notebook);
           dispatch({ type: 'metadata/loaded', payload: updatedNotebook.metadata })
           dispatch({ type: 'ui-specification/loaded', payload: updatedNotebook['ui-specification'] })
-          resetModifiedStatus(false)
+          dispatch({ type: "modifiedStatus/resetFlag", payload: {status: false}});
+          
           return true;
         } catch (e) {
             if (e instanceof ValidationError) {
@@ -123,7 +122,7 @@ export const NotebookLoader = () => {
     }
 
     const newNotebook = () => {
-            loadFn(initialState);
+            loadFn(initialState.notebook);
             afterLoad();
     };
 
@@ -146,12 +145,12 @@ export const NotebookLoader = () => {
         const element = document.createElement("a");
         const file = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
         element.href = URL.createObjectURL(file);
-        const name = slugify(state.metadata.name as string);
+        const name = slugify(notebook.metadata.name as string);
         element.download = `${name}.json`;
         document.body.appendChild(element);
         element.click();
         setOpen(false);
-        resetModifiedStatus(false);
+        dispatch({ type: "modifiedStatus/resetFlag", payload: {status: false}});
     };
 
     return (
@@ -165,12 +164,11 @@ export const NotebookLoader = () => {
                 >
                     Upload file
                     {!notebookModified ? (
-                    
                     <VisuallyHiddenInput type="file" 
                         onChange={handleFileChange} 
                         // below removes the value on click so we can upload the same file again
                         onClick={(e) => { const element = e.target as HTMLInputElement; element.value = ''; }}/>)
-                        : (null)
+                        : (null)}
                 </Button>
 
 

@@ -23,7 +23,7 @@ import { FieldType, Notebook } from "../../state/initial";
 
 export const OptionsEditor = ({ fieldName }: { fieldName: string }) => {
 
-    const field = useAppSelector((state: Notebook) => state['ui-specification'].fields[fieldName])
+    const field = useAppSelector((state) => state.notebook['ui-specification'].fields[fieldName])
     const dispatch = useAppDispatch()
 
     const [newOption, setNewOption] = useState('')

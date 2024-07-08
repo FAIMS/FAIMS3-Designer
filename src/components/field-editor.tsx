@@ -36,8 +36,6 @@ import { RelatedRecordEditor } from "./Fields/RelatedRecordEditor";
 import { BasicAutoIncrementerEditor } from "./Fields/BasicAutoIncrementer";
 import { TemplatedStringFieldEditor } from "./Fields/TemplatedStringFieldEditor";
 import { AdvancedSelectEditor } from "./Fields/AdvancedSelectEditor";
-
-import { Notebook } from "../state/initial";
 import { useAppDispatch, useAppSelector } from "../state/hooks";
 
 import { styled } from '@mui/material/styles';
@@ -69,7 +67,7 @@ type FieldEditorProps = {
 
 export const FieldEditor = ({ fieldName, viewId, expanded, handleExpandChange }: FieldEditorProps) => {
 
-    const field = useAppSelector((state: Notebook) => state['ui-specification'].fields[fieldName]);
+    const field = useAppSelector((state) => state.notebook['ui-specification'].fields[fieldName]);
     const dispatch = useAppDispatch();
 
     const fieldComponent = field['component-name'];

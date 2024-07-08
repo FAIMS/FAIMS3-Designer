@@ -19,7 +19,7 @@ import { FieldType, Notebook } from "../../state/initial";
 
 export const DateTimeNowEditor = ({ fieldName }: {fieldName: string}) => {
 
-    const field = useAppSelector((state: Notebook) => state['ui-specification'].fields[fieldName]);
+    const field = useAppSelector((state) => state.notebook['ui-specification'].fields[fieldName]);
     const dispatch = useAppDispatch();
 
     const updateIsAutoPick = (value: boolean) => {

@@ -41,14 +41,14 @@ type Props = {
 
 export const FormEditor = ({ viewSetId, moveCallback, moveButtonsDisabled, handleChangeCallback, handleDeleteCallback }: Props) => {
 
-    const visibleTypes = useAppSelector((state: Notebook) => state['ui-specification'].visible_types);
-    const viewsets = useAppSelector((state: Notebook) => state['ui-specification'].viewsets);
-    const viewSet = useAppSelector((state: Notebook) => state['ui-specification'].viewsets[viewSetId],
+    const visibleTypes = useAppSelector((state) => state.notebook['ui-specification'].visible_types);
+    const viewsets = useAppSelector((state) => state.notebook['ui-specification'].viewsets);
+    const viewSet = useAppSelector((state) => state.notebook['ui-specification'].viewsets[viewSetId],
         (left, right) => {
             return shallowEqual(left, right);
         });
-    const views = useAppSelector((state: Notebook) => state['ui-specification'].fviews);
-    const fields = useAppSelector((state: Notebook) => state['ui-specification'].fields);
+    const views = useAppSelector((state) => state.notebook['ui-specification'].fviews);
+    const fields = useAppSelector((state) => state.notebook['ui-specification'].fields);
     const dispatch = useAppDispatch();
 
     console.log('FormEditor', viewSetId);

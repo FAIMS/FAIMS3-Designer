@@ -20,7 +20,7 @@ const protectedFields = ['meta', 'project_status', 'access', 'accesses',
 
 const metadataReducer = createSlice({
     name: 'metadata',
-    initialState:  initialState.metadata,
+    initialState:  initialState.notebook.metadata,
     reducers: {
         loaded: (_state, action: PayloadAction<NotebookMetadata>) => {
             return action.payload;

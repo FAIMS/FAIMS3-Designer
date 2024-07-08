@@ -38,7 +38,7 @@ type newState = {
 
 export const AdvancedSelectEditor = ({ fieldName }: { fieldName: string }) => {
 
-    const field = useAppSelector((state: Notebook) => state['ui-specification'].fields[fieldName]);
+    const field = useAppSelector((state) => state.notebook['ui-specification'].fields[fieldName]);
     const dispatch = useAppDispatch();
 
     const state = {

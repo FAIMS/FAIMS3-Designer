@@ -12,21 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { Notebook } from './initial';
+import { AppState } from './initial';
 
 // The following functions are inspired by Dan Abramov's lesson on persisting redux state to localStorage,
 // see https://egghead.io/lessons/javascript-redux-persisting-the-state-to-the-local-storage.
 export const loadState = () => {
     try {
         const serializedState = localStorage.getItem('notebook');
-        return serializedState ? JSON.parse(serializedState) as Notebook : undefined;
-    } 
+        return serializedState ? JSON.parse(serializedState) as AppState : undefined;
+    }
     catch (error: unknown) {
         return undefined;
     }
 };
 
-export const saveState = (state: Notebook) => {
+export const saveState = (state: AppState) => {
     try {
         const serializedState = JSON.stringify(state);
         localStorage.setItem('notebook', serializedState);

@@ -1,17 +1,16 @@
 import { Button } from "@mui/material";
 import { useAppSelector } from "../state/hooks";
-import { Notebook } from '../state/initial';
 import {slugify} from '../state/uiSpec-reducer';
 
 export const ReviewPanel = () => {
 
-    const state = useAppSelector((state: Notebook) => state);
+    const state = useAppSelector((state) => state);
 
     const downloadNotebook = () => {
         const element = document.createElement("a");
         const file = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
         element.href = URL.createObjectURL(file);
-        const name = slugify(state.metadata.name as string);
+        const name = slugify(state.notebook.metadata.name as string);
         element.download = `${name}.json`;
         document.body.appendChild(element);
         element.click();

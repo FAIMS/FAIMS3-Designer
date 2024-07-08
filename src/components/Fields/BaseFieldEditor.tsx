@@ -14,7 +14,7 @@
 
 import { Checkbox, FormControlLabel, Grid, TextField, Card, Alert } from "@mui/material";
 import { useAppSelector, useAppDispatch } from "../../state/hooks";
-import { FieldType, Notebook } from "../../state/initial";
+import { FieldType } from "../../state/initial";
 import { ConditionModal, ConditionTranslation, ConditionType } from "../condition";
 
 type Props = {
@@ -38,7 +38,7 @@ type StateType = {
 
 export const BaseFieldEditor = ({ fieldName, children }: Props) => {
 
-    const field = useAppSelector((state: Notebook) => state['ui-specification'].fields[fieldName]);
+    const field = useAppSelector((state) => state.notebook['ui-specification'].fields[fieldName]);
     const dispatch = useAppDispatch();
 
     // These are needed because there is no consistency in how

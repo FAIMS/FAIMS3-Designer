@@ -1,6 +1,6 @@
 import { Grid, Card, TextField } from "@mui/material";
 import { useAppDispatch, useAppSelector } from "../../state/hooks";
-import { FieldType, Notebook } from "../../state/initial";
+import { FieldType } from "../../state/initial";
 
 type PropType = {
     fieldName: string,
@@ -9,7 +9,7 @@ type PropType = {
 
 export const BasicAutoIncrementerEditor = ({ fieldName, viewId }: PropType) => {
 
-    const field = useAppSelector((state: Notebook) => state['ui-specification'].fields[fieldName]);
+    const field = useAppSelector((state) => state.notebook['ui-specification'].fields[fieldName]);
     const dispatch = useAppDispatch();
 
     const label = field['component-parameters'].label;

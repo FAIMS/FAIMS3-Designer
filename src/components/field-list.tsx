@@ -32,7 +32,7 @@ type Props = {
 export const FieldList = ({ viewSetId, viewId }: Props) => {
 
     const fView = useAppSelector(
-        (state: Notebook) => state['ui-specification'].fviews[viewId]);
+        (state) => state.notebook['ui-specification'].fviews[viewId]);
     const dispatch = useAppDispatch();
 
     const [dialogOpen, setDialogOpen] = useState(false);

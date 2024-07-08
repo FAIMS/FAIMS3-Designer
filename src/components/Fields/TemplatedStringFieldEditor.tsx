@@ -10,13 +10,13 @@ type PropType = {
 
 export const TemplatedStringFieldEditor = ({ fieldName, viewId }: PropType) => {
 
-    const field = useAppSelector((state: Notebook) => state['ui-specification'].fields[fieldName]);
-    const formHasHRID = useAppSelector((state: Notebook) => {
-        return Object.keys(state['ui-specification'].fields).some((fieldName) => {
+    const field = useAppSelector((state) => state.notebook['ui-specification'].fields[fieldName]);
+    const formHasHRID = useAppSelector((state) => {
+        return Object.keys(state.notebook['ui-specification'].fields).some((fieldName) => {
             return fieldName.startsWith('hrid') && fieldName.endsWith(viewId);
         });
     });
-    const allFields = useAppSelector((state: Notebook) => state['ui-specification'].fields);
+    const allFields = useAppSelector((state) => state.notebook['ui-specification'].fields);
     const dispatch = useAppDispatch();
     const textAreaRef = useRef(null) as MutableRefObject<unknown>;
 

@@ -42,7 +42,7 @@ type Props = {
 
 export const SectionEditor = ({ viewSetId, viewId, viewSet, deleteCallback, addCallback, moveCallback }: Props) => {
 
-    const fView = useAppSelector((state: Notebook) => state['ui-specification'].fviews[viewId]);
+    const fView = useAppSelector((state) => state.notebook['ui-specification'].fviews[viewId]);
     const dispatch = useAppDispatch();
 
     console.log('SectionEditor', viewId, viewSet);

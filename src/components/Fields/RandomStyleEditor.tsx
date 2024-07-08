@@ -19,7 +19,7 @@ import { Notebook, FieldType } from "../../state/initial";
 
 export const RandomStyleEditor = ({ fieldName }: { fieldName: string }) => {
 
-    const field = useAppSelector((state: Notebook) => state['ui-specification'].fields[fieldName]);
+    const field = useAppSelector((state) => state.notebook['ui-specification'].fields[fieldName]);
     const dispatch = useAppDispatch();
 
     const initVariantStyle = field['component-parameters'].variant_style || '';

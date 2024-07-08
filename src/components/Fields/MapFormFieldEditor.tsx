@@ -15,11 +15,11 @@
 import { Grid, TextField, Card, FormControl, InputLabel, Select, MenuItem } from "@mui/material";
 import { useAppSelector, useAppDispatch } from "../../state/hooks";
 import { BaseFieldEditor } from "./BaseFieldEditor";
-import { FieldType, Notebook } from "../../state/initial";
+import { FieldType } from "../../state/initial";
 
 export const MapFormFieldEditor = ({ fieldName }: { fieldName: string }) => {
 
-    const field = useAppSelector((state: Notebook) => state['ui-specification'].fields[fieldName]);
+    const field = useAppSelector((state) => state.notebook['ui-specification'].fields[fieldName]);
     const dispatch = useAppDispatch();
 
     const initZoom = field['component-parameters'].zoom;
