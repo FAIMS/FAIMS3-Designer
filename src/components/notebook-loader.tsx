@@ -170,7 +170,6 @@ export const NotebookLoader = () => {
                         onClick={(e) => { const element = e.target as HTMLInputElement; element.value = ''; }}/>)
                         : (null)}
                 </Button>
-                {notebookModified ? (<p>Modified</p>): (<p>Not Modified</p>)}
 
                 {errors.length ? 
                     (<div>
