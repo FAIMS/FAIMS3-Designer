@@ -21,8 +21,8 @@ import { useAppDispatch, useAppSelector } from '../state/hooks';
 import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import CloseIcon from '@mui/icons-material/Close';
-import { slugify } from '../state/uiSpec-reducer';
 import { ValidationError, migrateNotebook } from '../state/migrateNotebook';
+import { downloadNotebook } from '../state/localStorage';
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -141,18 +141,6 @@ export const NotebookLoader = () => {
         }
     };
 
-    const downloadNotebook = () => {
-        const element = document.createElement("a");
-        const file = new Blob([JSON.stringify(notebook, null, 2)], { type: 'application/json' });
-        element.href = URL.createObjectURL(file);
-        const name = slugify(notebook.metadata.name as string);
-        element.download = `${name}.json`;
-        document.body.appendChild(element);
-        element.click();
-        setOpen(false);
-        dispatch({ type: "modifiedStatus/resetFlag", payload: false});
-    };
-
     return (
         <Grid container spacing={2} pt={3}>
             <Grid item xs={12} sm={6}>
@@ -216,7 +204,7 @@ export const NotebookLoader = () => {
                     {alertMsgContext}
                 </DialogContentText>
                 <DialogActions sx={{ pb: 3, pr: 1, justifyContent: "center"}}>
-                    <Button onClick={downloadNotebook} variant="outlined" sx={{ mr: 1}}>Save Current Notebook</Button>
+                    <Button onClick={() => downloadNotebook(notebook)} variant="outlined" sx={{ mr: 1}}>Save Current Notebook</Button>
                     {isUpload ? (
                         <Button autoFocus
                             component="label" 

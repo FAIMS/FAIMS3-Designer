@@ -23,8 +23,7 @@ export const schema = {
         notebook_version: { type: "string" },
         schema_version: { type: "string" },
       },
-      required: ["name", "notebook_version", "schema_version"],
-      additionalProperties: {},
+      required: ["name"],
     },
     NotebookUISpec: {
       type: "object",
@@ -124,7 +123,6 @@ export const schema = {
                     label: {type: "string",},
                   },
                   required: ["include", "label"],
-                  additionalProperties: false,
                 },
               ],
             },
@@ -149,7 +147,6 @@ export const schema = {
         "type-returned",
         "component-parameters",
       ],
-      additionalProperties: false,
     },
     ComponentParameters: {
       type: "object",
@@ -177,12 +174,10 @@ export const schema = {
                   RadioProps: {},
                 },
                 required: ["value", "label"],
-                additionalProperties: false,
               },
             },
             optiontree: {},
           },
-          additionalProperties: true,
         },
         InputLabelProps: {
           type: "object",
@@ -190,7 +185,6 @@ export const schema = {
             label: {type: "string",},
           },
           required: ["label"],
-          additionalProperties: true,
         },
         InputProps: {
           type: "object",
@@ -210,7 +204,6 @@ export const schema = {
               type: "string",
             },
           },
-          additionalProperties: false,
         },
         FormHelperTextProps: {
           type: "object",
@@ -218,7 +211,6 @@ export const schema = {
             children: {type: "string",
             },
           },
-          additionalProperties: false,
         },
         FormControlLabelProps: {
           type: "object",
@@ -226,7 +218,6 @@ export const schema = {
             label: {type: "string",},
           },
           required: ["label"],
-          additionalProperties: false,
         },
         initialValue: {},
         related_type: {type: "string",},
@@ -262,7 +253,6 @@ export const schema = {
         type: {type: "string",},
         valuetype: {type: "string",},
       },
-      additionalProperties: true,
     },
     ValidationSchemaElement: {
       type: "array",

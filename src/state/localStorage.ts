@@ -12,7 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { AppState } from './initial';
+import { AppState, Notebook } from './initial';
+import { slugify } from './uiSpec-reducer';
 
 // The following functions are inspired by Dan Abramov's lesson on persisting redux state to localStorage,
 // see https://egghead.io/lessons/javascript-redux-persisting-the-state-to-the-local-storage.
@@ -34,4 +35,14 @@ export const saveState = (state: AppState) => {
     catch (error: unknown) {
         console.log(error);
     }
+};
+
+export const downloadNotebook = (notebook: Notebook) => {
+    const element = document.createElement("a");
+    const file = new Blob([JSON.stringify(notebook, null, 2)], { type: 'application/json' });
+    element.href = URL.createObjectURL(file);
+    const name = slugify(notebook.metadata.name as string);
+    element.download = `${name}.json`;
+    document.body.appendChild(element);
+    element.click();
 };
