@@ -24,7 +24,6 @@ import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
 
 import { FieldList } from "./field-list";
 import { useAppSelector, useAppDispatch } from "../state/hooks";
-import { Notebook } from '../state/initial';
 import { useState } from "react";
 import {ConditionModal, ConditionTranslation, ConditionType } from "./condition";
 

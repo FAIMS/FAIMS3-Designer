@@ -143,7 +143,7 @@ export const NotebookLoader = () => {
 
     const downloadNotebook = () => {
         const element = document.createElement("a");
-        const file = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
+        const file = new Blob([JSON.stringify(notebook, null, 2)], { type: 'application/json' });
         element.href = URL.createObjectURL(file);
         const name = slugify(notebook.metadata.name as string);
         element.download = `${name}.json`;

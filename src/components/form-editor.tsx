@@ -29,7 +29,6 @@ import { useAppDispatch, useAppSelector } from "../state/hooks";
 import { SectionEditor } from "./section-editor";
 import { useState } from "react";
 import { shallowEqual } from "react-redux";
-import { Notebook } from "../state/initial";
 
 type Props = {
     viewSetId: string,

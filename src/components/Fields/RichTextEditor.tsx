@@ -16,7 +16,7 @@ import { Grid, FormHelperText } from "@mui/material";
 import { useAppSelector, useAppDispatch } from "../../state/hooks";
 import { useRef } from "react";
 import { MDXEditorMethods } from '@mdxeditor/editor';
-import { FieldType, Notebook } from "../../state/initial";
+import { FieldType } from "../../state/initial";
 import { MdxEditor } from "../mdx-editor";
 
 

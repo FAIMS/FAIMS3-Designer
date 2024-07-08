@@ -1,7 +1,7 @@
 import { Alert, Grid, Card, TextField, FormControl, InputLabel, MenuItem, Select, FormControlLabel, Checkbox, Typography } from "@mui/material";
 import { useAppDispatch, useAppSelector } from "../../state/hooks";
 import { MutableRefObject, useRef, useState } from "react";
-import { ComponentParameters, FieldType, Notebook } from "../../state/initial";
+import { ComponentParameters, FieldType } from "../../state/initial";
 
 type PropType = {
     fieldName: string,

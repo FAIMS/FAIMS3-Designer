@@ -22,7 +22,6 @@ import { FieldEditor } from "./field-editor";
 import { useState } from "react";
 import { useAppDispatch, useAppSelector } from "../state/hooks";
 import { getFieldNames } from "../fields";
-import { Notebook } from "../state/initial";
 
 type Props = {
     viewSetId: string,

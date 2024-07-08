@@ -15,7 +15,7 @@
 import { Grid, Card, FormHelperText, FormControlLabel, Checkbox } from "@mui/material";
 import { useAppSelector, useAppDispatch } from "../../state/hooks";
 import { BaseFieldEditor } from "./BaseFieldEditor";
-import { FieldType, Notebook } from "../../state/initial";
+import { FieldType } from "../../state/initial";
 
 export const DateTimeNowEditor = ({ fieldName }: {fieldName: string}) => {
 

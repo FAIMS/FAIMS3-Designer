@@ -19,7 +19,7 @@ import { Button, Alert, AlertTitle, TextField, Grid, Card, FormControl, FormLabe
 
 import { BaseFieldEditor } from "./BaseFieldEditor";
 import { useAppSelector, useAppDispatch } from "../../state/hooks";
-import { FieldType, Notebook } from "../../state/initial";
+import { FieldType } from "../../state/initial";
 
 import { useState } from 'react';
 

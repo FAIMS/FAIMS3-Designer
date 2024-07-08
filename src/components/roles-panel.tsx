@@ -19,7 +19,6 @@ import { useAppSelector, useAppDispatch } from "../state/hooks";
 
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
-import { Notebook } from '../state/initial';
 
 /**
  * RolesPanel - edit the user roles associated with this notebook

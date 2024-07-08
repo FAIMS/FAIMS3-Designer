@@ -14,7 +14,7 @@
 
 import { Grid, Select, FormControl, InputLabel, MenuItem, Stack, Divider, TextField, Button, IconButton, Tooltip, Dialog } from "@mui/material";
 import { useAppSelector } from "../state/hooks";
-import { FieldType, Notebook } from "../state/initial";
+import { FieldType } from "../state/initial";
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import SplitscreenIcon from '@mui/icons-material/Splitscreen';
 import QuizIcon from '@mui/icons-material/Quiz';

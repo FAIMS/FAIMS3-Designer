@@ -19,7 +19,7 @@ import AddCircleIcon from '@mui/icons-material/AddCircle';
 import { useState } from "react";
 import { useAppSelector, useAppDispatch } from "../../state/hooks";
 import { BaseFieldEditor } from "./BaseFieldEditor";
-import { FieldType, Notebook } from "../../state/initial";
+import { FieldType } from "../../state/initial";
 
 type PairList = [string, string][];
 type Props = {
