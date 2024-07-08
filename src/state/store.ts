@@ -15,6 +15,7 @@
 import { Middleware, configureStore } from '@reduxjs/toolkit'
 import metadataReducer from './metadata-reducer'
 import uiSpecificationReducer from './uiSpec-reducer'
+import modifiedStatusReducer from './modifiedStatus-reducer';
 import { ToolkitStore } from '@reduxjs/toolkit/dist/configureStore';
 import { Notebook } from './initial';
 import { loadState, saveState } from './localStorage';
@@ -31,7 +32,8 @@ const loggerMiddleware: Middleware<object, Notebook> = storeAPI => next => actio
 export const store: ToolkitStore<Notebook> = configureStore({
   reducer: {
     metadata: metadataReducer,
-    "ui-specification": uiSpecificationReducer
+    "ui-specification": uiSpecificationReducer,
+    modifiedStatus: modifiedStatusReducer,
   },
   preloadedState: persistedState,
   middleware: (getDefaultMiddleware) =>

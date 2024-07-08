@@ -15,11 +15,13 @@
 // Component to load a notebook file and initialise the state
 import {styled} from '@mui/material/styles';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
-import {Grid, Button, Typography} from "@mui/material";
+import {Grid, Button, Typography, Dialog, DialogActions, DialogTitle, DialogContentText, IconButton} from "@mui/material";
 import {initialState, Notebook} from '../state/initial';
-import { useAppDispatch } from '../state/hooks';
-import { useCallback } from 'react';
+import { useAppDispatch, useAppSelector } from '../state/hooks';
+import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import CloseIcon from '@mui/icons-material/Close';
+import { slugify } from '../state/uiSpec-reducer';
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -58,11 +60,56 @@ const validateNotebook = (jsonText: string): Notebook => {
 export const NotebookLoader = () => {
 
     const dispatch = useAppDispatch();
+    const notebookModified = useAppSelector((state: Notebook) => state.modifiedStatus.flag);
+    const state = useAppSelector((state: Notebook) => state);
+    const resetModifiedStatus = (newStatus: boolean) => {
+        dispatch({type: "modifiedStatus/resetFlag", payload: {newStatus}});
+    }
+
     const navigate = useNavigate();
+
+    const [open, setOpen] = useState(false);
+    const [alertTitle, setAlertTitle ] = useState(' ');
+    const [alertMsgContext, setAlertMsgContext ] = useState(' ');
+    const [alertBtnLabel, setAlertBtnLabel ] = useState(' ');
+    const [isUpload, setIsUpload ] = useState(false);
+
+    const handleContinue = () => {
+        setOpen(false);
+        newNotebook();
+    }
+
+    const handleClose = () => {
+        setOpen(false);
+    }
+
+    const handleNewNotebook = () => {
+        if(notebookModified) {
+            setIsUpload(false)
+            setAlertTitle("Start a new notebook?")
+            setAlertMsgContext("You have a notebook currently open. Starting a new notebook will overwrite your work.");
+            setAlertBtnLabel("Start New Notebook");
+            setOpen(true);
+        }
+        else {
+            newNotebook();
+        }
+    }
+
+    const handleUploadFile = () => {
+        if(notebookModified) {
+            setIsUpload(true);
+            setAlertTitle("Upload a notebook file?")
+            setAlertMsgContext("You have a notebook currently open. Uploading a new file will overwrite your work.");
+            setAlertBtnLabel("Continue Uploading");
+            setOpen(true);
+        }
+    }
 
     const loadFn = useCallback((notebook: Notebook) => {
         dispatch({ type: 'metadata/loaded', payload: notebook.metadata })
         dispatch({ type: 'ui-specification/loaded', payload: notebook['ui-specification'] })
+        resetModifiedStatus(false)
     }, [dispatch]);
 
     const afterLoad = () =>  {
@@ -70,8 +117,8 @@ export const NotebookLoader = () => {
     }
 
     const newNotebook = () => {
-        loadFn(initialState);
-        afterLoad();
+            loadFn(initialState);
+            afterLoad();
     };
 
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -89,14 +136,31 @@ export const NotebookLoader = () => {
         }
     };
 
+    const downloadNotebook = () => {
+        const element = document.createElement("a");
+        const file = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
+        element.href = URL.createObjectURL(file);
+        const name = slugify(state.metadata.name as string);
+        element.download = `${name}.json`;
+        document.body.appendChild(element);
+        element.click();
+        setOpen(false);
+        resetModifiedStatus(false);
+    };
+
     return (
         <Grid container spacing={2} pt={3}>
             <Grid item xs={12} sm={6}>
-                <Button component="label" 
+                <Button
+                        component="label" 
                         variant="contained" 
-                        startIcon={<CloudUploadIcon />}>
+                        startIcon={<CloudUploadIcon />}
+                        onClick={handleUploadFile}
+                >
                     Upload file
-                    <VisuallyHiddenInput type="file" onChange={handleFileChange} />
+                    {!notebookModified ? (
+                    <VisuallyHiddenInput type="file" onChange={handleFileChange} id="file-upload"/>
+                    ) : (null)}
                 </Button>
 
                 <Typography variant="body2" color="text.secondary">
@@ -105,13 +169,53 @@ export const NotebookLoader = () => {
             </Grid>
 
             <Grid item xs={12} sm={6}>                           
-                <Button variant="contained" onClick={newNotebook}>
+                <Button variant="contained" onClick={handleNewNotebook}>
                     New Notebook
                 </Button>
                 <Typography variant="body2" color="text.secondary">
                     Create a new notebook from scratch.
                 </Typography>
             </Grid>
+            <Dialog
+                open={open}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description">
+                    <DialogTitle id="draggable-dialog-title">
+                    <Typography sx={{ ml: 0, flex: 1 }} variant="h6" component="div">
+                        {alertTitle}
+                    </Typography>
+                    <IconButton
+                        aria-label="close"
+                        onClick={handleClose}
+                        sx={{
+                            position: 'absolute',
+                            right: 8,
+                            top: 8,
+                            color: (theme) => theme.palette.grey[500],
+                        }}
+                    >
+                        <CloseIcon />
+                    </IconButton>
+                </DialogTitle>
+                <DialogContentText id="alert-dialog-title" sx={{ p: 3}}>
+                    {alertMsgContext}
+                </DialogContentText>
+                <DialogActions sx={{ pb: 3, pr: 1, justifyContent: "center"}}>
+                    <Button onClick={downloadNotebook} variant="outlined" sx={{ mr: 1}}>Save Current Notebook</Button>
+                    {isUpload ? (
+                        <Button autoFocus
+                            component="label" 
+                            variant="outlined" 
+                            startIcon={<CloudUploadIcon />}>
+                            {alertBtnLabel}
+                            <VisuallyHiddenInput type="file" onChange={handleFileChange} id="file-upload"/>
+                        </Button>
+                        ) : (
+                        <Button autoFocus onClick={handleContinue} variant="outlined" >
+                            {alertBtnLabel}
+                        </Button>)}     
+                </DialogActions>
+            </Dialog>
         </Grid>
   );
 };

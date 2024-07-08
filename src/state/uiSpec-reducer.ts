@@ -42,11 +42,9 @@ export const slugify = (str: string) => {
     return str;
 };
 
-
-
 export const uiSpecificationReducer = createSlice({
     name: 'ui-specification',
-    initialState: initialState["ui-specification"],
+    initialState: initialState['ui-specification'],
     reducers: {
         loaded: (_state: NotebookUISpec, action: PayloadAction<NotebookUISpec>) => {
             return action.payload;
@@ -185,7 +183,6 @@ export const uiSpecificationReducer = createSlice({
             // add to fields and to the fview section
             state.fields[fieldLabel] = newField;
             state.fviews[viewId].fields.push(fieldLabel);
-
         },
         fieldDeleted: (state: NotebookUISpec,
             action: PayloadAction<{ fieldName: string, viewId: string }>) => {
@@ -372,6 +369,6 @@ export const uiSpecificationReducer = createSlice({
     }
 })
 
-export const { loaded, fieldUpdated } = uiSpecificationReducer.actions;
+export const { loaded, fieldUpdated, fieldMoved, fieldRenamed, fieldAdded, fieldDeleted, sectionRenamed, sectionAdded, sectionDeleted, sectionMoved, sectionConditionChanged, viewSetAdded, viewSetDeleted, viewSetMoved, viewSetRenamed, formVisibilityUpdated } = uiSpecificationReducer.actions;
 
 export default uiSpecificationReducer.reducer;
