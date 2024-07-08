@@ -16,13 +16,13 @@ import { Grid, FormHelperText } from "@mui/material";
 import { useAppSelector, useAppDispatch } from "../../state/hooks";
 import { useRef } from "react";
 import { MDXEditorMethods } from '@mdxeditor/editor';
-import { FieldType, Notebook } from "../../state/initial";
+import { FieldType } from "../../state/initial";
 import { MdxEditor } from "../mdx-editor";
 
 
 export const RichTextEditor = ({ fieldName }: { fieldName: string }) => {
 
-    const field = useAppSelector((state: Notebook) => state['ui-specification'].fields[fieldName]);
+    const field = useAppSelector((state) => state.notebook['ui-specification'].fields[fieldName]);
     const dispatch = useAppDispatch();
 
     const initContent = field['component-parameters'].content || "";

@@ -26,6 +26,7 @@ export type ComponentParameters = {
     name?: string,
     id?: string,
     helperText?: string,
+    helpertext?: string, // was allowed for TakePhoto
     variant?: string,
     label?: string,
     multiline?: boolean,
@@ -66,7 +67,7 @@ export type ComponentParameters = {
     valuetype?: string,
 };
 
-export type ValidationSchemaElement =  (string | number)[];
+export type ValidationSchemaElement =  (string | number | unknown[])[];
 
 export type FieldType = {
     "component-namespace": string,
@@ -80,19 +81,22 @@ export type FieldType = {
     "persistent"?: boolean,
     "displayParent"?: boolean,
     "meta"?: {
-        "annotation_label": string,
-        "annotation": boolean,
+        "annotation": {
+            "include": boolean,
+            "label": string,
+        },
         "uncertainty": {
             "include" : boolean,
             "label": string,
         }
     }
-}; 
+};
 
 export type NotebookUISpec = {
     fields: {[key: string]: FieldType},
     fviews: {[key: string]: {
         "fields": string[],
+        "description"?: string,
         "uidesign"?: string,
         "label": string,
         "condition"?: ConditionType,
@@ -108,36 +112,41 @@ export type NotebookModified = {
     flag: boolean,
 }
 
+export type AppState = {
+    modified: boolean,
+    notebook: Notebook,
+}
+
 export type Notebook = {
     metadata: NotebookMetadata,
-    "ui-specification": NotebookUISpec,
-    modifiedStatus: NotebookModified,
+    "ui-specification": NotebookUISpec
 }
 
 // an empty notebook
-export const initialState: Notebook = {
-    "metadata": {
-        "notebook_version": "1.0",
-        "schema_version": "1.0",
-        "name": "",
-        "accesses": ["admin", "moderator", "team"],
-        "filenames": [],
-        "ispublic": false,
-        "isrequest": false,
-        "lead_institution": "",
-        "showQRCodeButton": false,
-        "pre_description": "",
-        "project_lead": "",
-        "project_status": "New",
-        "sections": {}
-    },
-    "ui-specification": {
-        "fields": {},
-        "fviews": {},
-        "viewsets": {},
-        "visible_types": []
-    },
-    "modifiedStatus": {
-        "flag": false
+export const initialState: AppState = 
+{
+    modified: false,
+    notebook: {
+        "metadata": {
+            "notebook_version": "1.0",
+            "schema_version": "1.0",
+            "name": "",
+            "accesses": ["admin", "moderator", "team"],
+            "filenames": [],
+            "ispublic": false,
+            "isrequest": false,
+            "lead_institution": "",
+            "showQRCodeButton": false,
+            "pre_description": "",
+            "project_lead": "",
+            "project_status": "New",
+            "sections": {}
+        },
+        "ui-specification": {
+            "fields": {},
+            "fviews": {},
+            "viewsets": {},
+            "visible_types": []
+        },
     }
 }

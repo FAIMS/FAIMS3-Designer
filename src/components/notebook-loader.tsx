@@ -22,6 +22,7 @@ import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import CloseIcon from '@mui/icons-material/Close';
 import { slugify } from '../state/uiSpec-reducer';
+import { ValidationError, migrateNotebook } from '../state/migrateNotebook';
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -43,14 +44,6 @@ const validateNotebook = (jsonText: string): Notebook => {
             throw new Error('Invalid notebook file: not an object');
         }
 
-        if (!Object.prototype.hasOwnProperty.call(data, 'metadata')) {
-            throw new Error('Invalid notebook file: metadata missing');
-        }
-
-        if (!Object.prototype.hasOwnProperty.call(data, 'ui-specification')) {
-            throw new Error('Invalid notebook file: ui-specification missing');
-        }
-
         return data as Notebook;
     } catch (error) {
         throw new Error('Invalid notebook file: not JSON');
@@ -60,11 +53,8 @@ const validateNotebook = (jsonText: string): Notebook => {
 export const NotebookLoader = () => {
 
     const dispatch = useAppDispatch();
-    const notebookModified = useAppSelector((state: Notebook) => state.modifiedStatus.flag);
-    const state = useAppSelector((state: Notebook) => state);
-    const resetModifiedStatus = (newStatus: boolean) => {
-        dispatch({type: "modifiedStatus/resetFlag", payload: {newStatus}});
-    }
+    const notebookModified = useAppSelector((state) => state.modified);
+    const notebook = useAppSelector((state) => state.notebook);
 
     const navigate = useNavigate();
 
@@ -73,6 +63,7 @@ export const NotebookLoader = () => {
     const [alertMsgContext, setAlertMsgContext ] = useState(' ');
     const [alertBtnLabel, setAlertBtnLabel ] = useState(' ');
     const [isUpload, setIsUpload ] = useState(false);
+    const [errors, setErrors] = useState<string[]>([]);
 
     const handleContinue = () => {
         setOpen(false);
@@ -107,9 +98,23 @@ export const NotebookLoader = () => {
     }
 
     const loadFn = useCallback((notebook: Notebook) => {
-        dispatch({ type: 'metadata/loaded', payload: notebook.metadata })
-        dispatch({ type: 'ui-specification/loaded', payload: notebook['ui-specification'] })
-        resetModifiedStatus(false)
+        try {
+          const updatedNotebook = migrateNotebook(notebook);
+          dispatch({ type: 'metadata/loaded', payload: updatedNotebook.metadata })
+          dispatch({ type: 'ui-specification/loaded', payload: updatedNotebook['ui-specification'] })
+          dispatch({ type: "modifiedStatus/resetFlag", payload: false});
+          
+          return true;
+        } catch (e) {
+            if (e instanceof ValidationError) {
+                console.log('Error >>', e.messages);
+                setErrors(e.messages);
+            } else {
+                console.log("SOME OTHER ERROR", e);
+                setErrors(['unknown error']);
+            }
+            return false;
+        }    
     }, [dispatch]);
 
     const afterLoad = () =>  {
@@ -117,35 +122,35 @@ export const NotebookLoader = () => {
     }
 
     const newNotebook = () => {
-            loadFn(initialState);
+            loadFn(initialState.notebook);
             afterLoad();
     };
 
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.item(0);
         if (file) {
+            setErrors([]);
             file.text()
                 .then(text => {
                     const data = validateNotebook(text);
-                    loadFn(data);
-                    afterLoad();
+                    if (loadFn(data))  afterLoad();
                 })
-            .catch((error) => {
-            console.error(error); 
+            .catch(({message}) => {
+                setErrors([message]);
             });
         }
     };
 
     const downloadNotebook = () => {
         const element = document.createElement("a");
-        const file = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
+        const file = new Blob([JSON.stringify(notebook, null, 2)], { type: 'application/json' });
         element.href = URL.createObjectURL(file);
-        const name = slugify(state.metadata.name as string);
+        const name = slugify(notebook.metadata.name as string);
         element.download = `${name}.json`;
         document.body.appendChild(element);
         element.click();
         setOpen(false);
-        resetModifiedStatus(false);
+        dispatch({ type: "modifiedStatus/resetFlag", payload: false});
     };
 
     return (
@@ -159,13 +164,24 @@ export const NotebookLoader = () => {
                 >
                     Upload file
                     {!notebookModified ? (
-                    <VisuallyHiddenInput type="file" onChange={handleFileChange} id="file-upload"/>
-                    ) : (null)}
+                    <VisuallyHiddenInput type="file" 
+                        onChange={handleFileChange} 
+                        // below removes the value on click so we can upload the same file again
+                        onClick={(e) => { const element = e.target as HTMLInputElement; element.value = ''; }}/>)
+                        : (null)}
                 </Button>
+                {notebookModified ? (<p>Modified</p>): (<p>Not Modified</p>)}
 
-                <Typography variant="body2" color="text.secondary">
-                   Upload a notebook file to start editing.
-                </Typography>
+                {errors.length ? 
+                    (<div>
+                         <p>Errors in notebook format:</p> 
+                         <ul>{errors.map(e => (<li key={e}>{e}</li>))}</ul>
+                    </div>
+                    ) : (               
+                    <Typography variant="body2" color="text.secondary">
+                        Upload a notebook file to start editing.
+                    </Typography>)
+                }
             </Grid>
 
             <Grid item xs={12} sm={6}>                           

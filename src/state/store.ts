@@ -12,28 +12,30 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { Middleware, configureStore } from '@reduxjs/toolkit'
+import { Middleware, combineReducers, configureStore } from '@reduxjs/toolkit'
 import metadataReducer from './metadata-reducer'
 import uiSpecificationReducer from './uiSpec-reducer'
 import modifiedStatusReducer from './modifiedStatus-reducer';
 import { ToolkitStore } from '@reduxjs/toolkit/dist/configureStore';
-import { Notebook } from './initial';
+import { AppState, Notebook } from './initial';
 import { loadState, saveState } from './localStorage';
 import { throttle } from 'lodash';
 
 const persistedState = loadState();
 
-const loggerMiddleware: Middleware<object, Notebook> = storeAPI => next => action => {
+const loggerMiddleware: Middleware<object, AppState> = storeAPI => next => action => {
   console.log('dispatching', action);
   next(action);
   console.log('next state', storeAPI.getState())
 }
 
-export const store: ToolkitStore<Notebook> = configureStore({
+export const store: ToolkitStore<AppState> = configureStore({
   reducer: {
-    metadata: metadataReducer,
-    "ui-specification": uiSpecificationReducer,
-    modifiedStatus: modifiedStatusReducer,
+    notebook: combineReducers<Notebook>({
+      metadata: metadataReducer, 
+      "ui-specification": uiSpecificationReducer
+    }),
+    modified: modifiedStatusReducer,
   },
   preloadedState: persistedState,
   middleware: (getDefaultMiddleware) =>

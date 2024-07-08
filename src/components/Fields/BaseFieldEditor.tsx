@@ -14,7 +14,7 @@
 
 import { Checkbox, FormControlLabel, Grid, TextField, Card, Alert } from "@mui/material";
 import { useAppSelector, useAppDispatch } from "../../state/hooks";
-import { FieldType, Notebook } from "../../state/initial";
+import { FieldType } from "../../state/initial";
 import { ConditionModal, ConditionTranslation, ConditionType } from "../condition";
 
 type Props = {
@@ -38,26 +38,18 @@ type StateType = {
 
 export const BaseFieldEditor = ({ fieldName, children }: Props) => {
 
-    const field = useAppSelector((state: Notebook) => state['ui-specification'].fields[fieldName]);
+    const field = useAppSelector((state) => state.notebook['ui-specification'].fields[fieldName]);
     const dispatch = useAppDispatch();
 
     // These are needed because there is no consistency in how
     // the field label is stored in the notebook
     const getFieldLabel = () => {
-        return (field['component-parameters'] && field['component-parameters'].label) ||
-            (field['component-parameters'].InputLabelProps && field['component-parameters'].InputLabelProps.label) ||
-            field['component-parameters'].name;
+        return (field['component-parameters']?.label) || field['component-parameters'].name;
     }
 
     const setFieldLabel = (newField: FieldType, label: string) => {
         console.log('setFieldLabel', newField, label);
-        if (newField['component-parameters'] && 'label' in newField['component-parameters'])
-            newField['component-parameters'].label = label;
-        else if (newField['component-parameters'] &&
-            'InputLabelProps' in newField['component-parameters'] &&
-            newField['component-parameters'].InputLabelProps &&
-            newField['component-parameters'].InputLabelProps.label)
-            newField['component-parameters'].InputLabelProps.label = label;
+        newField['component-parameters'].label = label;
     }
 
     const updateField = (fieldName: string, newField: FieldType) => {
@@ -70,8 +62,8 @@ export const BaseFieldEditor = ({ fieldName, children }: Props) => {
         label: getFieldLabel(),
         helperText: cParams.helperText || "",
         required: cParams.required || false,
-        annotation: field.meta ? field.meta.annotation || false : false,
-        annotationLabel: field.meta ? field.meta.annotation_label || '' : '',
+        annotation: field.meta ? field.meta.annotation?.include : false,
+        annotationLabel: field.meta ? field.meta.annotation?.label || '' : '',
         uncertainty: field.meta ? field.meta.uncertainty.include || false : false,
         uncertaintyLabel: field.meta ? field.meta.uncertainty.label || '' : '',
         condition: field.condition,
@@ -86,8 +78,10 @@ export const BaseFieldEditor = ({ fieldName, children }: Props) => {
         newField['component-parameters'].helperText = newState.helperText;
         newField['component-parameters'].required = newState.required;
         if (newField.meta) {
-            newField.meta.annotation = newState.annotation;
-            newField.meta.annotation_label = newState.annotationLabel || '';
+            newField.meta.annotation = {
+                include: newState.annotation,
+                label: newState.annotationLabel || '',
+            }
             newField.meta.uncertainty = {
                 include: newState.uncertainty,
                 label: newState.uncertaintyLabel || ''

@@ -21,7 +21,6 @@ import { useState } from "react";
 import { useAppDispatch, useAppSelector } from "../state/hooks";
 import { FormEditor } from "./form-editor";
 import { shallowEqual } from "react-redux";
-import { Notebook } from "../state/initial";
 import { Link, Route, Routes, useLocation, useNavigate } from "react-router-dom";
 
 export const DesignPanel = () => {
@@ -29,8 +28,8 @@ export const DesignPanel = () => {
     const navigate = useNavigate();
     const { pathname } = useLocation();
 
-    const viewSets = useAppSelector((state: Notebook) => state['ui-specification'].viewsets, shallowEqual);
-    const visibleTypes: string[] = useAppSelector((state: Notebook) => state['ui-specification'].visible_types)
+    const viewSets = useAppSelector((state) => state.notebook['ui-specification'].viewsets, shallowEqual);
+    const visibleTypes: string[] = useAppSelector((state) => state.notebook['ui-specification'].visible_types)
     const dispatch = useAppDispatch();
 
     const startTabIndex = pathname.split('/')[2];

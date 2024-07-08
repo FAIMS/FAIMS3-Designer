@@ -15,10 +15,10 @@
 import { Card, Grid, TextField } from "@mui/material";
 import { useAppSelector, useAppDispatch } from "../../state/hooks";
 import { BaseFieldEditor } from "./BaseFieldEditor";
-import { FieldType, Notebook, ValidationSchemaElement } from "../../state/initial";
+import { FieldType, ValidationSchemaElement } from "../../state/initial";
 
 export const TextFieldEditor = ({ fieldName }: { fieldName: string }) => {
-    const field = useAppSelector((state: Notebook) => state['ui-specification'].fields[fieldName]);
+    const field = useAppSelector((state) => state.notebook['ui-specification'].fields[fieldName]);
     const dispatch = useAppDispatch();
 
     const initVal = field['initialValue'] as (string | number);
@@ -26,7 +26,7 @@ export const TextFieldEditor = ({ fieldName }: { fieldName: string }) => {
     const schema = field['validationSchema'] || [];
 
     // flattens the validationSchema array of arrays so that I can run the .includes() function on it
-    const validationArr: (string | number)[] = schema.flat();
+    const validationArr: unknown[] = schema.flat();
     // flag to tell us if we're dealing with controlled-number / number-field-val
     let hasMinMax = false;
     if (validationArr.includes('yup.min') && validationArr.includes('yup.max')) {

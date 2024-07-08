@@ -15,14 +15,14 @@
 import { Alert, Button, Checkbox, FormControlLabel, FormHelperText, Grid, TextField, Typography, Card } from "@mui/material";
 import { useEffect, useState, useRef } from "react";
 import { useAppSelector, useAppDispatch } from "../state/hooks";
-import { Notebook, PropertyMap } from "../state/initial";
+import { PropertyMap } from "../state/initial";
 import { MdxEditor } from "./mdx-editor";
 import { MDXEditorMethods } from '@mdxeditor/editor';
 
 
 export const InfoPanel = () => {
 
-    const metadata = useAppSelector((state: Notebook) => state.metadata);
+    const metadata = useAppSelector((state) => state.notebook.metadata);
     const dispatch = useAppDispatch();
 
     const ref = useRef<MDXEditorMethods>(null);

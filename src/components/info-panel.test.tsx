@@ -43,7 +43,7 @@ describe('Info Panel',  () => {
         const name = screen.getByTestId('name').querySelector('input');
         if (name) {
             fireEvent.change(name, { target: { value: 'New Name' } });
-            expect(store.getState().metadata.name).toBe('New Name');
+            expect(store.getState().notebook.metadata.name).toBe('New Name');
         }
         // check some content
         screen.getByText('Enable QR Code Search of Records');
@@ -55,7 +55,7 @@ describe('Info Panel',  () => {
             fireEvent.change(metaValue, { target: { value: 'Bobalooba' } });
             const createButton = screen.getByText('Create New Field');
             createButton.click();
-            expect(store.getState().metadata.Bob).toBe('Bobalooba');
+            expect(store.getState().notebook.metadata.Bob).toBe('Bobalooba');
         });
         // after that, the new metadata field should be visible
         expect(screen.getByTestId('extra-field-Bob')).toBeDefined();

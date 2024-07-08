@@ -19,7 +19,7 @@ import AddCircleIcon from '@mui/icons-material/AddCircle';
 import { useState } from "react";
 import { useAppSelector, useAppDispatch } from "../../state/hooks";
 import { BaseFieldEditor } from "./BaseFieldEditor";
-import { FieldType, Notebook } from "../../state/initial";
+import { FieldType } from "../../state/initial";
 
 type PairList = [string, string][];
 type Props = {
@@ -28,8 +28,8 @@ type Props = {
 
 export const RelatedRecordEditor = ({ fieldName }: Props) => {
 
-    const field = useAppSelector((state: Notebook) => state['ui-specification'].fields[fieldName]);
-    const viewsets = useAppSelector((state: Notebook) => state['ui-specification'].viewsets);
+    const field = useAppSelector((state) => state.notebook['ui-specification'].fields[fieldName]);
+    const viewsets = useAppSelector((state) => state.notebook['ui-specification'].viewsets);
     const dispatch = useAppDispatch();
 
     const [newOption1, setNewOption1] = useState('')

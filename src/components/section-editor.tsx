@@ -24,7 +24,6 @@ import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
 
 import { FieldList } from "./field-list";
 import { useAppSelector, useAppDispatch } from "../state/hooks";
-import { Notebook } from '../state/initial';
 import { useState } from "react";
 import {ConditionModal, ConditionTranslation, ConditionType } from "./condition";
 
@@ -42,7 +41,7 @@ type Props = {
 
 export const SectionEditor = ({ viewSetId, viewId, viewSet, deleteCallback, addCallback, moveCallback }: Props) => {
 
-    const fView = useAppSelector((state: Notebook) => state['ui-specification'].fviews[viewId]);
+    const fView = useAppSelector((state) => state.notebook['ui-specification'].fviews[viewId]);
     const dispatch = useAppDispatch();
 
     console.log('SectionEditor', viewId, viewSet);

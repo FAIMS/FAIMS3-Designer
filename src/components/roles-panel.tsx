@@ -19,7 +19,6 @@ import { useAppSelector, useAppDispatch } from "../state/hooks";
 
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
-import { Notebook } from '../state/initial';
 
 /**
  * RolesPanel - edit the user roles associated with this notebook
@@ -27,7 +26,7 @@ import { Notebook } from '../state/initial';
  */
 export const RolesPanel = () => {
 
-    const roles = useAppSelector((state: Notebook) => state.metadata.accesses) as string[];
+    const roles = useAppSelector((state) => state.notebook.metadata.accesses) as string[];
     const dispatch = useAppDispatch();
 
     const [newRole, setNewRole] = useState('');

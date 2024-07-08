@@ -19,7 +19,7 @@ import { Button, Alert, AlertTitle, TextField, Grid, Card, FormControl, FormLabe
 
 import { BaseFieldEditor } from "./BaseFieldEditor";
 import { useAppSelector, useAppDispatch } from "../../state/hooks";
-import { FieldType, Notebook } from "../../state/initial";
+import { FieldType } from "../../state/initial";
 
 import { useState } from 'react';
 
@@ -38,7 +38,7 @@ type newState = {
 
 export const AdvancedSelectEditor = ({ fieldName }: { fieldName: string }) => {
 
-    const field = useAppSelector((state: Notebook) => state['ui-specification'].fields[fieldName]);
+    const field = useAppSelector((state) => state.notebook['ui-specification'].fields[fieldName]);
     const dispatch = useAppDispatch();
 
     const state = {

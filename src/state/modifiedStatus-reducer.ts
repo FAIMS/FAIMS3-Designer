@@ -12,74 +12,74 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { initialState, NotebookModified } from "./initial";
+import {createSlice} from "@reduxjs/toolkit";
+import {initialState} from "./initial";
 import {propertyUpdated, rolesUpdated} from "./metadata-reducer";
 import {fieldAdded, fieldDeleted, fieldMoved, fieldRenamed, fieldUpdated, formVisibilityUpdated, sectionAdded, sectionConditionChanged, sectionDeleted, sectionMoved, sectionRenamed, viewSetAdded, viewSetDeleted, viewSetMoved, viewSetRenamed} from "./uiSpec-reducer";
 
 const modifiedStatusReducer = createSlice({
     name: 'modifiedStatus',
-    initialState:  initialState.modifiedStatus,
+    initialState:  initialState.modified,
     reducers: {
-        resetFlag: (state: NotebookModified, action: PayloadAction<{newStatus: boolean}>) => {
-            const { newStatus } = action.payload;
+        resetFlag: (_state, action) => {
+            const newStatus = action.payload as boolean;
             console.log("Reached modified reducer " + newStatus);
-            state.flag = newStatus;
+            return newStatus;
         },
     },
     extraReducers: builder => {
         //Metadata reducers
-        builder.addCase(propertyUpdated, (state) => {
-            state.flag = true;
+        builder.addCase(propertyUpdated, () => {
+            return true;
         })
-        .addCase(rolesUpdated, (state) => {
-            state.flag = true;
+        .addCase(rolesUpdated, () => {
+            return true;
         })
         //UISpec reducers
-        .addCase(fieldUpdated, (state) => {
-            state.flag = true;
+        .addCase(fieldUpdated, () => {
+            return true;
         })
-        .addCase(fieldMoved, (state) => {
-            state.flag = true;
+        .addCase(fieldMoved, () => {
+            return true;
         })
-        .addCase(fieldRenamed, (state) => {
-            state.flag = true;
+        .addCase(fieldRenamed, () => {
+            return true;
         })
-        .addCase(fieldAdded, (state) => {
-            state.flag = true;
+        .addCase(fieldAdded, () => {
+            return true;
         })
-        .addCase(fieldDeleted, (state) => {
-            state.flag = true;
+        .addCase(fieldDeleted, () => {
+            return true;
         })
-        .addCase(sectionRenamed, (state) => {
-            state.flag = true;
+        .addCase(sectionRenamed, () => {
+            return true;
         })
-        .addCase(sectionAdded, (state) => {
-            state.flag = true;
+        .addCase(sectionAdded, () => {
+            return true;
         })
-        .addCase(sectionDeleted, (state) => {
-            state.flag = true;
+        .addCase(sectionDeleted, () => {
+            return true;
         })
-        .addCase(sectionMoved, (state) => {
-            state.flag = true;
+        .addCase(sectionMoved, () => {
+            return true;
         })
-        .addCase(sectionConditionChanged, (state) => {
-            state.flag = true;
+        .addCase(sectionConditionChanged, () => {
+            return true;
         })
-        .addCase(viewSetAdded, (state) => {
-            state.flag = true;
+        .addCase(viewSetAdded, () => {
+            return true;
         })
-        .addCase(viewSetDeleted, (state) => {
-            state.flag = true;
+        .addCase(viewSetDeleted, () => {
+            return true;
         })
-        .addCase(viewSetMoved, (state) => {
-            state.flag = true;
+        .addCase(viewSetMoved, () => {
+            return true;
         })
-        .addCase(viewSetRenamed, (state) => {
-            state.flag = true;
+        .addCase(viewSetRenamed, () => {
+            return true;
         })
-        .addCase(formVisibilityUpdated, (state) => {
-            state.flag = true;
+        .addCase(formVisibilityUpdated, () => {
+            return true;
         })
     }    
 });

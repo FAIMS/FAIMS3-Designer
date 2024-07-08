@@ -20,12 +20,12 @@ const protectedFields = ['meta', 'project_status', 'access', 'accesses',
 
 const metadataReducer = createSlice({
     name: 'metadata',
-    initialState:  initialState.metadata,
+    initialState:  initialState.notebook.metadata,
     reducers: {
-        loaded: (_state: NotebookMetadata, action: PayloadAction<NotebookMetadata>) => {
+        loaded: (_state, action: PayloadAction<NotebookMetadata>) => {
             return action.payload;
         },
-        propertyUpdated: (state: NotebookMetadata, action: PayloadAction<{property: string, value: string}>) => {
+        propertyUpdated: (state, action: PayloadAction<{property: string, value: string}>) => {
             const { property, value } = action.payload;
             if (protectedFields.includes(property)) {
                 throw new Error(`Cannot update protected metadata field ${property} via propertyUpdated action`);
@@ -33,7 +33,7 @@ const metadataReducer = createSlice({
                 state[property] = value;
             }
         },
-        rolesUpdated: (state: NotebookMetadata, action: PayloadAction<{roles: string[]}>) => {
+        rolesUpdated: (state, action: PayloadAction<{roles: string[]}>) => {
             const { roles } = action.payload;
             state.accesses = roles;
         },

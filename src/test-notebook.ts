@@ -1,6 +1,6 @@
-import { Notebook } from "./state/initial";
+//import { Notebook } from "./state/initial";
 
-export const sampleNotebook:Notebook = {
+export const sampleNotebook:unknown = {
   "metadata": {
     "notebook_version": "1.0",
     "schema_version": "1.0",
@@ -18,7 +18,14 @@ export const sampleNotebook:Notebook = {
     "pre_description": "Demonstration notebook to help develop an export pipeline from Fieldmark to RSpace.",
     "project_lead": "Steve Cassidy",
     "project_status": "New",
-    "sections": {}
+    "sections": {
+          "Primary-New-Section": {
+            "sectiondescriptionPrimary-New-Section": "This description."
+          },
+          "Primary-Next-Section": {
+            "sectiondescriptionPrimary-Next-Section": "That description."
+          },
+        },
   },
   "ui-specification": {
     "fields": {
@@ -134,11 +141,12 @@ export const sampleNotebook:Notebook = {
           "id": "qr-code-field",
           "variant": "outlined",
           "required": true,
-          "label": "IGSN QR Code",
           "FormLabelProps": {
-            "children": "Input a value here"
+            "children": "IGSN QR Code"
           },
-          "helperText": "Scan the pre-printed QR Code for this sample."
+          "FormHelperTextProps": {
+            "children": "Scan the pre-printed QR Code for this sample."
+          }
         },
         "validationSchema": [
           [
@@ -193,7 +201,7 @@ export const sampleNotebook:Notebook = {
           "fullWidth": true,
           "name": "Sample-Photograph",
           "id": "take-photo-field",
-          "helperText": "Take a photo",
+          "helpertext": "Take a photo",
           "variant": "outlined",
           "label": "Sample Photograph"
         },
@@ -249,6 +257,47 @@ export const sampleNotebook:Notebook = {
           }
         }
       },
+
+      "survey-note": {
+        "component-namespace": "formik-material-ui",
+        "component-name": "MultipleTextField",
+        "type-returned": "faims-core::String",
+        "component-parameters": {
+          "fullWidth": true,
+          "helperText": "Note comments about survey area here",
+          "variant": "outlined",
+          "required": false,
+          "multiline": true,
+          "InputProps": {
+            "type": "text",
+            "rows": 4
+          },
+          "SelectProps": {},
+          "InputLabelProps": {
+            "label": "Survey Note"
+          },
+          "FormHelperTextProps": {},
+          "id": "survey-note",
+          "name": "survey-note"
+        },
+        "validationSchema": [
+          [
+            "yup.string"
+          ]
+        ],
+        "initialValue": "",
+        "access": [
+          "admin"
+        ],
+        "meta": {
+          "annotation_label": "annotation",
+          "annotation": false,
+          "uncertainty": {
+            "include": false,
+            "label": "uncertainty"
+          }
+        }
+      },
       "Type": {
         "component-namespace": "faims-custom",
         "component-name": "Select",
@@ -296,7 +345,35 @@ export const sampleNotebook:Notebook = {
             "label": "uncertainty"
           }
         }
-      }
+      },
+      safety_hazard: {
+        'component-namespace': 'faims-custom',
+        'component-name': 'Checkbox',
+        'type-returned': 'faims-core::Bool',
+        'component-parameters': {
+          name: 'safety_hazard',
+          id: 'safety_hazard',
+          required: false,
+          type: 'checkbox',
+          FormControlLabelProps: {
+            label: 'Safety Hazard',
+          },
+          FormHelperTextProps: {
+            children: 'Selecting this box will alert maintenance (eventually)',
+          },
+        },
+        validationSchema: [['yup.bool']],
+        initialValue: false,
+        access: ['admin'],
+        meta: {
+          annotation_label: 'annotation',
+          annotation: false,
+          uncertainty: {
+            include: false,
+            label: 'uncertainty',
+          },
+        },
+      },
     },
     "fviews": {
       "Primary-New-Section": {
@@ -306,7 +383,8 @@ export const sampleNotebook:Notebook = {
           "New-Text-Field",
           "Sample-Photograph",
           "Length-mm",
-          "Type"
+          "Type",
+          "safety_hazard"
         ]
       },
       "Primary-Next-Section": {
@@ -314,7 +392,8 @@ export const sampleNotebook:Notebook = {
         "fields": [
           "Field-ID",
           "hridPrimary-Next-Section",
-          "IGSN-QR-Code"
+          "IGSN-QR-Code",
+          "survey-note"
         ]
       }
     },
@@ -330,8 +409,5 @@ export const sampleNotebook:Notebook = {
     "visible_types": [
       "Primary"
     ]
-  },
-  "modifiedStatus": {
-    flag: false,
-  },
+  }
 }
