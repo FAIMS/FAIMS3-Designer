@@ -29,6 +29,7 @@ const loggerMiddleware: Middleware<object, AppState> = storeAPI => next => actio
   console.log('next state', storeAPI.getState())
 }
 
+
 export const store: ToolkitStore<AppState> = configureStore({
   reducer: {
     notebook: combineReducers<Notebook>({

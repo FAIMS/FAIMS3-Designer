@@ -16,6 +16,10 @@
 import {describe, expect, test } from 'vitest';
 import { migrateNotebook, validateNotebook } from './migrateNotebook';
 import { sampleNotebook } from '../test-notebook';
+import f3demo from '../../notebooks/FAIMS3-Beta-Demo-Notebook.json';
+import campusDemo from '../../notebooks/Campus-Survey-Demo.json';
+import sampleNB from '../../notebooks/sample_notebook.json';
+
 
 describe('Migrate Notebook Tests', () => {
 
@@ -88,8 +92,6 @@ describe('Migrate Notebook Tests', () => {
         }
     });
 
-
-
     test('update form descriptions', () => {
 
         const migrated = migrateNotebook(sampleNotebook);
@@ -102,10 +104,6 @@ describe('Migrate Notebook Tests', () => {
 
     });
 
-
-
-
-
     test('not losing properties', () => {
 
         const migrated = migrateNotebook(sampleNotebook);
@@ -114,4 +112,19 @@ describe('Migrate Notebook Tests', () => {
             expect(Object.getOwnPropertyNames(fields)).toContain(fieldName);
         });
     });
+
+
+    test('validate sample notebooks', () => {
+        const migratedF3 = migrateNotebook(f3demo);
+        // should not throw an exception
+        expect(migratedF3.metadata.name).toBe('Faims3 Beta Demo Notebook');
+
+        const migratedCD = migrateNotebook(campusDemo);
+        expect(migratedCD.metadata.name).toBe('Campus Survey Demo');
+
+        const migratedS = migrateNotebook(sampleNB);
+        expect(migratedS.metadata.name).toBe('Blue Mountains Survey');
+
+
+    })
 })
